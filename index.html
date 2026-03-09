@@ -632,11 +632,11 @@
           </div>
           <div class="hero-point">
             <strong>Actualización por mail</strong>
-            <span>Después podrá actualizarse sin duplicar datos.</span>
+            <span>Si el docente ya existe, luego se actualiza sin duplicar.</span>
           </div>
           <div class="hero-point">
-            <strong>Misma lógica del sistema</strong>
-            <span>Respetando la estructura que ya venías usando.</span>
+            <strong>Misma base del sistema</strong>
+            <span>Respetando la hoja y la lógica que ya venías usando.</span>
           </div>
         </div>
       </section>
@@ -652,17 +652,17 @@
 
         <div class="stat-card">
           <strong>Más visible</strong>
-          <span>El acceso al registro ahora está arriba y mejor destacado.</span>
+          <span>El acceso al registro está arriba y mejor destacado.</span>
         </div>
 
         <div class="stat-card">
           <strong>3 distritos</strong>
-          <span>Distrito principal más dos distritos extra de interés.</span>
+          <span>Uno principal y hasta dos distritos extra de interés.</span>
         </div>
 
         <div class="stat-card">
-          <strong>Listo para conectar</strong>
-          <span>Después lo enlazamos con Apps Script y la hoja docentes.</span>
+          <strong>Multinivel</strong>
+          <span>Ahora nivel / modalidad permite elegir varias opciones.</span>
         </div>
       </aside>
     </div>
@@ -688,7 +688,7 @@
 
         <article class="info-card">
           <h3>Base preparada</h3>
-          <p>El diseño ya queda listo para conectar más adelante con tu backend y guardar datos reales.</p>
+          <p>Queda lista para conectarse con Apps Script y guardar/actualizar registros reales.</p>
         </article>
       </div>
     </div>
@@ -697,8 +697,8 @@
   <section id="como-funciona">
     <div class="container">
       <div class="section-head">
-        <h2>Cómo va a funcionar</h2>
-        <p>La web ya queda lista para el siguiente paso: conectar el registro con tu base docente.</p>
+        <h2>Cómo funciona</h2>
+        <p>La web queda lista para integrarse con tu hoja docente y tu sistema de alertas.</p>
       </div>
 
       <div class="steps">
@@ -711,18 +711,18 @@
         <article class="step">
           <div class="step-number">2</div>
           <h4>Se valida la información</h4>
-          <p>La interfaz controla que los datos principales estén completos.</p>
+          <p>La interfaz controla que no haya distritos repetidos y que los datos principales estén completos.</p>
         </article>
 
         <article class="step">
           <div class="step-number">3</div>
-          <h4>Se enviará al sistema</h4>
-          <p>Luego conectaremos este formulario con Apps Script y Google Sheets.</p>
+          <h4>Se envía al sistema</h4>
+          <p>El formulario manda los datos al Apps Script para guardarlos en Sheets.</p>
         </article>
 
         <article class="step">
           <div class="step-number">4</div>
-          <h4>Tu radar usará esa base</h4>
+          <h4>Tu radar usa esa base</h4>
           <p>El sistema APD seguirá filtrando alertas según esas preferencias.</p>
         </article>
       </div>
@@ -734,8 +734,7 @@
       <div class="form-card">
         <h3>Registro docente</h3>
         <p>
-          Completá tus datos y preferencias. Por ahora esta versión deja la interfaz lista y prolija;
-          luego la conectamos con Apps Script.
+          Completá tus datos y preferencias. Si ya estás registrado con ese correo, el sistema actualizará tu fila.
         </p>
 
         <form id="registroForm">
@@ -791,10 +790,9 @@
               <input type="text" id="materia3" name="materia3">
             </div>
 
-            <div>
+            <div class="full">
               <label for="nivelModalidad">Nivel / modalidad</label>
-              <select id="nivelModalidad" name="nivelModalidad" required>
-                <option value="">Seleccionar nivel / modalidad</option>
+              <select id="nivelModalidad" name="nivelModalidad" multiple size="6" required>
                 <option>Inicial</option>
                 <option>Primaria</option>
                 <option>Secundaria</option>
@@ -807,6 +805,9 @@
                 <option>Educación Superior</option>
                 <option>Formación Profesional</option>
               </select>
+              <small style="display:block;margin-top:6px;color:var(--muted);">
+                Podés elegir varias opciones manteniendo presionada la tecla Ctrl.
+              </small>
             </div>
 
             <div>
@@ -821,7 +822,7 @@
               </select>
             </div>
 
-            <div class="full">
+            <div>
               <label for="tipoCargo">Tipo de cargo</label>
               <select id="tipoCargo" name="tipoCargo" required>
                 <option value="">Seleccionar tipo de cargo</option>
@@ -833,7 +834,7 @@
 
             <div class="full checks">
               <label class="check-row">
-                <input type="checkbox" id="aceptoEmail" checked>
+                <input type="checkbox" id="aceptoEmail">
                 <span>Acepto recibir alertas por email</span>
               </label>
 
@@ -854,28 +855,28 @@
       </div>
 
       <aside class="form-card">
-        <h3>Qué dejamos listo hoy</h3>
-        <p>Esta versión ya mejora la experiencia visual y ordena la carga de datos.</p>
+        <h3>Qué guarda el sistema</h3>
+        <p>La idea es respetar lo que ya venías usando en tu base docente.</p>
 
         <div class="side-list">
           <div class="side-item">
-            <strong>Registro más visible</strong>
-            <span>Acceso destacado arriba de la página y botón flotante permanente.</span>
+            <strong>Misma hoja `docentes`</strong>
+            <span>No hace falta crear otra hoja para registrar docentes nuevos.</span>
           </div>
 
           <div class="side-item">
-            <strong>Distritos desplegables</strong>
-            <span>Principal + dos distritos extra, sin escribir a mano.</span>
+            <strong>Correo como clave</strong>
+            <span>Si el mail ya existe, se actualiza esa fila en vez de duplicarse.</span>
           </div>
 
           <div class="side-item">
-            <strong>Checks funcionales</strong>
-            <span>Ahora sí se pueden aceptar alertas y términos correctamente.</span>
+            <strong>Otros distritos</strong>
+            <span>Los distritos 2 y 3 se guardan juntos en “Otros distritos de interés”.</span>
           </div>
 
           <div class="side-item">
-            <strong>Próximo paso</strong>
-            <span>Conectar este formulario con Apps Script y tu hoja `docentes`.</span>
+            <strong>Nivel / modalidad</strong>
+            <span>Se guarda como texto separado por comas en una sola celda.</span>
           </div>
         </div>
       </aside>
@@ -891,8 +892,8 @@
 
       <div class="faq">
         <div class="faq-item">
-          <h4>¿Ya guarda datos reales?</h4>
-          <p>Esta versión deja la interfaz completa y lista. Luego conectamos el guardado con Apps Script.</p>
+          <h4>¿Guarda datos reales?</h4>
+          <p>Sí, cuando lo conectes a la URL del Apps Script que te dejo abajo.</p>
         </div>
 
         <div class="faq-item">
@@ -901,13 +902,13 @@
         </div>
 
         <div class="faq-item">
-          <h4>¿Se puede mejorar más?</h4>
-          <p>Sí. Después podemos sumar actualización de preferencias, APD reales y estadísticas en vivo.</p>
+          <h4>¿Puedo elegir varias modalidades?</h4>
+          <p>Sí. Nivel / modalidad ahora permite varias opciones.</p>
         </div>
 
         <div class="faq-item">
           <h4>¿Respeta lo anterior?</h4>
-          <p>Sí. La idea es respetar la lógica que ya venías usando con tu sistema APD.</p>
+          <p>Sí. Está pensado para respetar la lógica que ya venías usando con tu sistema APD.</p>
         </div>
       </div>
     </div>
@@ -932,6 +933,8 @@
   <a class="floating-cta" href="#registro">Registrarme</a>
 
   <script>
+    const WEB_APP_URL = "PEGAR_AQUI_LA_URL_DEL_APPS_SCRIPT";
+
     const DISTRITOS = [
       "Adolfo Alsina","Adolfo Gonzales Chaves","Alberti","Almirante Brown","Arrecifes",
       "Avellaneda","Ayacucho","Azul","Bahía Blanca","Balcarce","Baradero","Benito Juárez",
@@ -982,7 +985,7 @@
     const msgOk = document.getElementById("mensajeOk");
     const msgError = document.getElementById("mensajeError");
 
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", async function(e) {
       e.preventDefault();
 
       msgOk.style.display = "none";
@@ -993,12 +996,19 @@
       const distrito3 = document.getElementById("distritoInteres3").value;
       const aceptaEmail = document.getElementById("aceptoEmail").checked;
       const aceptaTyC = document.getElementById("aceptoTyC").checked;
+      const nivelesSeleccionados = Array.from(document.getElementById("nivelModalidad").selectedOptions).map(option => option.value);
 
       const distritosElegidos = [distritoPrincipal, distrito2, distrito3].filter(Boolean);
       const sinDuplicados = new Set(distritosElegidos);
 
       if (sinDuplicados.size !== distritosElegidos.length) {
         msgError.textContent = "No repitas el mismo distrito en más de un campo.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      if (nivelesSeleccionados.length === 0) {
+        msgError.textContent = "Debés elegir al menos un nivel o modalidad.";
         msgError.style.display = "block";
         return;
       }
@@ -1015,9 +1025,53 @@
         return;
       }
 
-      msgOk.textContent = "La interfaz quedó lista. Después conectamos este formulario con Apps Script para guardar el registro real.";
-      msgOk.style.display = "block";
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
+      const payload = {
+        nombre: document.getElementById("nombre").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        celular: document.getElementById("celular").value.trim(),
+        distritoPrincipal: distritoPrincipal,
+        distritoInteres2: distrito2,
+        distritoInteres3: distrito3,
+        materia1: document.getElementById("materia1").value.trim(),
+        materia2: document.getElementById("materia2").value.trim(),
+        materia3: document.getElementById("materia3").value.trim(),
+        nivelesModalidad: nivelesSeleccionados,
+        turno: document.getElementById("turno").value.trim(),
+        tipoCargo: document.getElementById("tipoCargo").value.trim(),
+        aceptaEmail: aceptaEmail,
+        aceptaTyC: aceptaTyC
+      };
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const texto = await res.text();
+        let json = {};
+
+        try {
+          json = JSON.parse(texto);
+        } catch (_) {
+          json = { ok: false, mensaje: "Respuesta inválida del servidor." };
+        }
+
+        if (json.ok) {
+          msgOk.textContent = json.mensaje || "Registro guardado correctamente.";
+          msgOk.style.display = "block";
+          form.reset();
+        } else {
+          msgError.textContent = json.mensaje || "No se pudo guardar el registro.";
+          msgError.style.display = "block";
+        }
+      } catch (error) {
+        msgError.textContent = "Error al conectar con el servidor. Revisá la URL del Apps Script y la implementación.";
+        msgError.style.display = "block";
+      }
     });
   </script>
 
