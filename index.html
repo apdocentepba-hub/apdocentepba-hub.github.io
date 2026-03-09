@@ -1,393 +1,1076 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APDocentePBA | Registro docente</title>
+  <meta name="description" content="Registro docente para alertas de Actos Públicos Digitales.">
+  <style>
+    :root{
+      --bg:#eef8fb;
+      --card:#ffffff;
+      --primary:#68c4d8;
+      --primary-2:#4ab3ca;
+      --secondary:#115c77;
+      --secondary-2:#0b4b62;
+      --text:#123847;
+      --muted:#5c7b87;
+      --border:#d1e8ef;
+      --ok:#24a36d;
+      --error:#d94f4f;
+      --shadow:0 18px 40px rgba(17,92,119,.12);
+      --shadow-soft:0 8px 22px rgba(17,92,119,.08);
+      --radius-xl:26px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --max:1180px;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(104,196,216,.25), transparent 28%),
+        radial-gradient(circle at top right, rgba(17,92,119,.10), transparent 20%),
+        linear-gradient(180deg, #fbfeff 0%, #eef8fb 100%);
+      line-height:1.5;
+    }
 
-<title>APDocentePBA | Radar docente</title>
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    .container{width:min(var(--max), 92%);margin:0 auto}
 
-<style>
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:999;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(17,92,119,.08);
+    }
 
-body{
-font-family:Arial;
-background:#eef8fb;
-margin:0;
-}
+    .topbar-inner{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      padding:14px 0;
+    }
 
-.container{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
 
-header{
-background:white;
-border-bottom:1px solid #d1e8ef;
-padding:15px;
-}
+    .brand-logo{
+      width:58px;
+      height:58px;
+      object-fit:contain;
+      padding:6px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
+    }
 
-.brand{
-display:flex;
-align-items:center;
-gap:10px;
-}
+    .brand-text strong{
+      display:block;
+      color:var(--secondary-2);
+      font-size:1.18rem;
+    }
 
-.brand img{
-width:50px;
-}
+    .brand-text span{
+      color:var(--muted);
+      font-size:.88rem;
+    }
 
-.hero{
-background:white;
-padding:30px;
-margin-top:20px;
-border-radius:12px;
-}
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
 
-h1{
-color:#115c77;
-}
+    .nav a{
+      padding:10px 14px;
+      border-radius:999px;
+      color:var(--secondary-2);
+      font-size:.95rem;
+      transition:.2s ease;
+    }
 
-form{
-background:white;
-padding:25px;
-margin-top:20px;
-border-radius:12px;
-}
+    .nav a:hover{
+      background:#e6f5f9;
+      color:var(--secondary);
+    }
 
-input,select{
-width:100%;
-padding:10px;
-margin-top:5px;
-margin-bottom:15px;
-border:1px solid #d1e8ef;
-border-radius:8px;
-}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+      font-weight:bold;
+      padding:14px 22px;
+      border-radius:999px;
+      font-size:1rem;
+    }
 
-button{
-background:#115c77;
-color:white;
-padding:12px 20px;
-border:none;
-border-radius:20px;
-cursor:pointer;
-}
+    .btn-primary{
+      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
+      color:#fff;
+      box-shadow:var(--shadow);
+    }
 
-button:hover{
-background:#0b4b62;
-}
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.03);
+    }
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-}
+    .hero{
+      padding:48px 0 18px;
+    }
 
-.full{
-grid-column:1/-1;
-}
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.04fr .96fr;
+      gap:24px;
+      align-items:stretch;
+    }
 
-.checkbox-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:8px;
-margin-top:10px;
-}
+    .hero-main,.hero-side,.form-card,.info-card,.faq-item,.step{
+      background:#fff;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
+    }
 
-.msg{
-padding:10px;
-border-radius:8px;
-margin-top:10px;
-display:none;
-}
+    .hero-main,.hero-side,.form-card,.info-card{
+      border-radius:var(--radius-xl);
+    }
 
-.ok{
-background:#e6f7ef;
-color:#17794d;
-}
+    .hero-main{
+      padding:36px;
+    }
 
-.error{
-background:#fdeeee;
-color:#a33d3d;
-}
+    .hero-side{
+      padding:28px;
+      background:linear-gradient(165deg, var(--secondary) 0%, var(--secondary-2) 100%);
+      color:#fff;
+      border:none;
+      box-shadow:var(--shadow);
+    }
 
-</style>
+    .eyebrow{
+      display:inline-flex;
+      background:#e4f6fa;
+      color:var(--secondary);
+      border:1px solid #c9eaf2;
+      padding:10px 16px;
+      border-radius:999px;
+      font-size:.92rem;
+      font-weight:bold;
+      margin-bottom:18px;
+    }
 
+    .hero h1{
+      font-size:clamp(2.1rem, 4vw, 3.8rem);
+      line-height:1.05;
+      color:var(--secondary-2);
+      margin-bottom:18px;
+    }
+
+    .hero .lead{
+      color:var(--muted);
+      font-size:1.05rem;
+      max-width:760px;
+      margin-bottom:22px;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin:22px 0 24px;
+    }
+
+    .hero-points{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .hero-point{
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .hero-point strong{
+      display:block;
+      color:var(--secondary);
+      margin-bottom:6px;
+    }
+
+    .hero-point span{
+      color:var(--muted);
+      font-size:.94rem;
+    }
+
+    .hero-side-top{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .hero-side-logo{
+      width:92px;
+      height:92px;
+      object-fit:contain;
+      padding:10px;
+      border-radius:24px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    .hero-side h3{
+      font-size:1.6rem;
+      margin-bottom:6px;
+    }
+
+    .hero-side p{
+      color:rgba(255,255,255,.88);
+    }
+
+    .stat-card{
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:16px 18px;
+      margin-top:14px;
+    }
+
+    .stat-card strong{
+      display:block;
+      font-size:1.25rem;
+      margin-bottom:4px;
+    }
+
+    section{
+      padding:38px 0;
+    }
+
+    .section-head{
+      text-align:center;
+      margin-bottom:24px;
+    }
+
+    .section-head h2{
+      color:var(--secondary-2);
+      font-size:clamp(1.8rem, 3vw, 2.5rem);
+      margin-bottom:10px;
+    }
+
+    .section-head p{
+      color:var(--muted);
+      max-width:850px;
+      margin:0 auto;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:22px;
+    }
+
+    .info-card{
+      padding:24px;
+    }
+
+    .info-card h3{
+      color:var(--secondary-2);
+      margin-bottom:10px;
+    }
+
+    .info-card p{
+      color:var(--muted);
+    }
+
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .step{
+      border-radius:22px;
+      padding:24px;
+    }
+
+    .step-number{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color:#fff;
+      font-weight:bold;
+      margin-bottom:14px;
+    }
+
+    .step h4{
+      color:var(--secondary-2);
+      margin-bottom:8px;
+    }
+
+    .step p{
+      color:var(--muted);
+      font-size:.96rem;
+    }
+
+    .register-wrap{
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    .form-card{
+      padding:28px;
+    }
+
+    .form-card h3{
+      color:var(--secondary-2);
+      font-size:1.6rem;
+      margin-bottom:8px;
+    }
+
+    .form-card p{
+      color:var(--muted);
+      margin-bottom:18px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .full{
+      grid-column:1 / -1;
+    }
+
+    label{
+      display:block;
+      color:var(--secondary-2);
+      font-weight:bold;
+      font-size:.93rem;
+      margin-bottom:6px;
+    }
+
+    input, select{
+      width:100%;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:.98rem;
+      color:var(--text);
+      outline:none;
+    }
+
+    input:focus, select:focus{
+      border-color:var(--primary-2);
+      box-shadow:0 0 0 4px rgba(104,196,216,.18);
+    }
+
+    .checks{
+      display:grid;
+      gap:10px;
+      margin-top:6px;
+    }
+
+    .check-row{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .check-row input{
+      width:auto;
+      margin-top:2px;
+      transform:scale(1.15);
+    }
+
+    .niveles-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px 20px;
+      margin-top:8px;
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .nivel-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--text);
+      font-size:.95rem;
+    }
+
+    .nivel-item input{
+      width:auto;
+      transform:scale(1.15);
+    }
+
+    .form-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .status-msg{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:14px;
+      font-weight:bold;
+      display:none;
+    }
+
+    .status-ok{
+      background:#e6f7ef;
+      border:1px solid #bce8d0;
+      color:#17794d;
+    }
+
+    .status-error{
+      background:#fdeeee;
+      border:1px solid #f3c9c9;
+      color:#a33d3d;
+    }
+
+    .side-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .side-item{
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 16px;
+    }
+
+    .side-item strong{
+      display:block;
+      color:var(--secondary);
+      margin-bottom:4px;
+    }
+
+    .side-item span{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .faq{
+      display:grid;
+      gap:14px;
+    }
+
+    .faq-item{
+      border-radius:18px;
+      padding:18px 20px;
+    }
+
+    .faq-item h4{
+      color:var(--secondary-2);
+      margin-bottom:8px;
+    }
+
+    .faq-item p{
+      color:var(--muted);
+    }
+
+    footer{
+      padding:28px 0 44px;
+      color:var(--muted);
+    }
+
+    .footer-box{
+      background:rgba(255,255,255,.75);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:22px 24px;
+      box-shadow:var(--shadow-soft);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+    }
+
+    .footer-brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .footer-brand img{
+      width:56px;
+      height:56px;
+      object-fit:contain;
+      padding:5px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+
+    .floating-cta{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:1000;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
+      color:#fff;
+      padding:15px 20px;
+      border-radius:999px;
+      font-weight:bold;
+      box-shadow:0 18px 35px rgba(17,92,119,.28);
+    }
+
+    .floating-cta:hover{
+      transform:translateY(-2px);
+    }
+
+    @media (max-width:1100px){
+      .hero-grid,.register-wrap{
+        grid-template-columns:1fr;
+      }
+
+      .hero-points,.steps,.grid-3{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .form-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:760px){
+      .topbar-inner{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .hero-points,.steps,.grid-3,.niveles-grid{
+        grid-template-columns:1fr;
+      }
+
+      .hero-main,.hero-side,.form-card,.info-card{
+        padding:24px;
+      }
+
+      .footer-box{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .floating-cta{
+        left:14px;
+        right:14px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-<div class="container brand">
-
-<img src="logo.png">
-
-<div>
-<strong>APDocentePBA</strong><br>
-Radar docente
-</div>
-
-</div>
-</header>
-
-<div class="container">
-
-<div class="hero">
-
-<h1>Registro docente</h1>
-
-<p>
-Registrate para recibir alertas de actos públicos digitales según tus preferencias.
-</p>
-
-</div>
-
-<form id="registroForm">
-
-<div class="grid">
-
-<div class="full">
-<label>Nombre y apellido</label>
-<input type="text" id="nombre" required>
-</div>
-
-<div>
-<label>Email</label>
-<input type="email" id="email" required>
-</div>
-
-<div>
-<label>Celular</label>
-<input type="text" id="celular">
-</div>
-
-<div>
-<label>Distrito principal</label>
-<select id="distritoPrincipal"></select>
-</div>
-
-<div>
-<label>Distrito interés 2</label>
-<select id="distrito2"></select>
-</div>
-
-<div>
-<label>Distrito interés 3</label>
-<select id="distrito3"></select>
-</div>
-
-<div>
-<label>Materia / área 1</label>
-<input type="text" id="materia1" required>
-</div>
-
-<div>
-<label>Materia / área 2</label>
-<input type="text" id="materia2">
-</div>
-
-<div>
-<label>Materia / área 3</label>
-<input type="text" id="materia3">
-</div>
-
-<div class="full">
-
-<label>Nivel / modalidad</label>
-
-<div class="checkbox-grid">
-
-<label><input type="checkbox" value="Inicial"> Inicial</label>
-<label><input type="checkbox" value="Primaria"> Primaria</label>
-<label><input type="checkbox" value="Secundaria"> Secundaria</label>
-<label><input type="checkbox" value="Secundaria Técnica"> Secundaria Técnica</label>
-<label><input type="checkbox" value="Secundaria Agraria"> Secundaria Agraria</label>
-<label><input type="checkbox" value="Educación de Adultos (CENS)"> CENS</label>
-<label><input type="checkbox" value="Educación Especial"> Especial</label>
-<label><input type="checkbox" value="Educación Artística"> Artística</label>
-<label><input type="checkbox" value="Educación Física"> Física</label>
-<label><input type="checkbox" value="Educación Superior"> Superior</label>
-
-</div>
-
-</div>
-
-<div>
-<label>Turno</label>
-<select id="turno">
-
-<option>Mañana</option>
-<option>Tarde</option>
-<option>Vespertino</option>
-<option>Noche</option>
-<option>Cualquiera</option>
-
-</select>
-</div>
-
-<div>
-<label>Tipo de cargo</label>
-
-<select id="tipoCargo">
-
-<option>Módulos / Horas cátedra</option>
-<option>Cargo</option>
-<option>Ambos</option>
-
-</select>
-
-</div>
-
-<div class="full">
-
-<label>
-<input type="checkbox" id="aceptaEmail">
-Aceptar alertas por email
-</label>
-
-</div>
-
-<div class="full">
-
-<label>
-<input type="checkbox" id="aceptaTyC">
-Aceptar términos
-</label>
-
-</div>
-
-</div>
-
-<button type="submit">Registrar</button>
-
-<div id="ok" class="msg ok"></div>
-<div id="error" class="msg error"></div>
-
-</form>
-
-</div>
-
-<script>
-
-const WEB_APP_URL="https://script.google.com/macros/s/AKfycbyawEj2viIP8N4s0FW7yLNHSW4DoZ_KYiFVN0u0Q_HbO5MY0QFQEkBm_4QpN9bDv4td/exec"
-
-const DISTRITOS=[
-"Avellaneda",
-"Lanús",
-"La Plata",
-"Quilmes",
-"Berazategui",
-"Florencio Varela",
-"Almirante Brown",
-"Esteban Echeverría",
-"Ezeiza",
-"Lomas de Zamora",
-"La Matanza",
-"Morón",
-"Merlo",
-"Moreno",
-"Tigre",
-"San Isidro",
-"San Martín",
-"Vicente López",
-"San Fernando"
-]
-
-function cargarDistritos(){
-
-const selects=[
-distritoPrincipal,
-distrito2,
-distrito3
-]
-
-selects.forEach(s=>{
-
-let opt=document.createElement("option")
-opt.text="Seleccionar"
-opt.value=""
-s.appendChild(opt)
-
-DISTRITOS.forEach(d=>{
-
-let o=document.createElement("option")
-o.value=d
-o.text=d
-s.appendChild(o)
-
-})
-
-})
-
-}
-
-cargarDistritos()
-
-const form=document.getElementById("registroForm")
-
-form.addEventListener("submit",async e=>{
-
-e.preventDefault()
-
-ok.style.display="none"
-error.style.display="none"
-
-const niveles=[...document.querySelectorAll(".checkbox-grid input:checked")].map(e=>e.value)
-
-const data={
-
-nombre:nombre.value,
-email:email.value,
-celular:celular.value,
-distritoPrincipal:distritoPrincipal.value,
-distritoInteres2:distrito2.value,
-distritoInteres3:distrito3.value,
-materia1:materia1.value,
-materia2:materia2.value,
-materia3:materia3.value,
-nivelesModalidad:niveles,
-turno:turno.value,
-tipoCargo:tipoCargo.value,
-aceptaEmail:aceptaEmail.checked,
-aceptaTyC:aceptaTyC.checked
-
-}
-
-try{
-
-const res=await fetch(WEB_APP_URL,{
-
-method:"POST",
-body:JSON.stringify(data)
-
-})
-
-const txt=await res.text()
-
-const json=JSON.parse(txt)
-
-if(json.ok){
-
-ok.innerText="Registro guardado correctamente"
-ok.style.display="block"
-form.reset()
-
-}else{
-
-error.innerText=json.mensaje
-error.style.display="block"
-
-}
-
-}catch(e){
-
-error.innerText="No se pudo conectar con el servidor"
-error.style.display="block"
-
-}
-
-})
-
-</script>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <img class="brand-logo" src="logo.png" alt="Logo APDocentePBA">
+        <div class="brand-text">
+          <strong>APDocentePBA</strong>
+          <span>Registro integrado y alertas automáticas</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#inicio">Inicio</a>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#registro">Registro</a>
+        <a href="#faq">Preguntas</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio" class="hero">
+    <div class="container hero-grid">
+      <section class="hero-main">
+        <div class="eyebrow">Sistema independiente de seguimiento APD</div>
+        <h1>Registrate desde la misma web y recibí alertas según tus preferencias</h1>
+        <p class="lead">
+          APDocentePBA monitorea publicaciones públicas de Actos Públicos Digitales y permite registrar docentes sin salir de la página.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#registro" class="btn btn-primary" style="font-size:18px;padding:18px 28px;">Registrarme para recibir alertas</a>
+        </div>
+
+        <div class="hero-points">
+          <div class="hero-point">
+            <strong>Registro directo</strong>
+            <span>Sin redirección a Google Forms.</span>
+          </div>
+          <div class="hero-point">
+            <strong>Actualización por mail</strong>
+            <span>Si el docente ya existe, se actualiza sin duplicar.</span>
+          </div>
+          <div class="hero-point">
+            <strong>Misma base del sistema</strong>
+            <span>Usando la hoja `docentes` que ya tenías.</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="hero-side">
+        <div class="hero-side-top">
+          <img class="hero-side-logo" src="logo.png" alt="Logo APDocentePBA">
+          <div>
+            <h3>APDocentePBA</h3>
+            <p>Radar de oportunidades para docentes de la Provincia de Buenos Aires.</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <strong>Más visible</strong>
+          <span>El acceso al registro está arriba y mejor destacado.</span>
+        </div>
+
+        <div class="stat-card">
+          <strong>3 distritos</strong>
+          <span>Uno principal y hasta dos distritos extra de interés.</span>
+        </div>
+
+        <div class="stat-card">
+          <strong>Multinivel</strong>
+          <span>Nivel / modalidad permite varias opciones.</span>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <section id="beneficios">
+    <div class="container">
+      <div class="section-head">
+        <h2>Ventajas de este registro</h2>
+        <p>La experiencia mejora sin romper la lógica de tu proyecto.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="info-card">
+          <h3>Más claro para el docente</h3>
+          <p>El formulario está mejor ubicado, más visible y más fácil de completar.</p>
+        </article>
+
+        <article class="info-card">
+          <h3>Menos errores</h3>
+          <p>Los distritos se eligen desde listas desplegables en vez de escribirlos a mano.</p>
+        </article>
+
+        <article class="info-card">
+          <h3>Base preparada</h3>
+          <p>Queda lista para guardar y actualizar registros reales.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona">
+    <div class="container">
+      <div class="section-head">
+        <h2>Cómo funciona</h2>
+        <p>La web se integra con tu hoja docente y con tu sistema de alertas.</p>
+      </div>
+
+      <div class="steps">
+        <article class="step">
+          <div class="step-number">1</div>
+          <h4>El docente se registra</h4>
+          <p>Completa datos personales, distritos, materias y preferencias.</p>
+        </article>
+
+        <article class="step">
+          <div class="step-number">2</div>
+          <h4>Se valida la información</h4>
+          <p>La interfaz controla datos faltantes y distritos repetidos.</p>
+        </article>
+
+        <article class="step">
+          <div class="step-number">3</div>
+          <h4>Se envía al sistema</h4>
+          <p>El formulario manda los datos al Apps Script para guardarlos en Sheets.</p>
+        </article>
+
+        <article class="step">
+          <div class="step-number">4</div>
+          <h4>Tu radar usa esa base</h4>
+          <p>El sistema APD filtra alertas según esas preferencias.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="registro">
+    <div class="container register-wrap">
+      <div class="form-card">
+        <h3>Registro docente</h3>
+        <p>
+          Completá tus datos y preferencias. Si ya estás registrado con ese correo, el sistema actualizará tu fila.
+        </p>
+
+        <form id="registroForm">
+          <div class="form-grid">
+            <div class="full">
+              <label for="nombre">Nombre y apellido</label>
+              <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div>
+              <label for="email">Correo electrónico</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+
+            <div>
+              <label for="celular">Celular</label>
+              <input type="text" id="celular" name="celular">
+            </div>
+
+            <div>
+              <label for="distritoPrincipal">Distrito principal</label>
+              <select id="distritoPrincipal" name="distritoPrincipal" required>
+                <option value="">Seleccionar distrito</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="distritoInteres2">Distrito de interés 2</label>
+              <select id="distritoInteres2" name="distritoInteres2">
+                <option value="">Seleccionar distrito</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="distritoInteres3">Distrito de interés 3</label>
+              <select id="distritoInteres3" name="distritoInteres3">
+                <option value="">Seleccionar distrito</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="materia1">Materia / área 1</label>
+              <input type="text" id="materia1" name="materia1" required>
+            </div>
+
+            <div>
+              <label for="materia2">Materia / área 2</label>
+              <input type="text" id="materia2" name="materia2">
+            </div>
+
+            <div>
+              <label for="materia3">Materia / área 3</label>
+              <input type="text" id="materia3" name="materia3">
+            </div>
+
+            <div class="full">
+              <label>Nivel / modalidad</label>
+              <div class="niveles-grid">
+                <label class="nivel-item"><input type="checkbox" value="Inicial"> Inicial</label>
+                <label class="nivel-item"><input type="checkbox" value="Primaria"> Primaria</label>
+                <label class="nivel-item"><input type="checkbox" value="Secundaria"> Secundaria</label>
+                <label class="nivel-item"><input type="checkbox" value="Secundaria Técnica"> Secundaria Técnica</label>
+                <label class="nivel-item"><input type="checkbox" value="Secundaria Agraria"> Secundaria Agraria</label>
+                <label class="nivel-item"><input type="checkbox" value="Educación de Adultos (CENS)"> CENS</label>
+                <label class="nivel-item"><input type="checkbox" value="Educación Especial"> Especial</label>
+                <label class="nivel-item"><input type="checkbox" value="Educación Artística"> Artística</label>
+                <label class="nivel-item"><input type="checkbox" value="Educación Física"> Física</label>
+                <label class="nivel-item"><input type="checkbox" value="Educación Superior"> Superior</label>
+              </div>
+            </div>
+
+            <div>
+              <label for="turno">Turno de interés</label>
+              <select id="turno" name="turno" required>
+                <option value="">Seleccionar turno</option>
+                <option>Mañana</option>
+                <option>Tarde</option>
+                <option>Vespertino</option>
+                <option>Noche</option>
+                <option>Cualquiera</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="tipoCargo">Tipo de cargo</label>
+              <select id="tipoCargo" name="tipoCargo" required>
+                <option value="">Seleccionar tipo de cargo</option>
+                <option>Módulos / Horas cátedra</option>
+                <option>Cargo</option>
+                <option>Ambos</option>
+              </select>
+            </div>
+
+            <div class="full checks">
+              <label class="check-row">
+                <input type="checkbox" id="aceptoEmail">
+                <span>Acepto recibir alertas por email</span>
+              </label>
+
+              <label class="check-row">
+                <input type="checkbox" id="aceptoTyC">
+                <span>Acepto los términos y condiciones</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Confirmar registro</button>
+          </div>
+
+          <div id="mensajeOk" class="status-msg status-ok"></div>
+          <div id="mensajeError" class="status-msg status-error"></div>
+        </form>
+      </div>
+
+      <aside class="form-card">
+        <h3>Qué guarda el sistema</h3>
+        <p>Respetando lo que ya venías usando en tu base docente.</p>
+
+        <div class="side-list">
+          <div class="side-item">
+            <strong>Misma hoja `docentes`</strong>
+            <span>No hace falta crear otra hoja para registrar docentes nuevos.</span>
+          </div>
+
+          <div class="side-item">
+            <strong>Correo como clave</strong>
+            <span>Si el mail ya existe, se actualiza esa fila en vez de duplicarse.</span>
+          </div>
+
+          <div class="side-item">
+            <strong>Otros distritos</strong>
+            <span>Los distritos 2 y 3 se guardan juntos en “Otros distritos de interés”.</span>
+          </div>
+
+          <div class="side-item">
+            <strong>Nivel / modalidad</strong>
+            <span>Se guarda como texto separado por comas en una sola celda.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <h2>Preguntas frecuentes</h2>
+        <p>Algunas dudas comunes sobre esta interfaz de registro.</p>
+      </div>
+
+      <div class="faq">
+        <div class="faq-item">
+          <h4>¿Guarda datos reales?</h4>
+          <p>Sí, usando la URL del Apps Script.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>¿Por qué tres distritos?</h4>
+          <p>Porque definiste dejar uno principal y hasta dos distritos adicionales por ahora.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>¿Puedo elegir varias modalidades?</h4>
+          <p>Sí. Nivel / modalidad permite varias opciones al mismo tiempo.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>¿Respeta lo anterior?</h4>
+          <p>Sí. Está pensado para respetar la lógica de tu sistema APD actual.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-box">
+        <div class="footer-brand">
+          <img src="logo.png" alt="Logo APDocentePBA">
+          <div>
+            <strong style="display:block;color:var(--secondary-2);margin-bottom:4px;">APDocentePBA</strong>
+            <span>Proyecto independiente de alertas para docentes de la Provincia de Buenos Aires.</span>
+          </div>
+        </div>
+
+        <div>© 2026 APDocentePBA</div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-cta" href="#registro">Registrarme</a>
+
+  <script>
+    const WEB_APP_URL = "PEGAR_AQUI_LA_URL_DEL_APPS_SCRIPT";
+
+    const DISTRITOS = [
+      "Adolfo Alsina","Adolfo Gonzales Chaves","Alberti","Almirante Brown","Arrecifes",
+      "Avellaneda","Ayacucho","Azul","Bahía Blanca","Balcarce","Baradero","Benito Juárez",
+      "Berazategui","Berisso","Bolívar","Bragado","Brandsen","Campana","Cañuelas",
+      "Capitán Sarmiento","Carlos Casares","Carlos Tejedor","Carmen de Areco","Castelli",
+      "Chacabuco","Chascomús","Chivilcoy","Colón","Coronel Dorrego","Coronel Pringles",
+      "Coronel Rosales","Coronel Suárez","Daireaux","Dolores","Ensenada","Escobar",
+      "Esteban Echeverría","Exaltación de la Cruz","Ezeiza","Florencio Varela",
+      "Florentino Ameghino","General Alvarado","General Alvear","General Arenales",
+      "General Belgrano","General Guido","General Juan Madariaga","General La Madrid",
+      "General Las Heras","General Lavalle","General Paz","General Pinto",
+      "General Pueyrredón","General Rodríguez","General San Martín","General Viamonte",
+      "General Villegas","Guaminí","Hipólito Yrigoyen","Hurlingham","Ituzaingó",
+      "José C. Paz","Junín","La Costa","La Matanza","La Plata","Lanús","Laprida",
+      "Las Flores","Leandro N. Alem","Lincoln","Lobería","Lobos","Lomas de Zamora",
+      "Luján","Magdalena","Maipú","Malvinas Argentinas","Mar Chiquita","Marcos Paz",
+      "Mercedes","Merlo","Monte","Monte Hermoso","Moreno","Morón","Navarro",
+      "Necochea","Nueve de Julio","Olavarría","Patagones","Pehuajó","Pellegrini",
+      "Pergamino","Pila","Pilar","Pinamar","Presidente Perón","Puán","Punta Indio",
+      "Quilmes","Ramallo","Rauch","Rivadavia","Rojas","Roque Pérez","Saavedra",
+      "Saladillo","Salliqueló","Salto","San Andrés de Giles","San Antonio de Areco",
+      "San Cayetano","San Fernando","San Isidro","San Miguel","San Nicolás","San Pedro",
+      "San Vicente","Suipacha","Tandil","Tapalqué","Tigre","Tordillo","Tornquist",
+      "Trenque Lauquen","Tres Arroyos","Tres de Febrero","Tres Lomas",
+      "Veinticinco de Mayo","Vicente López","Villa Gesell","Villarino","Zárate"
+    ];
+
+    function cargarDistritos() {
+      const selects = [
+        document.getElementById("distritoPrincipal"),
+        document.getElementById("distritoInteres2"),
+        document.getElementById("distritoInteres3")
+      ];
+
+      selects.forEach(select => {
+        DISTRITOS.forEach(distrito => {
+          const option = document.createElement("option");
+          option.value = distrito;
+          option.textContent = distrito;
+          select.appendChild(option);
+        });
+      });
+    }
+
+    cargarDistritos();
+
+    const form = document.getElementById("registroForm");
+    const msgOk = document.getElementById("mensajeOk");
+    const msgError = document.getElementById("mensajeError");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      msgOk.style.display = "none";
+      msgError.style.display = "none";
+
+      const distritoPrincipal = document.getElementById("distritoPrincipal").value;
+      const distrito2 = document.getElementById("distritoInteres2").value;
+      const distrito3 = document.getElementById("distritoInteres3").value;
+      const aceptaEmail = document.getElementById("aceptoEmail").checked;
+      const aceptaTyC = document.getElementById("aceptoTyC").checked;
+      const nivelesSeleccionados = Array.from(document.querySelectorAll('.niveles-grid input:checked')).map(option => option.value);
+
+      const distritosElegidos = [distritoPrincipal, distrito2, distrito3].filter(Boolean);
+      const sinDuplicados = new Set(distritosElegidos);
+
+      if (!distritoPrincipal) {
+        msgError.textContent = "Debés elegir un distrito principal.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      if (sinDuplicados.size !== distritosElegidos.length) {
+        msgError.textContent = "No repitas el mismo distrito en más de un campo.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      if (nivelesSeleccionados.length === 0) {
+        msgError.textContent = "Debés elegir al menos un nivel o modalidad.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      if (!aceptaEmail) {
+        msgError.textContent = "Debés aceptar recibir alertas por email.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      if (!aceptaTyC) {
+        msgError.textContent = "Debés aceptar los términos y condiciones.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      const payload = {
+        nombre: document.getElementById("nombre").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        celular: document.getElementById("celular").value.trim(),
+        distritoPrincipal: distritoPrincipal,
+        distritoInteres2: distrito2,
+        distritoInteres3: distrito3,
+        materia1: document.getElementById("materia1").value.trim(),
+        materia2: document.getElementById("materia2").value.trim(),
+        materia3: document.getElementById("materia3").value.trim(),
+        nivelesModalidad: nivelesSeleccionados,
+        turno: document.getElementById("turno").value.trim(),
+        tipoCargo: document.getElementById("tipoCargo").value.trim(),
+        aceptaEmail: aceptaEmail,
+        aceptaTyC: aceptaTyC
+      };
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          mode: "no-cors"
+        });
+
+        msgOk.textContent = "Registro enviado. En breve revisá si se cargó en la hoja docentes.";
+        msgOk.style.display = "block";
+        form.reset();
+
+      } catch (error) {
+        msgError.textContent = "Error al conectar con el servidor. Revisá la URL del Apps Script y la implementación.";
+        msgError.style.display = "block";
+      }
+    });
+  </script>
 
 </body>
 </html>
