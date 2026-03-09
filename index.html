@@ -1044,21 +1044,28 @@
 
       try {
         const res = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
+  method: "POST",
+  body: JSON.stringify(payload)
+});
 
-        const texto = await res.text();
-        let json = {};
+const texto = await res.text();
+let json = {};
 
-        try {
-          json = JSON.parse(texto);
-        } catch (_) {
-          json = { ok: false, mensaje: "Respuesta inválida del servidor." };
-        }
+try {
+  json = JSON.parse(texto.trim());
+} catch (_) {
+  const inicio = texto.indexOf("{");
+  const fin = texto.lastIndexOf("}");
+  if (inicio !== -1 && fin !== -1 && fin > inicio) {
+    try {
+      json = JSON.parse(texto.slice(inicio, fin + 1));
+    } catch (e2) {
+      json = { ok: false, mensaje: "Respuesta inválida del servidor." };
+    }
+  } else {
+    json = { ok: false, mensaje: "Respuesta inválida del servidor." };
+  }
+}
 
         if (json.ok) {
           msgOk.textContent = json.mensaje || "Registro guardado correctamente.";
