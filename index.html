@@ -28,6 +28,7 @@
 
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
+    <iframe name="ocultoFrame" style="display:none;"></iframe>
     body{
       font-family:Arial, Helvetica, sans-serif;
       color:var(--text);
@@ -746,8 +747,9 @@
         <p>
           Completá tus datos y preferencias. Si ya estás registrado con ese correo, el sistema actualizará tu fila.
         </p>
-
-        <form id="registroForm">
+<input type="hidden" name="payload" id="payload">
+<input type="hidden" name="modo" value="web">
+        <form id="registroForm" method="POST" target="ocultoFrame">
           <div class="form-grid">
             <div class="full">
               <label for="nombre">Nombre y apellido</label>
@@ -939,138 +941,138 @@
   <a class="floating-cta" href="#registro">Registrarme</a>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzEOeSS5u3vEoObIBy_NA7vQ9BUQGJcCyTEYvTIrjCRwN1a4OOVMVPRWX1yiD3QPGyF/exec";
+  const WEB_APP_URL = "PEGAR_AQUI_LA_URL_DEL_APPS_SCRIPT";
 
-    const DISTRITOS = [
-      "Adolfo Alsina","Adolfo Gonzales Chaves","Alberti","Almirante Brown","Arrecifes",
-      "Avellaneda","Ayacucho","Azul","Bahía Blanca","Balcarce","Baradero","Benito Juárez",
-      "Berazategui","Berisso","Bolívar","Bragado","Brandsen","Campana","Cañuelas",
-      "Capitán Sarmiento","Carlos Casares","Carlos Tejedor","Carmen de Areco","Castelli",
-      "Chacabuco","Chascomús","Chivilcoy","Colón","Coronel Dorrego","Coronel Pringles",
-      "Coronel Rosales","Coronel Suárez","Daireaux","Dolores","Ensenada","Escobar",
-      "Esteban Echeverría","Exaltación de la Cruz","Ezeiza","Florencio Varela",
-      "Florentino Ameghino","General Alvarado","General Alvear","General Arenales",
-      "General Belgrano","General Guido","General Juan Madariaga","General La Madrid",
-      "General Las Heras","General Lavalle","General Paz","General Pinto",
-      "General Pueyrredón","General Rodríguez","General San Martín","General Viamonte",
-      "General Villegas","Guaminí","Hipólito Yrigoyen","Hurlingham","Ituzaingó",
-      "José C. Paz","Junín","La Costa","La Matanza","La Plata","Lanús","Laprida",
-      "Las Flores","Leandro N. Alem","Lincoln","Lobería","Lobos","Lomas de Zamora",
-      "Luján","Magdalena","Maipú","Malvinas Argentinas","Mar Chiquita","Marcos Paz",
-      "Mercedes","Merlo","Monte","Monte Hermoso","Moreno","Morón","Navarro",
-      "Necochea","Nueve de Julio","Olavarría","Patagones","Pehuajó","Pellegrini",
-      "Pergamino","Pila","Pilar","Pinamar","Presidente Perón","Puán","Punta Indio",
-      "Quilmes","Ramallo","Rauch","Rivadavia","Rojas","Roque Pérez","Saavedra",
-      "Saladillo","Salliqueló","Salto","San Andrés de Giles","San Antonio de Areco",
-      "San Cayetano","San Fernando","San Isidro","San Miguel","San Nicolás","San Pedro",
-      "San Vicente","Suipacha","Tandil","Tapalqué","Tigre","Tordillo","Tornquist",
-      "Trenque Lauquen","Tres Arroyos","Tres de Febrero","Tres Lomas",
-      "Veinticinco de Mayo","Vicente López","Villa Gesell","Villarino","Zárate"
+  const DISTRITOS = [
+    "Adolfo Alsina","Adolfo Gonzales Chaves","Alberti","Almirante Brown","Arrecifes",
+    "Avellaneda","Ayacucho","Azul","Bahía Blanca","Balcarce","Baradero","Benito Juárez",
+    "Berazategui","Berisso","Bolívar","Bragado","Brandsen","Campana","Cañuelas",
+    "Capitán Sarmiento","Carlos Casares","Carlos Tejedor","Carmen de Areco","Castelli",
+    "Chacabuco","Chascomús","Chivilcoy","Colón","Coronel Dorrego","Coronel Pringles",
+    "Coronel Rosales","Coronel Suárez","Daireaux","Dolores","Ensenada","Escobar",
+    "Esteban Echeverría","Exaltación de la Cruz","Ezeiza","Florencio Varela",
+    "Florentino Ameghino","General Alvarado","General Alvear","General Arenales",
+    "General Belgrano","General Guido","General Juan Madariaga","General La Madrid",
+    "General Las Heras","General Lavalle","General Paz","General Pinto",
+    "General Pueyrredón","General Rodríguez","General San Martín","General Viamonte",
+    "General Villegas","Guaminí","Hipólito Yrigoyen","Hurlingham","Ituzaingó",
+    "José C. Paz","Junín","La Costa","La Matanza","La Plata","Lanús","Laprida",
+    "Las Flores","Leandro N. Alem","Lincoln","Lobería","Lobos","Lomas de Zamora",
+    "Luján","Magdalena","Maipú","Malvinas Argentinas","Mar Chiquita","Marcos Paz",
+    "Mercedes","Merlo","Monte","Monte Hermoso","Moreno","Morón","Navarro",
+    "Necochea","Nueve de Julio","Olavarría","Patagones","Pehuajó","Pellegrini",
+    "Pergamino","Pila","Pilar","Pinamar","Presidente Perón","Puán","Punta Indio",
+    "Quilmes","Ramallo","Rauch","Rivadavia","Rojas","Roque Pérez","Saavedra",
+    "Saladillo","Salliqueló","Salto","San Andrés de Giles","San Antonio de Areco",
+    "San Cayetano","San Fernando","San Isidro","San Miguel","San Nicolás","San Pedro",
+    "San Vicente","Suipacha","Tandil","Tapalqué","Tigre","Tordillo","Tornquist",
+    "Trenque Lauquen","Tres Arroyos","Tres de Febrero","Tres Lomas",
+    "Veinticinco de Mayo","Vicente López","Villa Gesell","Villarino","Zárate"
+  ];
+
+  function cargarDistritos() {
+    const selects = [
+      document.getElementById("distritoPrincipal"),
+      document.getElementById("distritoInteres2"),
+      document.getElementById("distritoInteres3")
     ];
 
-    function cargarDistritos() {
-      const selects = [
-        document.getElementById("distritoPrincipal"),
-        document.getElementById("distritoInteres2"),
-        document.getElementById("distritoInteres3")
-      ];
-
-      selects.forEach(select => {
-        DISTRITOS.forEach(distrito => {
-          const option = document.createElement("option");
-          option.value = distrito;
-          option.textContent = distrito;
-          select.appendChild(option);
-        });
+    selects.forEach(select => {
+      DISTRITOS.forEach(distrito => {
+        const option = document.createElement("option");
+        option.value = distrito;
+        option.textContent = distrito;
+        select.appendChild(option);
       });
+    });
+  }
+
+  cargarDistritos();
+
+  const form = document.getElementById("registroForm");
+  const msgOk = document.getElementById("mensajeOk");
+  const msgError = document.getElementById("mensajeError");
+  const payloadInput = document.getElementById("payload");
+
+  form.action = WEB_APP_URL;
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    msgOk.style.display = "none";
+    msgError.style.display = "none";
+
+    const distritoPrincipal = document.getElementById("distritoPrincipal").value;
+    const distrito2 = document.getElementById("distritoInteres2").value;
+    const distrito3 = document.getElementById("distritoInteres3").value;
+    const aceptaEmail = document.getElementById("aceptoEmail").checked;
+    const aceptaTyC = document.getElementById("aceptoTyC").checked;
+    const nivelesSeleccionados = Array.from(
+      document.querySelectorAll(".niveles-grid input:checked")
+    ).map(option => option.value);
+
+    const distritosElegidos = [distritoPrincipal, distrito2, distrito3].filter(Boolean);
+    const sinDuplicados = new Set(distritosElegidos);
+
+    if (!distritoPrincipal) {
+      msgError.textContent = "Debés elegir un distrito principal.";
+      msgError.style.display = "block";
+      return;
     }
 
-    cargarDistritos();
+    if (sinDuplicados.size !== distritosElegidos.length) {
+      msgError.textContent = "No repitas el mismo distrito en más de un campo.";
+      msgError.style.display = "block";
+      return;
+    }
 
-    const form = document.getElementById("registroForm");
-    const msgOk = document.getElementById("mensajeOk");
-    const msgError = document.getElementById("mensajeError");
+    if (nivelesSeleccionados.length === 0) {
+      msgError.textContent = "Debés elegir al menos un nivel o modalidad.";
+      msgError.style.display = "block";
+      return;
+    }
 
-    form.addEventListener("submit", async function(e) {
-      e.preventDefault();
+    if (!aceptaEmail) {
+      msgError.textContent = "Debés aceptar recibir alertas por email.";
+      msgError.style.display = "block";
+      return;
+    }
 
-      msgOk.style.display = "none";
-      msgError.style.display = "none";
+    if (!aceptaTyC) {
+      msgError.textContent = "Debés aceptar los términos y condiciones.";
+      msgError.style.display = "block";
+      return;
+    }
 
-      const distritoPrincipal = document.getElementById("distritoPrincipal").value;
-      const distrito2 = document.getElementById("distritoInteres2").value;
-      const distrito3 = document.getElementById("distritoInteres3").value;
-      const aceptaEmail = document.getElementById("aceptoEmail").checked;
-      const aceptaTyC = document.getElementById("aceptoTyC").checked;
-      const nivelesSeleccionados = Array.from(document.querySelectorAll('.niveles-grid input:checked')).map(option => option.value);
+    const payload = {
+      nombre: document.getElementById("nombre").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      celular: document.getElementById("celular").value.trim(),
+      distritoPrincipal: distritoPrincipal,
+      distritoInteres2: distrito2,
+      distritoInteres3: distrito3,
+      materia1: document.getElementById("materia1").value.trim(),
+      materia2: document.getElementById("materia2").value.trim(),
+      materia3: document.getElementById("materia3").value.trim(),
+      nivelesModalidad: nivelesSeleccionados,
+      turno: document.getElementById("turno").value.trim(),
+      tipoCargo: document.getElementById("tipoCargo").value.trim(),
+      aceptaEmail: aceptaEmail,
+      aceptaTyC: aceptaTyC
+    };
 
-      const distritosElegidos = [distritoPrincipal, distrito2, distrito3].filter(Boolean);
-      const sinDuplicados = new Set(distritosElegidos);
+    payloadInput.value = JSON.stringify(payload);
 
-      if (!distritoPrincipal) {
-        msgError.textContent = "Debés elegir un distrito principal.";
-        msgError.style.display = "block";
-        return;
-      }
+    form.submit();
 
-      if (sinDuplicados.size !== distritosElegidos.length) {
-        msgError.textContent = "No repitas el mismo distrito en más de un campo.";
-        msgError.style.display = "block";
-        return;
-      }
+    msgOk.textContent = "Registro enviado. Revisá la hoja docentes en unos segundos.";
+    msgOk.style.display = "block";
 
-      if (nivelesSeleccionados.length === 0) {
-        msgError.textContent = "Debés elegir al menos un nivel o modalidad.";
-        msgError.style.display = "block";
-        return;
-      }
-
-      if (!aceptaEmail) {
-        msgError.textContent = "Debés aceptar recibir alertas por email.";
-        msgError.style.display = "block";
-        return;
-      }
-
-      if (!aceptaTyC) {
-        msgError.textContent = "Debés aceptar los términos y condiciones.";
-        msgError.style.display = "block";
-        return;
-      }
-
-      const payload = {
-        nombre: document.getElementById("nombre").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        celular: document.getElementById("celular").value.trim(),
-        distritoPrincipal: distritoPrincipal,
-        distritoInteres2: distrito2,
-        distritoInteres3: distrito3,
-        materia1: document.getElementById("materia1").value.trim(),
-        materia2: document.getElementById("materia2").value.trim(),
-        materia3: document.getElementById("materia3").value.trim(),
-        nivelesModalidad: nivelesSeleccionados,
-        turno: document.getElementById("turno").value.trim(),
-        tipoCargo: document.getElementById("tipoCargo").value.trim(),
-        aceptaEmail: aceptaEmail,
-        aceptaTyC: aceptaTyC
-      };
-
-      try {
-        const res = await fetch(WEB_APP_URL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          mode: "no-cors"
-        });
-
-        msgOk.textContent = "Registro enviado. En breve revisá si se cargó en la hoja docentes.";
-        msgOk.style.display = "block";
-        form.reset();
-
-      } catch (error) {
-        msgError.textContent = "Error al conectar con el servidor. Revisá la URL del Apps Script y la implementación.";
-        msgError.style.display = "block";
-      }
-    });
-  </script>
+    setTimeout(() => {
+      form.reset();
+    }, 500);
+  });
+</script>
 
 </body>
 </html>
