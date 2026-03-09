@@ -3,648 +3,723 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>APDocentePBA | Alertas automáticas para docentes</title>
-  <meta name="description" content="APDocentePBA monitorea publicaciones de Actos Públicos Digitales y envía alertas por correo a docentes según sus preferencias." />
+  <title>APDocentePBA | Radar de alertas para docentes</title>
+  <meta name="description" content="APDocentePBA monitorea publicaciones de Actos Públicos Digitales y envía alertas automáticas a docentes según sus preferencias." />
   <style>
     :root{
-      --bg: #eef8fb;
-      --bg-soft: #f8fcfd;
-      --card: #ffffff;
-      --primary: #66c3d6;
-      --primary-strong: #2e8fa6;
-      --secondary: #115c77;
-      --secondary-2: #0b4b62;
-      --text: #123847;
-      --muted: #557785;
-      --border: #cfe7ee;
-      --shadow: 0 14px 35px rgba(17, 92, 119, .12);
-      --shadow-soft: 0 8px 20px rgba(17, 92, 119, .08);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
-      --ok: #28a36a;
-      --warn: #f0b429;
+      --bg:#eef8fb;
+      --bg-soft:#f9feff;
+      --card:#ffffff;
+      --primary:#68c4d8;
+      --primary-2:#4ab3ca;
+      --secondary:#115c77;
+      --secondary-2:#0b4b62;
+      --text:#123847;
+      --muted:#5c7b87;
+      --border:#d1e8ef;
+      --ok:#24a36d;
+      --warn:#efb034;
+      --shadow:0 18px 40px rgba(17,92,119,.12);
+      --shadow-soft:0 8px 22px rgba(17,92,119,.08);
+      --radius-xl:30px;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --max:1180px;
     }
 
     *{
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
     }
 
     html{
-      scroll-behavior: smooth;
+      scroll-behavior:smooth;
     }
 
     body{
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(102,195,214,.25), transparent 28%),
-        radial-gradient(circle at top right, rgba(17,92,119,.10), transparent 24%),
-        linear-gradient(180deg, #f9feff 0%, #eef8fb 100%);
-      line-height: 1.5;
-    }
-
-    img{
-      max-width: 100%;
-      display: block;
+        radial-gradient(circle at top left, rgba(104,196,216,.25), transparent 28%),
+        radial-gradient(circle at top right, rgba(17,92,119,.10), transparent 20%),
+        linear-gradient(180deg, #fbfeff 0%, #eef8fb 100%);
+      line-height:1.5;
     }
 
     a{
-      text-decoration: none;
-      color: inherit;
+      text-decoration:none;
+      color:inherit;
+    }
+
+    img{
+      max-width:100%;
+      display:block;
     }
 
     .container{
-      width: min(1180px, 92%);
-      margin: 0 auto;
+      width:min(var(--max), 92%);
+      margin:0 auto;
     }
 
     .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(255,255,255,.88);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(17,92,119,.08);
+      position:sticky;
+      top:0;
+      z-index:999;
+      background:rgba(255,255,255,.9);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(17,92,119,.08);
     }
 
     .topbar-inner{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      padding:14px 0;
     }
 
     .brand{
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
     }
 
     .brand-logo{
-      width: 56px;
-      height: 56px;
-      object-fit: cover;
-      border-radius: 18px;
-      background: white;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft);
-      padding: 6px;
+      width:58px;
+      height:58px;
+      object-fit:contain;
+      padding:6px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
     }
 
     .brand-text{
-      display: flex;
-      flex-direction: column;
-      line-height: 1.1;
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
     }
 
     .brand-text strong{
-      font-size: 1.15rem;
-      color: var(--secondary-2);
+      color:var(--secondary-2);
+      font-size:1.18rem;
     }
 
     .brand-text span{
-      font-size: .86rem;
-      color: var(--muted);
+      color:var(--muted);
+      font-size:.88rem;
     }
 
     .nav{
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-end;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
     .nav a{
-      padding: 10px 14px;
-      border-radius: 999px;
-      color: var(--secondary-2);
-      font-size: .95rem;
-      transition: .2s ease;
+      padding:10px 14px;
+      border-radius:999px;
+      color:var(--secondary-2);
+      font-size:.95rem;
+      transition:.2s ease;
     }
 
     .nav a:hover{
-      background: #e4f4f8;
-      color: var(--secondary);
+      background:#e6f5f9;
+      color:var(--secondary);
     }
 
     .btn{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: none;
-      cursor: pointer;
-      transition: .2s ease;
-      font-weight: bold;
-      padding: 14px 22px;
-      border-radius: 999px;
-      font-size: 1rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+      font-weight:bold;
+      padding:14px 22px;
+      border-radius:999px;
+      font-size:1rem;
     }
 
     .btn-primary{
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-strong) 100%);
-      color: white;
-      box-shadow: var(--shadow);
+      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
+      color:#fff;
+      box-shadow:var(--shadow);
     }
 
     .btn-primary:hover{
-      transform: translateY(-2px);
-      filter: brightness(1.03);
+      transform:translateY(-2px);
+      filter:brightness(1.03);
     }
 
     .btn-secondary{
-      background: white;
-      color: var(--secondary);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft);
+      background:#fff;
+      color:var(--secondary);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
     }
 
     .btn-secondary:hover{
-      background: #f1fbfd;
+      background:#f2fbfd;
     }
 
     .hero{
-      padding: 54px 0 24px;
+      padding:56px 0 24px;
     }
 
     .hero-grid{
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 28px;
-      align-items: stretch;
+      display:grid;
+      grid-template-columns:1.12fr .88fr;
+      gap:26px;
+      align-items:stretch;
     }
 
     .hero-main,
     .hero-side{
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: var(--shadow);
+      border-radius:var(--radius-xl);
+      overflow:hidden;
+      box-shadow:var(--shadow);
     }
 
     .hero-main{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.98) 100%);
-      border: 1px solid var(--border);
-      padding: 38px;
-      position: relative;
+      background:rgba(255,255,255,.95);
+      border:1px solid var(--border);
+      padding:40px;
+      position:relative;
     }
 
     .eyebrow{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #e4f6fa;
-      color: var(--secondary);
-      border: 1px solid #cbeaf1;
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: .92rem;
-      font-weight: bold;
-      margin-bottom: 18px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#e4f6fa;
+      color:var(--secondary);
+      border:1px solid #c9eaf2;
+      padding:10px 16px;
+      border-radius:999px;
+      font-size:.92rem;
+      font-weight:bold;
+      margin-bottom:18px;
     }
 
     .hero h1{
-      font-size: clamp(2.2rem, 4vw, 4rem);
-      line-height: 1.05;
-      margin-bottom: 18px;
-      color: var(--secondary-2);
-      max-width: 760px;
+      font-size:clamp(2.2rem, 4vw, 4.1rem);
+      line-height:1.03;
+      color:var(--secondary-2);
+      margin-bottom:18px;
+      max-width:780px;
     }
 
-    .hero p.lead{
-      color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 760px;
-      margin-bottom: 24px;
+    .hero .lead{
+      color:var(--muted);
+      font-size:1.1rem;
+      max-width:760px;
+      margin-bottom:24px;
     }
 
     .hero-actions{
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 26px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
     }
 
-    .hero-points{
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 10px;
+    .hero-mini{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:14px;
     }
 
-    .hero-point{
-      background: #f8fdfe;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 16px;
+    .hero-mini-card{
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
     }
 
-    .hero-point strong{
-      display: block;
-      color: var(--secondary);
-      margin-bottom: 6px;
-      font-size: 1rem;
+    .hero-mini-card strong{
+      display:block;
+      color:var(--secondary);
+      margin-bottom:6px;
+      font-size:1rem;
     }
 
-    .hero-point span{
-      color: var(--muted);
-      font-size: .94rem;
+    .hero-mini-card span{
+      color:var(--muted);
+      font-size:.94rem;
     }
 
     .hero-side{
-      background: linear-gradient(160deg, var(--secondary) 0%, var(--secondary-2) 100%);
-      color: white;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 100%;
+      background:linear-gradient(165deg, var(--secondary) 0%, var(--secondary-2) 100%);
+      color:#fff;
+      padding:30px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
     }
 
     .hero-side-top{
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 22px;
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-bottom:20px;
     }
 
     .hero-side-logo{
-      width: 96px;
-      height: 96px;
-      border-radius: 24px;
-      background: rgba(255,255,255,.14);
-      border: 1px solid rgba(255,255,255,.12);
-      padding: 10px;
-      object-fit: contain;
+      width:96px;
+      height:96px;
+      object-fit:contain;
+      padding:10px;
+      border-radius:24px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.14);
     }
 
     .hero-side h3{
-      font-size: 1.6rem;
-      line-height: 1.1;
+      font-size:1.65rem;
+      line-height:1.1;
+      margin-bottom:6px;
     }
 
     .hero-side p{
-      color: rgba(255,255,255,.88);
+      color:rgba(255,255,255,.88);
     }
 
     .stats-list{
-      display: grid;
-      gap: 14px;
-      margin-top: 20px;
+      display:grid;
+      gap:14px;
+      margin-top:18px;
     }
 
     .stat-card{
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 18px;
-      padding: 16px 18px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:16px 18px;
     }
 
     .stat-card strong{
-      display: block;
-      font-size: 1.4rem;
-      margin-bottom: 4px;
+      display:block;
+      font-size:1.35rem;
+      margin-bottom:4px;
     }
 
     .stat-card span{
-      color: rgba(255,255,255,.86);
-      font-size: .95rem;
+      color:rgba(255,255,255,.88);
+      font-size:.95rem;
     }
 
     section{
-      padding: 42px 0;
+      padding:42px 0;
     }
 
     .section-head{
-      text-align: center;
-      margin-bottom: 26px;
+      text-align:center;
+      margin-bottom:26px;
     }
 
     .section-head h2{
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      color: var(--secondary-2);
-      margin-bottom: 10px;
+      color:var(--secondary-2);
+      font-size:clamp(1.8rem, 3vw, 2.6rem);
+      margin-bottom:10px;
     }
 
     .section-head p{
-      color: var(--muted);
-      max-width: 820px;
-      margin: 0 auto;
-      font-size: 1.03rem;
+      color:var(--muted);
+      max-width:850px;
+      margin:0 auto;
+      font-size:1.03rem;
     }
 
     .grid-3{
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:22px;
     }
 
     .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 24px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-soft);
+      padding:24px;
+      transition:.25s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-4px);
     }
 
     .card-icon{
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #d9f3f8 0%, #eefcff 100%);
-      color: var(--secondary);
-      font-weight: bold;
-      font-size: 1.25rem;
-      margin-bottom: 16px;
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, #dbf4f8 0%, #eefcff 100%);
+      color:var(--secondary);
+      font-weight:bold;
+      font-size:1.2rem;
+      margin-bottom:16px;
     }
 
     .card h3{
-      color: var(--secondary-2);
-      margin-bottom: 10px;
-      font-size: 1.18rem;
+      color:var(--secondary-2);
+      margin-bottom:10px;
+      font-size:1.18rem;
     }
 
     .card p{
-      color: var(--muted);
+      color:var(--muted);
     }
 
     .how-grid{
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:18px;
     }
 
     .step{
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-soft);
-      position: relative;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:24px;
+      box-shadow:var(--shadow-soft);
     }
 
     .step-number{
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      color: white;
-      font-weight: bold;
-      margin-bottom: 14px;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color:#fff;
+      font-weight:bold;
+      margin-bottom:14px;
     }
 
     .step h4{
-      color: var(--secondary-2);
-      margin-bottom: 8px;
-      font-size: 1.08rem;
+      color:var(--secondary-2);
+      margin-bottom:8px;
+      font-size:1.07rem;
     }
 
     .step p{
-      color: var(--muted);
-      font-size: .96rem;
+      color:var(--muted);
+      font-size:.96rem;
     }
 
-    .live-wrap{
-      display: grid;
-      grid-template-columns: 1fr .9fr;
-      gap: 22px;
-      align-items: stretch;
+    .radar-wrap{
+      display:grid;
+      grid-template-columns:1fr .9fr;
+      gap:22px;
+      align-items:stretch;
     }
 
-    .live-board{
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 28px;
-      box-shadow: var(--shadow);
+    .live-board,
+    .prefs,
+    .status-panel{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:28px;
     }
 
     .live-board h3,
-    .prefs h3{
-      color: var(--secondary-2);
-      font-size: 1.45rem;
-      margin-bottom: 8px;
+    .prefs h3,
+    .status-panel h3{
+      color:var(--secondary-2);
+      margin-bottom:8px;
+      font-size:1.45rem;
     }
 
     .live-board > p,
-    .prefs > p{
-      color: var(--muted);
-      margin-bottom: 18px;
+    .prefs > p,
+    .status-panel > p{
+      color:var(--muted);
+      margin-bottom:18px;
     }
 
     .apd-list{
-      display: grid;
-      gap: 14px;
+      display:grid;
+      gap:14px;
     }
 
     .apd-item{
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      background: #f8fdfe;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 18px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px 18px;
     }
 
     .apd-item strong{
-      display: block;
-      color: var(--secondary);
-      margin-bottom: 4px;
-      font-size: 1.02rem;
+      display:block;
+      color:var(--secondary);
+      margin-bottom:4px;
+      font-size:1.02rem;
     }
 
     .apd-item span{
-      color: var(--muted);
-      font-size: .94rem;
+      color:var(--muted);
+      font-size:.94rem;
     }
 
     .badge{
-      align-self: start;
-      background: #dcf5eb;
-      color: #157a4b;
-      border: 1px solid #bcebd7;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: .84rem;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    .prefs{
-      background: linear-gradient(180deg, #f7fdff 0%, #edf8fb 100%);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 28px;
-      box-shadow: var(--shadow-soft);
+      align-self:start;
+      background:#dcf5eb;
+      color:#157a4b;
+      border:1px solid #bcebd7;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-weight:bold;
+      white-space:nowrap;
     }
 
     .pref-list{
-      display: grid;
-      gap: 12px;
+      display:grid;
+      gap:12px;
     }
 
     .pref-item{
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 16px;
-      color: var(--muted);
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 16px;
+      color:var(--muted);
     }
 
     .pref-item strong{
-      color: var(--secondary);
-      display: block;
-      margin-bottom: 4px;
+      display:block;
+      color:var(--secondary);
+      margin-bottom:4px;
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+      margin-top:10px;
+    }
+
+    .status-box{
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      text-align:center;
+    }
+
+    .status-box strong{
+      display:block;
+      color:var(--secondary-2);
+      font-size:1.45rem;
+      margin-bottom:6px;
+    }
+
+    .status-box span{
+      color:var(--muted);
+      font-size:.94rem;
+    }
+
+    .status-note{
+      margin-top:16px;
+      padding:14px 16px;
+      background:#fff8e7;
+      border:1px solid #f8dfab;
+      color:#8a6515;
+      border-radius:16px;
+      font-size:.95rem;
     }
 
     .cta-panel{
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-strong) 100%);
-      color: white;
-      border-radius: 34px;
-      padding: 36px;
-      box-shadow: var(--shadow);
-      text-align: center;
+      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
+      color:#fff;
+      border-radius:34px;
+      padding:38px;
+      box-shadow:var(--shadow);
+      text-align:center;
     }
 
     .cta-panel h2{
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      margin-bottom: 12px;
+      font-size:clamp(1.8rem, 3vw, 2.8rem);
+      margin-bottom:12px;
     }
 
     .cta-panel p{
-      max-width: 850px;
-      margin: 0 auto 24px;
-      color: rgba(255,255,255,.9);
-      font-size: 1.05rem;
+      color:rgba(255,255,255,.9);
+      max-width:860px;
+      margin:0 auto 24px;
+      font-size:1.05rem;
     }
 
     .faq{
-      display: grid;
-      gap: 14px;
+      display:grid;
+      gap:14px;
     }
 
     .faq-item{
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px 20px;
-      box-shadow: var(--shadow-soft);
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px 20px;
+      box-shadow:var(--shadow-soft);
     }
 
     .faq-item h4{
-      color: var(--secondary-2);
-      margin-bottom: 8px;
-      font-size: 1.05rem;
+      color:var(--secondary-2);
+      margin-bottom:8px;
+      font-size:1.05rem;
     }
 
     .faq-item p{
-      color: var(--muted);
+      color:var(--muted);
     }
 
     footer{
-      padding: 28px 0 44px;
-      color: var(--muted);
+      padding:28px 0 44px;
+      color:var(--muted);
     }
 
     .footer-grid{
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 20px;
-      align-items: center;
-      background: rgba(255,255,255,.7);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 22px 24px;
-      box-shadow: var(--shadow-soft);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:20px;
+      align-items:center;
+      background:rgba(255,255,255,.75);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:22px 24px;
+      box-shadow:var(--shadow-soft);
     }
 
     .footer-brand{
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display:flex;
+      align-items:center;
+      gap:14px;
     }
 
     .footer-brand img{
-      width: 54px;
-      height: 54px;
-      object-fit: cover;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: white;
-      padding: 5px;
+      width:56px;
+      height:56px;
+      object-fit:contain;
+      padding:5px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:#fff;
     }
 
     .footer-note{
-      text-align: right;
-      font-size: .95rem;
+      text-align:right;
+      font-size:.95rem;
     }
 
-    @media (max-width: 1100px){
+    .floating-cta{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:1000;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
+      color:#fff;
+      padding:14px 18px;
+      border-radius:999px;
+      box-shadow:0 18px 35px rgba(17,92,119,.28);
+      font-weight:bold;
+    }
+
+    .floating-cta:hover{
+      transform:translateY(-2px);
+    }
+
+    .fade-up{
+      opacity:0;
+      transform:translateY(18px);
+      transition:all .65s ease;
+    }
+
+    .fade-up.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    @media (max-width:1100px){
       .hero-grid,
-      .live-wrap{
-        grid-template-columns: 1fr;
+      .radar-wrap{
+        grid-template-columns:1fr;
       }
 
-      .hero-points{
-        grid-template-columns: 1fr;
+      .hero-mini,
+      .status-grid{
+        grid-template-columns:1fr;
       }
 
       .grid-3,
       .how-grid{
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:1fr 1fr;
       }
 
       .footer-grid{
-        grid-template-columns: 1fr;
+        grid-template-columns:1fr;
       }
 
       .footer-note{
-        text-align: left;
+        text-align:left;
       }
     }
 
-    @media (max-width: 760px){
+    @media (max-width:760px){
       .topbar-inner{
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction:column;
+        align-items:flex-start;
       }
 
       .nav{
-        justify-content: flex-start;
+        justify-content:flex-start;
       }
 
       .hero-main,
       .hero-side,
       .live-board,
       .prefs,
+      .status-panel,
       .cta-panel{
-        padding: 24px;
+        padding:24px;
       }
 
       .grid-3,
       .how-grid{
-        grid-template-columns: 1fr;
+        grid-template-columns:1fr;
       }
 
       .apd-item{
-        grid-template-columns: 1fr;
+        grid-template-columns:1fr;
       }
 
       .brand-logo{
-        width: 48px;
-        height: 48px;
+        width:50px;
+        height:50px;
+      }
+
+      .floating-cta{
+        left:14px;
+        right:14px;
+        justify-content:center;
       }
     }
   </style>
@@ -657,7 +732,7 @@
         <img class="brand-logo" src="logo.png" alt="Logo APDocentePBA">
         <div class="brand-text">
           <strong>APDocentePBA</strong>
-          <span>Alertas automáticas para docentes</span>
+          <span>Radar de alertas para docentes</span>
         </div>
       </div>
 
@@ -665,7 +740,8 @@
         <a href="#inicio">Inicio</a>
         <a href="#beneficios">Beneficios</a>
         <a href="#como-funciona">Cómo funciona</a>
-        <a href="#apd">Últimos APD</a>
+        <a href="#apd">Radar</a>
+        <a href="#estado">Estado</a>
         <a href="#faq">Preguntas</a>
       </nav>
     </div>
@@ -673,63 +749,63 @@
 
   <main id="inicio" class="hero">
     <div class="container hero-grid">
-      <section class="hero-main">
-        <div class="eyebrow">Alertas inteligentes para Actos Públicos Digitales</div>
+      <section class="hero-main fade-up">
+        <div class="eyebrow">Alertas automáticas para Actos Públicos Digitales</div>
 
-        <h1>Enterate más rápido cuando aparece un APD que coincide con tu búsqueda</h1>
+        <h1>Enterate más rápido cuando aparece un APD que coincide con lo que estás buscando</h1>
 
         <p class="lead">
           APDocentePBA monitorea publicaciones de Actos Públicos Digitales y envía avisos por correo
-          cuando aparece una oferta compatible con tus preferencias de distrito, materia, cargo, turno y nivel.
+          cuando aparece una oferta compatible con tus preferencias de distrito, materia, cargo y turno.
         </p>
 
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">Registrarse ahora</a>
-          <a class="btn btn-secondary" href="#como-funciona">Ver cómo funciona</a>
+          <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">Registrarme</a>
+          <a class="btn btn-secondary" href="#como-funciona">Cómo funciona</a>
         </div>
 
-        <div class="hero-points">
-          <div class="hero-point">
-            <strong>Registro simple</strong>
-            <span>Cargá tu correo y configurá tus preferencias en pocos pasos.</span>
+        <div class="hero-mini">
+          <div class="hero-mini-card">
+            <strong>Registro rápido</strong>
+            <span>Formulario simple para cargar correo y preferencias.</span>
           </div>
 
-          <div class="hero-point">
-            <strong>Alertas filtradas</strong>
-            <span>Recibí avisos solo cuando la publicación coincida con lo que te interesa.</span>
+          <div class="hero-mini-card">
+            <strong>Filtro inteligente</strong>
+            <span>Coincidencia por distrito, materia, cargo y turno.</span>
           </div>
 
-          <div class="hero-point">
-            <strong>Proyecto en crecimiento</strong>
-            <span>La web está preparada para sumar panel en vivo y cambios de preferencias.</span>
+          <div class="hero-mini-card">
+            <strong>Proyecto escalable</strong>
+            <span>Preparado para panel en vivo y edición de preferencias.</span>
           </div>
         </div>
       </section>
 
-      <aside class="hero-side">
+      <aside class="hero-side fade-up">
         <div>
           <div class="hero-side-top">
             <img class="hero-side-logo" src="logo.png" alt="Logo APDocentePBA">
             <div>
               <h3>Radar APD</h3>
-              <p>Notificaciones rápidas para docentes de la Provincia de Buenos Aires.</p>
+              <p>Una herramienta pensada para docentes de la Provincia de Buenos Aires.</p>
             </div>
           </div>
 
           <div class="stats-list">
             <div class="stat-card">
-              <strong>APD</strong>
-              <span>Publicaciones monitoreadas automáticamente.</span>
+              <strong id="stat1">24/7</strong>
+              <span>Seguimiento automatizado de publicaciones públicas.</span>
             </div>
 
             <div class="stat-card">
-              <strong>Email</strong>
-              <span>Avisos enviados según distrito, materia, cargo y turno.</span>
+              <strong id="stat2">Email</strong>
+              <span>Alertas enviadas solo cuando hay coincidencias útiles.</span>
             </div>
 
             <div class="stat-card">
-              <strong>ABC</strong>
-              <span>Enlace directo para que el docente pueda ingresar y postularse.</span>
+              <strong id="stat3">ABC</strong>
+              <span>Acceso orientado a postulación desde la publicación detectada.</span>
             </div>
           </div>
         </div>
@@ -739,38 +815,38 @@
 
   <section id="beneficios">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head fade-up">
         <h2>Qué ofrece APDocentePBA</h2>
         <p>
-          Una forma práctica de seguir publicaciones de APD sin depender de revisar la página manualmente a cada rato.
+          Una manera más práctica de seguir publicaciones de APD sin depender de revisar manualmente la página durante todo el día.
         </p>
       </div>
 
       <div class="grid-3">
-        <article class="card">
+        <article class="card fade-up">
           <div class="card-icon">01</div>
           <h3>Alertas personalizadas</h3>
           <p>
-            El sistema puede filtrar por distrito principal, otros distritos, materia o área,
-            cargo de interés, turno y nivel o modalidad.
+            El sistema puede filtrar por distrito principal, otros distritos de interés,
+            materias o áreas, cargo y turno.
           </p>
         </article>
 
-        <article class="card">
+        <article class="card fade-up">
           <div class="card-icon">02</div>
-          <h3>Menos tiempo perdido</h3>
+          <h3>Menos revisión manual</h3>
           <p>
-            En lugar de revisar APD de forma manual muchas veces por día, recibís un aviso
-            cuando aparece una publicación compatible con tu perfil.
+            En vez de entrar una y otra vez a revisar publicaciones, recibís avisos
+            cuando aparece algo compatible con tu perfil.
           </p>
         </article>
 
-        <article class="card">
+        <article class="card fade-up">
           <div class="card-icon">03</div>
           <h3>Base organizada</h3>
           <p>
-            El sistema registra ofertas detectadas, docentes cargados, envíos realizados
-            y futuras mejoras para preferencias editables.
+            APDocentePBA está pensado para registrar ofertas detectadas, docentes cargados
+            y estado de los avisos enviados.
           </p>
         </article>
       </div>
@@ -779,80 +855,80 @@
 
   <section id="como-funciona">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head fade-up">
         <h2>Cómo funciona</h2>
         <p>
-          El circuito fue pensado para que el docente reciba un aviso claro y útil lo antes posible.
+          El flujo fue armado para que el aviso llegue de forma clara, rápida y con datos útiles para el docente.
         </p>
       </div>
 
       <div class="how-grid">
-        <article class="step">
+        <article class="step fade-up">
           <div class="step-number">1</div>
           <h4>Te registrás</h4>
-          <p>Cargás tu correo electrónico y completás tus preferencias de búsqueda.</p>
+          <p>Cargás tu correo y tus preferencias desde el formulario.</p>
         </article>
 
-        <article class="step">
+        <article class="step fade-up">
           <div class="step-number">2</div>
-          <h4>Se monitorean publicaciones</h4>
-          <p>El sistema revisa publicaciones públicas de APD y detecta nuevas ofertas.</p>
+          <h4>Se detectan publicaciones</h4>
+          <p>El radar revisa publicaciones públicas y registra nuevas ofertas.</p>
         </article>
 
-        <article class="step">
+        <article class="step fade-up">
           <div class="step-number">3</div>
           <h4>Se comparan criterios</h4>
-          <p>La oferta se cruza con distrito, materia, cargo, turno y otras preferencias del docente.</p>
+          <p>La oferta se cruza con distrito, materia, cargo, turno y otras preferencias.</p>
         </article>
 
-        <article class="step">
+        <article class="step fade-up">
           <div class="step-number">4</div>
-          <h4>Recibís el aviso</h4>
-          <p>Si hay coincidencia, llega una alerta por correo con los datos y el acceso para postularse.</p>
+          <h4>Llega la alerta</h4>
+          <p>Si coincide con tu perfil, se envía el aviso por correo electrónico.</p>
         </article>
       </div>
     </div>
   </section>
 
   <section id="apd">
-    <div class="container live-wrap">
-      <div class="live-board">
+    <div class="container radar-wrap">
+      <div class="live-board fade-up">
         <h3>Últimos APD detectados</h3>
         <p>
-          Esta sección ya queda preparada para mostrar automáticamente las últimas ofertas detectadas por el sistema.
+          Esta sección ya queda lista para mostrar ofertas reales del sistema. Por ahora se muestran ejemplos visuales del formato.
         </p>
 
         <div class="apd-list">
           <div class="apd-item">
             <div>
               <strong>FRANCÉS (FRA) · Avellaneda</strong>
-              <span>Nivel Secundaria · Turno mañana · Escuela con publicación reciente</span>
+              <span>Nivel Secundaria · Turno mañana · Publicación detectada recientemente</span>
             </div>
-            <div class="badge">Ejemplo</div>
+            <div class="badge">Radar</div>
           </div>
 
           <div class="apd-item">
             <div>
               <strong>MATEMÁTICA · Lanús</strong>
-              <span>Nivel Secundaria · Turno tarde · Oferta detectada por el radar</span>
+              <span>Nivel Secundaria · Turno tarde · Oferta compatible con filtros cargados</span>
             </div>
-            <div class="badge">Ejemplo</div>
+            <div class="badge">Radar</div>
           </div>
 
           <div class="apd-item">
             <div>
               <strong>INGLÉS · Quilmes</strong>
-              <span>Nivel Secundaria · Turno noche · Publicación compatible con filtros</span>
+              <span>Nivel Secundaria · Turno noche · Registro listo para alerta por email</span>
             </div>
-            <div class="badge">Ejemplo</div>
+            <div class="badge">Radar</div>
           </div>
         </div>
       </div>
 
-      <aside class="prefs">
-        <h3>Preferencias que se pueden configurar</h3>
+      <aside class="prefs fade-up">
+        <h3>Preferencias configurables</h3>
         <p>
-          La idea es que cada docente pueda ajustar su perfil para recibir avisos más precisos.
+          El sistema ya está pensado para crecer con más control sobre lo que cada docente quiere recibir.
         </p>
 
         <div class="pref-list">
@@ -862,36 +938,69 @@
           </div>
 
           <div class="pref-item">
-            <strong>Materias y áreas</strong>
-            Hasta varias materias o áreas por docente.
+            <strong>Materias / áreas</strong>
+            Varias materias o áreas por docente.
           </div>
 
           <div class="pref-item">
             <strong>Cargos</strong>
-            Cargos específicos o coincidencia por área y cargo.
+            Coincidencia por cargo específico o por área.
           </div>
 
           <div class="pref-item">
-            <strong>Turno y modalidad</strong>
-            Mañana, tarde, vespertino, noche, nivel y otras preferencias.
+            <strong>Turnos</strong>
+            Mañana, tarde, vespertino, noche o cualquiera.
           </div>
 
           <div class="pref-item">
             <strong>Estado de alertas</strong>
-            Activo, pausado o baja para controlar el servicio fácilmente.
+            Activo, pausado o baja.
           </div>
         </div>
       </aside>
     </div>
   </section>
 
+  <section id="estado">
+    <div class="container">
+      <div class="status-panel fade-up">
+        <h3>Estado del proyecto</h3>
+        <p>
+          APDocentePBA ya tiene una base funcional y sigue creciendo con nuevas mejoras.
+        </p>
+
+        <div class="status-grid">
+          <div class="status-box">
+            <strong>Web</strong>
+            <span>Publicada y funcionando</span>
+          </div>
+
+          <div class="status-box">
+            <strong>Formulario</strong>
+            <span>Conectado para registro</span>
+          </div>
+
+          <div class="status-box">
+            <strong id="lastUpdate">Hoy</strong>
+            <span>Última actualización visual</span>
+          </div>
+        </div>
+
+        <div class="status-note">
+          Próximo objetivo recomendado: conectar esta web con los datos reales del sistema para mostrar
+          publicaciones detectadas, estadísticas y actividad reciente.
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="container">
-      <div class="cta-panel">
+      <div class="cta-panel fade-up">
         <h2>Sumate a APDocentePBA</h2>
         <p>
           Registrate para recibir alertas cuando aparezcan publicaciones compatibles con tus preferencias.
-          Esta web está pensada para crecer con panel en vivo, cambios de preferencias y más automatización.
+          Esta versión ya está lista para seguir creciendo con panel en vivo, estadísticas y edición de preferencias.
         </p>
         <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">Quiero recibir alertas</a>
       </div>
@@ -900,43 +1009,39 @@
 
   <section id="faq">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head fade-up">
         <h2>Preguntas frecuentes</h2>
         <p>
-          Algunas dudas comunes sobre el funcionamiento del sistema y las alertas.
+          Algunas dudas comunes sobre APDocentePBA y el sistema de notificaciones.
         </p>
       </div>
 
       <div class="faq">
-        <div class="faq-item">
+        <div class="faq-item fade-up">
           <h4>¿Es una web oficial del ABC?</h4>
           <p>
-            No. APDocentePBA es un sistema independiente que monitorea publicaciones públicas
-            y envía avisos automatizados.
+            No. APDocentePBA es un sistema independiente que monitorea publicaciones públicas y genera avisos automatizados.
           </p>
         </div>
 
-        <div class="faq-item">
+        <div class="faq-item fade-up">
           <h4>¿Cómo me registro?</h4>
           <p>
-            Desde el botón de registro. El formulario permite cargar correo y preferencias
-            para filtrar las alertas.
+            Desde los botones de registro de esta web. El formulario permite cargar correo y preferencias.
           </p>
         </div>
 
-        <div class="faq-item">
-          <h4>¿Puedo cambiar mis preferencias más adelante?</h4>
+        <div class="faq-item fade-up">
+          <h4>¿Puedo cambiar mis preferencias?</h4>
           <p>
-            Sí. El proyecto ya está pensado para permitir cambios de materias, cargos,
-            turnos, distritos y estado de alertas.
+            Sí, el proyecto ya está pensado para permitir actualización de materias, cargos, turnos, distritos y estado de alertas.
           </p>
         </div>
 
-        <div class="faq-item">
+        <div class="faq-item fade-up">
           <h4>¿Las alertas llegan por correo?</h4>
           <p>
-            Sí. El sistema envía correos a docentes cuando detecta una publicación
-            compatible con sus criterios configurados.
+            Sí. Cuando el sistema detecta una publicación compatible, puede enviar un correo con los datos relevantes.
           </p>
         </div>
       </div>
@@ -954,10 +1059,38 @@
       </div>
 
       <div class="footer-note">
-        © 2026 APDocentePBA · Seguimiento y alertas de publicaciones APD
+        © 2026 APDocentePBA · Radar de publicaciones APD
       </div>
     </div>
   </footer>
+
+  <a class="floating-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">
+    Registrarme
+  </a>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    const meses = [
+      "enero","febrero","marzo","abril","mayo","junio",
+      "julio","agosto","septiembre","octubre","noviembre","diciembre"
+    ];
+
+    const ahora = new Date();
+    const textoFecha = ahora.getDate() + " de " + meses[ahora.getMonth()];
+    const lastUpdate = document.getElementById("lastUpdate");
+    if (lastUpdate) {
+      lastUpdate.textContent = textoFecha;
+    }
+  </script>
 
 </body>
 </html>
