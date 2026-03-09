@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>APDocentePBA | Radar de alertas para docentes</title>
-  <meta name="description" content="APDocentePBA monitorea publicaciones de Actos Públicos Digitales y envía alertas automáticas a docentes según sus preferencias." />
+  <meta name="description" content="APDocentePBA monitorea publicaciones de Actos Públicos Digitales y permite registro directo desde la web." />
   <style>
     :root{
       --bg:#eef8fb;
@@ -18,26 +18,17 @@
       --muted:#5c7b87;
       --border:#d1e8ef;
       --ok:#24a36d;
-      --warn:#efb034;
+      --error:#d94f4f;
       --shadow:0 18px 40px rgba(17,92,119,.12);
       --shadow-soft:0 8px 22px rgba(17,92,119,.08);
       --radius-xl:30px;
       --radius-lg:22px;
       --radius-md:16px;
-      --radius-sm:12px;
       --max:1180px;
     }
 
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-    }
-
-    html{
-      scroll-behavior:smooth;
-    }
-
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
     body{
       font-family:Arial, Helvetica, sans-serif;
       color:var(--text);
@@ -48,679 +39,237 @@
       line-height:1.5;
     }
 
-    a{
-      text-decoration:none;
-      color:inherit;
-    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
 
-    img{
-      max-width:100%;
-      display:block;
-    }
-
-    .container{
-      width:min(var(--max), 92%);
-      margin:0 auto;
-    }
+    .container{width:min(var(--max), 92%);margin:0 auto}
 
     .topbar{
-      position:sticky;
-      top:0;
-      z-index:999;
+      position:sticky;top:0;z-index:999;
       background:rgba(255,255,255,.9);
       backdrop-filter:blur(10px);
       border-bottom:1px solid rgba(17,92,119,.08);
     }
 
     .topbar-inner{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:18px;
-      padding:14px 0;
+      display:flex;justify-content:space-between;align-items:center;
+      gap:18px;padding:14px 0;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      min-width:0;
-    }
-
+    .brand{display:flex;align-items:center;gap:14px}
     .brand-logo{
-      width:58px;
-      height:58px;
-      object-fit:contain;
-      padding:6px;
-      border-radius:18px;
-      background:#fff;
-      border:1px solid var(--border);
+      width:58px;height:58px;object-fit:contain;padding:6px;
+      border-radius:18px;background:#fff;border:1px solid var(--border);
       box-shadow:var(--shadow-soft);
     }
 
-    .brand-text{
-      display:flex;
-      flex-direction:column;
-      line-height:1.1;
-    }
-
     .brand-text strong{
-      color:var(--secondary-2);
-      font-size:1.18rem;
+      display:block;color:var(--secondary-2);font-size:1.18rem;
     }
 
-    .brand-text span{
-      color:var(--muted);
-      font-size:.88rem;
-    }
+    .brand-text span{color:var(--muted);font-size:.88rem}
 
-    .nav{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-
+    .nav{display:flex;gap:8px;flex-wrap:wrap}
     .nav a{
-      padding:10px 14px;
-      border-radius:999px;
-      color:var(--secondary-2);
-      font-size:.95rem;
-      transition:.2s ease;
+      padding:10px 14px;border-radius:999px;color:var(--secondary-2);
+      font-size:.95rem;transition:.2s ease;
     }
-
-    .nav a:hover{
-      background:#e6f5f9;
-      color:var(--secondary);
-    }
+    .nav a:hover{background:#e6f5f9;color:var(--secondary)}
 
     .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      border:none;
-      cursor:pointer;
-      transition:.22s ease;
-      font-weight:bold;
-      padding:14px 22px;
-      border-radius:999px;
-      font-size:1rem;
+      display:inline-flex;align-items:center;justify-content:center;
+      border:none;cursor:pointer;transition:.22s ease;font-weight:bold;
+      padding:14px 22px;border-radius:999px;font-size:1rem;
     }
 
     .btn-primary{
       background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
-      color:#fff;
-      box-shadow:var(--shadow);
+      color:#fff;box-shadow:var(--shadow);
     }
 
-    .btn-primary:hover{
-      transform:translateY(-2px);
-      filter:brightness(1.03);
-    }
+    .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.03)}
 
-    .btn-secondary{
-      background:#fff;
-      color:var(--secondary);
-      border:1px solid var(--border);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .btn-secondary:hover{
-      background:#f2fbfd;
-    }
-
-    .hero{
-      padding:56px 0 24px;
-    }
-
+    .hero{padding:56px 0 24px}
     .hero-grid{
-      display:grid;
-      grid-template-columns:1.12fr .88fr;
-      gap:26px;
-      align-items:stretch;
+      display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:stretch;
     }
 
-    .hero-main,
-    .hero-side{
-      border-radius:var(--radius-xl);
-      overflow:hidden;
-      box-shadow:var(--shadow);
+    .hero-main,.hero-side,.form-card,.info-card,.faq-item,.step{
+      background:#fff;border:1px solid var(--border);box-shadow:var(--shadow-soft);
     }
 
-    .hero-main{
-      background:rgba(255,255,255,.95);
-      border:1px solid var(--border);
-      padding:40px;
-      position:relative;
-    }
+    .hero-main,.hero-side,.form-card,.info-card{border-radius:var(--radius-xl)}
+
+    .hero-main{padding:40px}
+    .hero-side{padding:30px;background:linear-gradient(165deg, var(--secondary) 0%, var(--secondary-2) 100%);color:#fff;border:none;box-shadow:var(--shadow)}
 
     .eyebrow{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:#e4f6fa;
-      color:var(--secondary);
-      border:1px solid #c9eaf2;
-      padding:10px 16px;
-      border-radius:999px;
-      font-size:.92rem;
-      font-weight:bold;
-      margin-bottom:18px;
+      display:inline-flex;background:#e4f6fa;color:var(--secondary);
+      border:1px solid #c9eaf2;padding:10px 16px;border-radius:999px;
+      font-size:.92rem;font-weight:bold;margin-bottom:18px;
     }
 
     .hero h1{
-      font-size:clamp(2.2rem, 4vw, 4.1rem);
-      line-height:1.03;
-      color:var(--secondary-2);
-      margin-bottom:18px;
-      max-width:780px;
+      font-size:clamp(2.2rem, 4vw, 4rem);
+      line-height:1.03;color:var(--secondary-2);margin-bottom:18px;
     }
 
     .hero .lead{
-      color:var(--muted);
-      font-size:1.1rem;
-      max-width:760px;
-      margin-bottom:24px;
+      color:var(--muted);font-size:1.08rem;max-width:760px;margin-bottom:22px;
     }
 
-    .hero-actions{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      margin-bottom:24px;
+    .hero-points{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .hero-point{
+      background:#f8fdfe;border:1px solid var(--border);border-radius:18px;padding:16px;
     }
+    .hero-point strong{display:block;color:var(--secondary);margin-bottom:6px}
+    .hero-point span{color:var(--muted);font-size:.94rem}
 
-    .hero-mini{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:14px;
-    }
-
-    .hero-mini-card{
-      background:#f8fdfe;
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:16px;
-    }
-
-    .hero-mini-card strong{
-      display:block;
-      color:var(--secondary);
-      margin-bottom:6px;
-      font-size:1rem;
-    }
-
-    .hero-mini-card span{
-      color:var(--muted);
-      font-size:.94rem;
-    }
-
-    .hero-side{
-      background:linear-gradient(165deg, var(--secondary) 0%, var(--secondary-2) 100%);
-      color:#fff;
-      padding:30px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-    }
-
-    .hero-side-top{
-      display:flex;
-      gap:16px;
-      align-items:center;
-      margin-bottom:20px;
-    }
-
+    .hero-side-top{display:flex;gap:16px;align-items:center;margin-bottom:18px}
     .hero-side-logo{
-      width:96px;
-      height:96px;
-      object-fit:contain;
-      padding:10px;
-      border-radius:24px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.14);
+      width:92px;height:92px;object-fit:contain;padding:10px;border-radius:24px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);
     }
 
-    .hero-side h3{
-      font-size:1.65rem;
-      line-height:1.1;
-      margin-bottom:6px;
-    }
-
-    .hero-side p{
-      color:rgba(255,255,255,.88);
-    }
-
-    .stats-list{
-      display:grid;
-      gap:14px;
-      margin-top:18px;
-    }
+    .hero-side h3{font-size:1.6rem;margin-bottom:6px}
+    .hero-side p{color:rgba(255,255,255,.88)}
 
     .stat-card{
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:18px;
-      padding:16px 18px;
+      background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;padding:16px 18px;margin-top:14px;
     }
 
-    .stat-card strong{
-      display:block;
-      font-size:1.35rem;
-      margin-bottom:4px;
-    }
+    .stat-card strong{display:block;font-size:1.35rem;margin-bottom:4px}
 
-    .stat-card span{
-      color:rgba(255,255,255,.88);
-      font-size:.95rem;
-    }
+    section{padding:42px 0}
 
-    section{
-      padding:42px 0;
-    }
-
-    .section-head{
-      text-align:center;
-      margin-bottom:26px;
-    }
-
+    .section-head{text-align:center;margin-bottom:26px}
     .section-head h2{
-      color:var(--secondary-2);
-      font-size:clamp(1.8rem, 3vw, 2.6rem);
-      margin-bottom:10px;
+      color:var(--secondary-2);font-size:clamp(1.8rem, 3vw, 2.6rem);margin-bottom:10px;
     }
+    .section-head p{color:var(--muted);max-width:850px;margin:0 auto}
 
-    .section-head p{
-      color:var(--muted);
-      max-width:850px;
-      margin:0 auto;
-      font-size:1.03rem;
-    }
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 
-    .grid-3{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:22px;
-    }
+    .info-card{padding:24px}
+    .info-card h3{color:var(--secondary-2);margin-bottom:10px}
+    .info-card p{color:var(--muted)}
 
-    .card{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:var(--radius-lg);
-      box-shadow:var(--shadow-soft);
-      padding:24px;
-      transition:.25s ease;
-    }
-
-    .card:hover{
-      transform:translateY(-4px);
-    }
-
-    .card-icon{
-      width:58px;
-      height:58px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg, #dbf4f8 0%, #eefcff 100%);
-      color:var(--secondary);
-      font-weight:bold;
-      font-size:1.2rem;
-      margin-bottom:16px;
-    }
-
-    .card h3{
-      color:var(--secondary-2);
-      margin-bottom:10px;
-      font-size:1.18rem;
-    }
-
-    .card p{
-      color:var(--muted);
-    }
-
-    .how-grid{
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:18px;
-    }
-
-    .step{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:var(--radius-lg);
-      padding:24px;
-      box-shadow:var(--shadow-soft);
-    }
-
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .step{border-radius:22px;padding:24px}
     .step-number{
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
+      width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
       background:linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      color:#fff;
-      font-weight:bold;
-      margin-bottom:14px;
+      color:#fff;font-weight:bold;margin-bottom:14px;
+    }
+    .step h4{color:var(--secondary-2);margin-bottom:8px}
+    .step p{color:var(--muted);font-size:.96rem}
+
+    .register-wrap{
+      display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start;
     }
 
-    .step h4{
-      color:var(--secondary-2);
-      margin-bottom:8px;
-      font-size:1.07rem;
+    .form-card{padding:30px}
+    .form-card h3{color:var(--secondary-2);font-size:1.6rem;margin-bottom:8px}
+    .form-card p{color:var(--muted);margin-bottom:18px}
+
+    .form-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:14px;
     }
 
-    .step p{
-      color:var(--muted);
-      font-size:.96rem;
+    .full{grid-column:1 / -1}
+
+    label{
+      display:block;color:var(--secondary-2);font-weight:bold;font-size:.93rem;margin-bottom:6px;
     }
 
-    .radar-wrap{
-      display:grid;
-      grid-template-columns:1fr .9fr;
-      gap:22px;
-      align-items:stretch;
+    input, select, textarea{
+      width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--border);
+      background:#fff;font-size:.98rem;color:var(--text);outline:none;
     }
 
-    .live-board,
-    .prefs,
-    .status-panel{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:var(--radius-xl);
-      box-shadow:var(--shadow);
-      padding:28px;
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--primary-2);
+      box-shadow:0 0 0 4px rgba(104,196,216,.18);
     }
 
-    .live-board h3,
-    .prefs h3,
-    .status-panel h3{
-      color:var(--secondary-2);
-      margin-bottom:8px;
-      font-size:1.45rem;
+    textarea{min-height:92px;resize:vertical}
+
+    .checks{
+      display:grid;gap:10px;margin-top:8px;
     }
 
-    .live-board > p,
-    .prefs > p,
-    .status-panel > p{
-      color:var(--muted);
-      margin-bottom:18px;
+    .check-row{
+      display:flex;align-items:flex-start;gap:10px;
+      background:#f8fdfe;border:1px solid var(--border);border-radius:14px;padding:12px 14px;
+      color:var(--muted);font-size:.95rem;
     }
 
-    .apd-list{
-      display:grid;
-      gap:14px;
+    .check-row input{
+      width:auto;margin-top:2px;
     }
 
-    .apd-item{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:12px;
-      background:#f8fdfe;
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:16px 18px;
+    .form-actions{
+      display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;
     }
 
-    .apd-item strong{
-      display:block;
-      color:var(--secondary);
-      margin-bottom:4px;
-      font-size:1.02rem;
+    .status-msg{
+      margin-top:14px;padding:14px 16px;border-radius:14px;font-weight:bold;display:none;
     }
 
-    .apd-item span{
-      color:var(--muted);
-      font-size:.94rem;
+    .status-ok{
+      background:#e6f7ef;border:1px solid #bce8d0;color:#17794d;
     }
 
-    .badge{
-      align-self:start;
-      background:#dcf5eb;
-      color:#157a4b;
-      border:1px solid #bcebd7;
-      padding:8px 12px;
-      border-radius:999px;
-      font-size:.82rem;
-      font-weight:bold;
-      white-space:nowrap;
+    .status-error{
+      background:#fdeeee;border:1px solid #f3c9c9;color:#a33d3d;
     }
 
-    .pref-list{
-      display:grid;
-      gap:12px;
+    .side-list{display:grid;gap:12px}
+    .side-item{
+      background:#f8fdfe;border:1px solid var(--border);border-radius:16px;padding:14px 16px;
     }
+    .side-item strong{display:block;color:var(--secondary);margin-bottom:4px}
+    .side-item span{color:var(--muted);font-size:.95rem}
 
-    .pref-item{
-      background:#f8fdfe;
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:14px 16px;
-      color:var(--muted);
-    }
-
-    .pref-item strong{
-      display:block;
-      color:var(--secondary);
-      margin-bottom:4px;
-    }
-
-    .status-grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:16px;
-      margin-top:10px;
-    }
-
-    .status-box{
-      background:#f8fdfe;
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:18px;
-      text-align:center;
-    }
-
-    .status-box strong{
-      display:block;
-      color:var(--secondary-2);
-      font-size:1.45rem;
-      margin-bottom:6px;
-    }
-
-    .status-box span{
-      color:var(--muted);
-      font-size:.94rem;
-    }
-
-    .status-note{
-      margin-top:16px;
-      padding:14px 16px;
-      background:#fff8e7;
-      border:1px solid #f8dfab;
-      color:#8a6515;
-      border-radius:16px;
-      font-size:.95rem;
-    }
-
-    .cta-panel{
-      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
-      color:#fff;
-      border-radius:34px;
-      padding:38px;
-      box-shadow:var(--shadow);
-      text-align:center;
-    }
-
-    .cta-panel h2{
-      font-size:clamp(1.8rem, 3vw, 2.8rem);
-      margin-bottom:12px;
-    }
-
-    .cta-panel p{
-      color:rgba(255,255,255,.9);
-      max-width:860px;
-      margin:0 auto 24px;
-      font-size:1.05rem;
-    }
-
-    .faq{
-      display:grid;
-      gap:14px;
-    }
-
-    .faq-item{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:18px 20px;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .faq-item h4{
-      color:var(--secondary-2);
-      margin-bottom:8px;
-      font-size:1.05rem;
-    }
-
-    .faq-item p{
-      color:var(--muted);
-    }
+    .faq{display:grid;gap:14px}
+    .faq-item{border-radius:18px;padding:18px 20px}
+    .faq-item h4{color:var(--secondary-2);margin-bottom:8px}
+    .faq-item p{color:var(--muted)}
 
     footer{
-      padding:28px 0 44px;
-      color:var(--muted);
+      padding:28px 0 44px;color:var(--muted);
     }
 
-    .footer-grid{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:20px;
-      align-items:center;
+    .footer-box{
       background:rgba(255,255,255,.75);
       border:1px solid var(--border);
       border-radius:24px;
       padding:22px 24px;
       box-shadow:var(--shadow-soft);
-    }
-
-    .footer-brand{
       display:flex;
+      justify-content:space-between;
       align-items:center;
-      gap:14px;
+      gap:18px;
     }
 
+    .footer-brand{display:flex;align-items:center;gap:14px}
     .footer-brand img{
-      width:56px;
-      height:56px;
-      object-fit:contain;
-      padding:5px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:#fff;
-    }
-
-    .footer-note{
-      text-align:right;
-      font-size:.95rem;
-    }
-
-    .floating-cta{
-      position:fixed;
-      right:18px;
-      bottom:18px;
-      z-index:1000;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
-      color:#fff;
-      padding:14px 18px;
-      border-radius:999px;
-      box-shadow:0 18px 35px rgba(17,92,119,.28);
-      font-weight:bold;
-    }
-
-    .floating-cta:hover{
-      transform:translateY(-2px);
-    }
-
-    .fade-up{
-      opacity:0;
-      transform:translateY(18px);
-      transition:all .65s ease;
-    }
-
-    .fade-up.show{
-      opacity:1;
-      transform:translateY(0);
+      width:56px;height:56px;object-fit:contain;padding:5px;border-radius:16px;
+      border:1px solid var(--border);background:#fff;
     }
 
     @media (max-width:1100px){
-      .hero-grid,
-      .radar-wrap{
-        grid-template-columns:1fr;
-      }
-
-      .hero-mini,
-      .status-grid{
-        grid-template-columns:1fr;
-      }
-
-      .grid-3,
-      .how-grid{
-        grid-template-columns:1fr 1fr;
-      }
-
-      .footer-grid{
-        grid-template-columns:1fr;
-      }
-
-      .footer-note{
-        text-align:left;
-      }
+      .hero-grid,.register-wrap{grid-template-columns:1fr}
+      .hero-points,.steps,.grid-3{grid-template-columns:1fr 1fr}
+      .form-grid{grid-template-columns:1fr}
     }
 
     @media (max-width:760px){
-      .topbar-inner{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      .nav{
-        justify-content:flex-start;
-      }
-
-      .hero-main,
-      .hero-side,
-      .live-board,
-      .prefs,
-      .status-panel,
-      .cta-panel{
-        padding:24px;
-      }
-
-      .grid-3,
-      .how-grid{
-        grid-template-columns:1fr;
-      }
-
-      .apd-item{
-        grid-template-columns:1fr;
-      }
-
-      .brand-logo{
-        width:50px;
-        height:50px;
-      }
-
-      .floating-cta{
-        left:14px;
-        right:14px;
-        justify-content:center;
-      }
+      .topbar-inner{flex-direction:column;align-items:flex-start}
+      .hero-points,.steps,.grid-3{grid-template-columns:1fr}
+      .hero-main,.hero-side,.form-card,.info-card{padding:24px}
+      .footer-box{flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
@@ -732,7 +281,7 @@
         <img class="brand-logo" src="logo.png" alt="Logo APDocentePBA">
         <div class="brand-text">
           <strong>APDocentePBA</strong>
-          <span>Radar de alertas para docentes</span>
+          <span>Registro integrado y alertas automáticas</span>
         </div>
       </div>
 
@@ -740,8 +289,7 @@
         <a href="#inicio">Inicio</a>
         <a href="#beneficios">Beneficios</a>
         <a href="#como-funciona">Cómo funciona</a>
-        <a href="#apd">Radar</a>
-        <a href="#estado">Estado</a>
+        <a href="#registro">Registro</a>
         <a href="#faq">Preguntas</a>
       </nav>
     </div>
@@ -749,65 +297,52 @@
 
   <main id="inicio" class="hero">
     <div class="container hero-grid">
-      <section class="hero-main fade-up">
-        <div class="eyebrow">Alertas automáticas para Actos Públicos Digitales</div>
-
-        <h1>Enterate más rápido cuando aparece un APD que coincide con lo que estás buscando</h1>
-
+      <section class="hero-main">
+        <div class="eyebrow">Sistema independiente de seguimiento APD</div>
+        <h1>Registrate desde la misma web y recibí alertas según tus preferencias</h1>
         <p class="lead">
-          APDocentePBA monitorea publicaciones de Actos Públicos Digitales y envía avisos por correo
-          cuando aparece una oferta compatible con tus preferencias de distrito, materia, cargo y turno.
+          APDocentePBA monitorea publicaciones públicas de Actos Públicos Digitales y permite registrar
+          docentes sin salir de la página.
         </p>
 
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">Registrarme</a>
-          <a class="btn btn-secondary" href="#como-funciona">Cómo funciona</a>
-        </div>
-
-        <div class="hero-mini">
-          <div class="hero-mini-card">
-            <strong>Registro rápido</strong>
-            <span>Formulario simple para cargar correo y preferencias.</span>
+        <div class="hero-points">
+          <div class="hero-point">
+            <strong>Registro directo</strong>
+            <span>Sin redirección a Google Forms.</span>
           </div>
-
-          <div class="hero-mini-card">
-            <strong>Filtro inteligente</strong>
-            <span>Coincidencia por distrito, materia, cargo y turno.</span>
+          <div class="hero-point">
+            <strong>Actualización por mail</strong>
+            <span>Si el docente ya existe, se actualizan sus datos.</span>
           </div>
-
-          <div class="hero-mini-card">
-            <strong>Proyecto escalable</strong>
-            <span>Preparado para panel en vivo y edición de preferencias.</span>
+          <div class="hero-point">
+            <strong>Misma base docente</strong>
+            <span>Se usa la hoja `docentes` que ya venías usando.</span>
           </div>
         </div>
       </section>
 
-      <aside class="hero-side fade-up">
-        <div>
-          <div class="hero-side-top">
-            <img class="hero-side-logo" src="logo.png" alt="Logo APDocentePBA">
-            <div>
-              <h3>Radar APD</h3>
-              <p>Una herramienta pensada para docentes de la Provincia de Buenos Aires.</p>
-            </div>
+      <aside class="hero-side">
+        <div class="hero-side-top">
+          <img class="hero-side-logo" src="logo.png" alt="Logo APDocentePBA">
+          <div>
+            <h3>APDocentePBA</h3>
+            <p>Radar de oportunidades para docentes de la Provincia de Buenos Aires.</p>
           </div>
+        </div>
 
-          <div class="stats-list">
-            <div class="stat-card">
-              <strong id="stat1">24/7</strong>
-              <span>Seguimiento automatizado de publicaciones públicas.</span>
-            </div>
+        <div class="stat-card">
+          <strong>Web + Sheets</strong>
+          <span>La web registra y Google Sheets sigue siendo tu base principal.</span>
+        </div>
 
-            <div class="stat-card">
-              <strong id="stat2">Email</strong>
-              <span>Alertas enviadas solo cuando hay coincidencias útiles.</span>
-            </div>
+        <div class="stat-card">
+          <strong>Sin duplicar hojas</strong>
+          <span>Respetamos la estructura del formulario anterior.</span>
+        </div>
 
-            <div class="stat-card">
-              <strong id="stat3">ABC</strong>
-              <span>Acceso orientado a postulación desde la publicación detectada.</span>
-            </div>
-          </div>
+        <div class="stat-card">
+          <strong>Preparado para crecer</strong>
+          <span>Después se puede sumar edición de preferencias y panel en vivo.</span>
         </div>
       </aside>
     </div>
@@ -815,39 +350,25 @@
 
   <section id="beneficios">
     <div class="container">
-      <div class="section-head fade-up">
-        <h2>Qué ofrece APDocentePBA</h2>
-        <p>
-          Una manera más práctica de seguir publicaciones de APD sin depender de revisar manualmente la página durante todo el día.
-        </p>
+      <div class="section-head">
+        <h2>Ventajas de este cambio</h2>
+        <p>La interfaz mejora sin romper el sistema que ya venías armando.</p>
       </div>
 
       <div class="grid-3">
-        <article class="card fade-up">
-          <div class="card-icon">01</div>
-          <h3>Alertas personalizadas</h3>
-          <p>
-            El sistema puede filtrar por distrito principal, otros distritos de interés,
-            materias o áreas, cargo y turno.
-          </p>
+        <article class="info-card">
+          <h3>Más profesional</h3>
+          <p>El docente se registra dentro de tu propia web y no siente que lo estás mandando a otro sitio.</p>
         </article>
 
-        <article class="card fade-up">
-          <div class="card-icon">02</div>
-          <h3>Menos revisión manual</h3>
-          <p>
-            En vez de entrar una y otra vez a revisar publicaciones, recibís avisos
-            cuando aparece algo compatible con tu perfil.
-          </p>
+        <article class="info-card">
+          <h3>Sin perder lo anterior</h3>
+          <p>Seguís usando la misma hoja `docentes`, con los mismos campos del formulario que ya habías definido.</p>
         </article>
 
-        <article class="card fade-up">
-          <div class="card-icon">03</div>
-          <h3>Base organizada</h3>
-          <p>
-            APDocentePBA está pensado para registrar ofertas detectadas, docentes cargados
-            y estado de los avisos enviados.
-          </p>
+        <article class="info-card">
+          <h3>Base lista para editar</h3>
+          <p>Como el mail se usa como clave, después se puede evolucionar a “editar preferencias” fácilmente.</p>
         </article>
       </div>
     </div>
@@ -855,241 +376,258 @@
 
   <section id="como-funciona">
     <div class="container">
-      <div class="section-head fade-up">
-        <h2>Cómo funciona</h2>
-        <p>
-          El flujo fue armado para que el aviso llegue de forma clara, rápida y con datos útiles para el docente.
-        </p>
+      <div class="section-head">
+        <h2>Cómo funciona ahora</h2>
+        <p>El nuevo flujo mantiene tu base y mejora la experiencia de registro.</p>
       </div>
 
-      <div class="how-grid">
-        <article class="step fade-up">
+      <div class="steps">
+        <article class="step">
           <div class="step-number">1</div>
-          <h4>Te registrás</h4>
-          <p>Cargás tu correo y tus preferencias desde el formulario.</p>
+          <h4>El docente completa el formulario web</h4>
+          <p>Todo ocurre dentro de APDocentePBA.</p>
         </article>
 
-        <article class="step fade-up">
+        <article class="step">
           <div class="step-number">2</div>
-          <h4>Se detectan publicaciones</h4>
-          <p>El radar revisa publicaciones públicas y registra nuevas ofertas.</p>
+          <h4>La web envía los datos al Apps Script</h4>
+          <p>Los datos se procesan sin mostrar Google Forms.</p>
         </article>
 
-        <article class="step fade-up">
+        <article class="step">
           <div class="step-number">3</div>
-          <h4>Se comparan criterios</h4>
-          <p>La oferta se cruza con distrito, materia, cargo, turno y otras preferencias.</p>
+          <h4>Se guarda en `docentes`</h4>
+          <p>Si el mail ya existe, la fila se actualiza.</p>
         </article>
 
-        <article class="step fade-up">
+        <article class="step">
           <div class="step-number">4</div>
-          <h4>Llega la alerta</h4>
-          <p>Si coincide con tu perfil, se envía el aviso por correo electrónico.</p>
+          <h4>Tu sistema APD sigue usando esa base</h4>
+          <p>No hace falta crear otra hoja docente.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <section id="apd">
-    <div class="container radar-wrap">
-      <div class="live-board fade-up">
-        <h3>Últimos APD detectados</h3>
-        <p>
-          Esta sección ya queda lista para mostrar ofertas reales del sistema. Por ahora se muestran ejemplos visuales del formato.
-        </p>
+  <section id="registro">
+    <div class="container register-wrap">
+      <div class="form-card">
+        <h3>Registro docente</h3>
+        <p>Completá tus datos y preferencias. Si ya estabas registrado con este correo, tu información se actualizará.</p>
 
-        <div class="apd-list">
-          <div class="apd-item">
-            <div>
-              <strong>FRANCÉS (FRA) · Avellaneda</strong>
-              <span>Nivel Secundaria · Turno mañana · Publicación detectada recientemente</span>
+        <form id="registroForm">
+          <div class="form-grid">
+            <div class="full">
+              <label for="nombre">Nombre y apellido</label>
+              <input type="text" id="nombre" name="nombre" required>
             </div>
-            <div class="badge">Radar</div>
+
+            <div>
+              <label for="email">Correo electrónico</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+
+            <div>
+              <label for="celular">Celular</label>
+              <input type="text" id="celular" name="celular">
+            </div>
+
+            <div>
+              <label for="distritoPrincipal">Distrito principal</label>
+              <input type="text" id="distritoPrincipal" name="distritoPrincipal" required>
+            </div>
+
+            <div>
+              <label for="otrosDistritos">Otros distritos de interés</label>
+              <input type="text" id="otrosDistritos" name="otrosDistritos" placeholder="Ej: Lanús, Quilmes">
+            </div>
+
+            <div>
+              <label for="materia1">Materia / área 1</label>
+              <input type="text" id="materia1" name="materia1" required>
+            </div>
+
+            <div>
+              <label for="materia2">Materia / área 2</label>
+              <input type="text" id="materia2" name="materia2">
+            </div>
+
+            <div>
+              <label for="materia3">Materia / área 3</label>
+              <input type="text" id="materia3" name="materia3">
+            </div>
+
+            <div>
+              <label for="nivelModalidad">Nivel / modalidad</label>
+              <input type="text" id="nivelModalidad" name="nivelModalidad">
+            </div>
+
+            <div>
+              <label for="turno">Turno de interés</label>
+              <select id="turno" name="turno" required>
+                <option value="">Seleccionar</option>
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Vespertino">Vespertino</option>
+                <option value="Noche">Noche</option>
+                <option value="Cualquiera">Cualquiera</option>
+              </select>
+            </div>
+
+            <div class="full">
+              <label for="tipoCargo">Tipo de cargo</label>
+              <input type="text" id="tipoCargo" name="tipoCargo">
+            </div>
+
+            <div class="full checks">
+              <label class="check-row">
+                <input type="checkbox" id="aceptoEmail" checked disabled>
+                <span>Acepto recibir alertas por email</span>
+              </label>
+
+              <label class="check-row">
+                <input type="checkbox" id="aceptoTyC" checked disabled>
+                <span>Acepto los términos y condiciones</span>
+              </label>
+            </div>
           </div>
 
-          <div class="apd-item">
-            <div>
-              <strong>MATEMÁTICA · Lanús</strong>
-              <span>Nivel Secundaria · Turno tarde · Oferta compatible con filtros cargados</span>
-            </div>
-            <div class="badge">Radar</div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Enviar registro</button>
           </div>
 
-          <div class="apd-item">
-            <div>
-              <strong>INGLÉS · Quilmes</strong>
-              <span>Nivel Secundaria · Turno noche · Registro listo para alerta por email</span>
-            </div>
-            <div class="badge">Radar</div>
-          </div>
-        </div>
+          <div id="mensajeOk" class="status-msg status-ok"></div>
+          <div id="mensajeError" class="status-msg status-error"></div>
+        </form>
       </div>
 
-      <aside class="prefs fade-up">
-        <h3>Preferencias configurables</h3>
-        <p>
-          El sistema ya está pensado para crecer con más control sobre lo que cada docente quiere recibir.
-        </p>
+      <aside class="form-card">
+        <h3>Qué se guarda</h3>
+        <p>Se respetan los mismos campos base del formulario anterior.</p>
 
-        <div class="pref-list">
-          <div class="pref-item">
-            <strong>Distritos</strong>
-            Distrito principal y otros distritos de interés.
+        <div class="side-list">
+          <div class="side-item">
+            <strong>Misma hoja `docentes`</strong>
+            <span>No hace falta crear otra hoja ni tocar el sistema de alertas.</span>
           </div>
 
-          <div class="pref-item">
-            <strong>Materias / áreas</strong>
-            Varias materias o áreas por docente.
+          <div class="side-item">
+            <strong>Correo como clave</strong>
+            <span>Evita registros duplicados cuando una persona vuelve a cargar sus datos.</span>
           </div>
 
-          <div class="pref-item">
-            <strong>Cargos</strong>
-            Coincidencia por cargo específico o por área.
+          <div class="side-item">
+            <strong>Estado alertas</strong>
+            <span>El registro nuevo o actualizado queda como ACTIVO.</span>
           </div>
 
-          <div class="pref-item">
-            <strong>Turnos</strong>
-            Mañana, tarde, vespertino, noche o cualquiera.
-          </div>
-
-          <div class="pref-item">
-            <strong>Estado de alertas</strong>
-            Activo, pausado o baja.
+          <div class="side-item">
+            <strong>Compatibilidad</strong>
+            <span>Respeta la estructura que ya venías usando con el formulario previo.</span>
           </div>
         </div>
       </aside>
     </div>
   </section>
 
-  <section id="estado">
-    <div class="container">
-      <div class="status-panel fade-up">
-        <h3>Estado del proyecto</h3>
-        <p>
-          APDocentePBA ya tiene una base funcional y sigue creciendo con nuevas mejoras.
-        </p>
-
-        <div class="status-grid">
-          <div class="status-box">
-            <strong>Web</strong>
-            <span>Publicada y funcionando</span>
-          </div>
-
-          <div class="status-box">
-            <strong>Formulario</strong>
-            <span>Conectado para registro</span>
-          </div>
-
-          <div class="status-box">
-            <strong id="lastUpdate">Hoy</strong>
-            <span>Última actualización visual</span>
-          </div>
-        </div>
-
-        <div class="status-note">
-          Próximo objetivo recomendado: conectar esta web con los datos reales del sistema para mostrar
-          publicaciones detectadas, estadísticas y actividad reciente.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="cta-panel fade-up">
-        <h2>Sumate a APDocentePBA</h2>
-        <p>
-          Registrate para recibir alertas cuando aparezcan publicaciones compatibles con tus preferencias.
-          Esta versión ya está lista para seguir creciendo con panel en vivo, estadísticas y edición de preferencias.
-        </p>
-        <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">Quiero recibir alertas</a>
-      </div>
-    </div>
-  </section>
-
   <section id="faq">
     <div class="container">
-      <div class="section-head fade-up">
+      <div class="section-head">
         <h2>Preguntas frecuentes</h2>
-        <p>
-          Algunas dudas comunes sobre APDocentePBA y el sistema de notificaciones.
-        </p>
+        <p>Algunas dudas comunes sobre el nuevo registro integrado.</p>
       </div>
 
       <div class="faq">
-        <div class="faq-item fade-up">
-          <h4>¿Es una web oficial del ABC?</h4>
-          <p>
-            No. APDocentePBA es un sistema independiente que monitorea publicaciones públicas y genera avisos automatizados.
-          </p>
+        <div class="faq-item">
+          <h4>¿Se pierde el formulario anterior?</h4>
+          <p>No. Simplemente ahora la web puede registrar directamente en la misma base.</p>
         </div>
 
-        <div class="faq-item fade-up">
-          <h4>¿Cómo me registro?</h4>
-          <p>
-            Desde los botones de registro de esta web. El formulario permite cargar correo y preferencias.
-          </p>
+        <div class="faq-item">
+          <h4>¿Hace falta una hoja nueva?</h4>
+          <p>No. Se usa la misma hoja `docentes` que ya tenías.</p>
         </div>
 
-        <div class="faq-item fade-up">
-          <h4>¿Puedo cambiar mis preferencias?</h4>
-          <p>
-            Sí, el proyecto ya está pensado para permitir actualización de materias, cargos, turnos, distritos y estado de alertas.
-          </p>
+        <div class="faq-item">
+          <h4>¿Qué pasa si el docente ya estaba registrado?</h4>
+          <p>Se busca por correo y se actualiza su fila existente en lugar de duplicar datos.</p>
         </div>
 
-        <div class="faq-item fade-up">
-          <h4>¿Las alertas llegan por correo?</h4>
-          <p>
-            Sí. Cuando el sistema detecta una publicación compatible, puede enviar un correo con los datos relevantes.
-          </p>
+        <div class="faq-item">
+          <h4>¿Después se puede mejorar más?</h4>
+          <p>Sí. El siguiente paso natural es permitir edición de preferencias y mostrar APD reales en la web.</p>
         </div>
       </div>
     </div>
   </section>
 
   <footer>
-    <div class="container footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Logo APDocentePBA">
-        <div>
-          <strong style="display:block;color:var(--secondary-2);margin-bottom:4px;">APDocentePBA</strong>
-          <span>Proyecto independiente de alertas para docentes de la Provincia de Buenos Aires.</span>
+    <div class="container">
+      <div class="footer-box">
+        <div class="footer-brand">
+          <img src="logo.png" alt="Logo APDocentePBA">
+          <div>
+            <strong style="display:block;color:var(--secondary-2);margin-bottom:4px;">APDocentePBA</strong>
+            <span>Proyecto independiente de alertas para docentes de la Provincia de Buenos Aires.</span>
+          </div>
         </div>
-      </div>
 
-      <div class="footer-note">
-        © 2026 APDocentePBA · Radar de publicaciones APD
+        <div>© 2026 APDocentePBA</div>
       </div>
     </div>
   </footer>
 
-  <a class="floating-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSfYmo_j8jKSmGbUbSOQIoOXMR8ohP1gaftSw35i6xFYhEejAQ/viewform" target="_blank">
-    Registrarme
-  </a>
-
   <script>
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('show');
+    const WEB_APP_URL = "PEGAR_AQUI_LA_URL_DEL_APPS_SCRIPT";
+
+    const form = document.getElementById("registroForm");
+    const msgOk = document.getElementById("mensajeOk");
+    const msgError = document.getElementById("mensajeError");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      msgOk.style.display = "none";
+      msgError.style.display = "none";
+
+      const data = {
+        nombre: document.getElementById("nombre").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        celular: document.getElementById("celular").value.trim(),
+        distritoPrincipal: document.getElementById("distritoPrincipal").value.trim(),
+        otrosDistritos: document.getElementById("otrosDistritos").value.trim(),
+        materia1: document.getElementById("materia1").value.trim(),
+        materia2: document.getElementById("materia2").value.trim(),
+        materia3: document.getElementById("materia3").value.trim(),
+        nivelModalidad: document.getElementById("nivelModalidad").value.trim(),
+        turno: document.getElementById("turno").value.trim(),
+        tipoCargo: document.getElementById("tipoCargo").value.trim()
+      };
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+
+        if (json.ok) {
+          msgOk.textContent = json.mensaje || "Registro enviado correctamente.";
+          msgOk.style.display = "block";
+          form.reset();
+        } else {
+          msgError.textContent = json.mensaje || "No se pudo enviar el registro.";
+          msgError.style.display = "block";
         }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-    const meses = [
-      "enero","febrero","marzo","abril","mayo","junio",
-      "julio","agosto","septiembre","octubre","noviembre","diciembre"
-    ];
-
-    const ahora = new Date();
-    const textoFecha = ahora.getDate() + " de " + meses[ahora.getMonth()];
-    const lastUpdate = document.getElementById("lastUpdate");
-    if (lastUpdate) {
-      lastUpdate.textContent = textoFecha;
-    }
+      } catch (error) {
+        msgError.textContent = "Error al conectar con el servidor. Revisá la URL del Apps Script y la implementación.";
+        msgError.style.display = "block";
+      }
+    });
   </script>
 
 </body>
