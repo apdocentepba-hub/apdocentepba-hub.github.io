@@ -45,147 +45,352 @@
     .container{width:min(var(--max), 92%);margin:0 auto}
 
     .topbar{
-      position:sticky;top:0;z-index:999;
+      position:sticky;
+      top:0;
+      z-index:999;
       background:rgba(255,255,255,.9);
       backdrop-filter:blur(10px);
       border-bottom:1px solid rgba(17,92,119,.08);
     }
 
     .topbar-inner{
-      display:flex;justify-content:space-between;align-items:center;
-      gap:18px;padding:14px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      padding:14px 0;
     }
 
     .brand{display:flex;align-items:center;gap:14px}
     .brand-logo{
-      width:58px;height:58px;object-fit:contain;padding:6px;
-      border-radius:18px;background:#fff;border:1px solid var(--border);
+      width:58px;
+      height:58px;
+      object-fit:contain;
+      padding:6px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid var(--border);
       box-shadow:var(--shadow-soft);
     }
 
     .brand-text strong{
-      display:block;color:var(--secondary-2);font-size:1.18rem;
+      display:block;
+      color:var(--secondary-2);
+      font-size:1.18rem;
     }
 
-    .brand-text span{color:var(--muted);font-size:.88rem}
+    .brand-text span{
+      color:var(--muted);
+      font-size:.88rem;
+    }
 
-    .nav{display:flex;gap:8px;flex-wrap:wrap}
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
     .nav a{
-      padding:10px 14px;border-radius:999px;color:var(--secondary-2);
-      font-size:.95rem;transition:.2s ease;
+      padding:10px 14px;
+      border-radius:999px;
+      color:var(--secondary-2);
+      font-size:.95rem;
+      transition:.2s ease;
     }
-    .nav a:hover{background:#e6f5f9;color:var(--secondary)}
+
+    .nav a:hover{
+      background:#e6f5f9;
+      color:var(--secondary);
+    }
 
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      border:none;cursor:pointer;transition:.22s ease;font-weight:bold;
-      padding:14px 22px;border-radius:999px;font-size:1rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+      font-weight:bold;
+      padding:14px 22px;
+      border-radius:999px;
+      font-size:1rem;
     }
 
     .btn-primary{
       background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
-      color:#fff;box-shadow:var(--shadow);
+      color:#fff;
+      box-shadow:var(--shadow);
     }
 
-    .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.03)}
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.03);
+    }
 
-    .hero{padding:56px 0 24px}
+    .btn-secondary{
+      background:#fff;
+      color:var(--secondary);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
+    }
+
+    .btn-secondary:hover{
+      background:#f2fbfd;
+    }
+
+    .hero{
+      padding:56px 0 24px;
+    }
+
     .hero-grid{
-      display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:stretch;
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:26px;
+      align-items:stretch;
     }
 
     .hero-main,.hero-side,.form-card,.info-card,.faq-item,.step{
-      background:#fff;border:1px solid var(--border);box-shadow:var(--shadow-soft);
+      background:#fff;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-soft);
     }
 
-    .hero-main,.hero-side,.form-card,.info-card{border-radius:var(--radius-xl)}
+    .hero-main,.hero-side,.form-card,.info-card{
+      border-radius:var(--radius-xl);
+    }
 
-    .hero-main{padding:40px}
-    .hero-side{padding:30px;background:linear-gradient(165deg, var(--secondary) 0%, var(--secondary-2) 100%);color:#fff;border:none;box-shadow:var(--shadow)}
+    .hero-main{
+      padding:40px;
+    }
+
+    .hero-side{
+      padding:30px;
+      background:linear-gradient(165deg, var(--secondary) 0%, var(--secondary-2) 100%);
+      color:#fff;
+      border:none;
+      box-shadow:var(--shadow);
+    }
 
     .eyebrow{
-      display:inline-flex;background:#e4f6fa;color:var(--secondary);
-      border:1px solid #c9eaf2;padding:10px 16px;border-radius:999px;
-      font-size:.92rem;font-weight:bold;margin-bottom:18px;
+      display:inline-flex;
+      background:#e4f6fa;
+      color:var(--secondary);
+      border:1px solid #c9eaf2;
+      padding:10px 16px;
+      border-radius:999px;
+      font-size:.92rem;
+      font-weight:bold;
+      margin-bottom:18px;
     }
 
     .hero h1{
       font-size:clamp(2.2rem, 4vw, 4rem);
-      line-height:1.03;color:var(--secondary-2);margin-bottom:18px;
+      line-height:1.03;
+      color:var(--secondary-2);
+      margin-bottom:18px;
     }
 
     .hero .lead{
-      color:var(--muted);font-size:1.08rem;max-width:760px;margin-bottom:22px;
+      color:var(--muted);
+      font-size:1.08rem;
+      max-width:760px;
+      margin-bottom:22px;
     }
 
-    .hero-points{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .hero-actions{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin:22px 0 26px;
+    }
+
+    .hero-points{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
     .hero-point{
-      background:#f8fdfe;border:1px solid var(--border);border-radius:18px;padding:16px;
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
     }
-    .hero-point strong{display:block;color:var(--secondary);margin-bottom:6px}
-    .hero-point span{color:var(--muted);font-size:.94rem}
 
-    .hero-side-top{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+    .hero-point strong{
+      display:block;
+      color:var(--secondary);
+      margin-bottom:6px;
+    }
+
+    .hero-point span{
+      color:var(--muted);
+      font-size:.94rem;
+    }
+
+    .hero-side-top{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
     .hero-side-logo{
-      width:92px;height:92px;object-fit:contain;padding:10px;border-radius:24px;
-      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);
+      width:92px;
+      height:92px;
+      object-fit:contain;
+      padding:10px;
+      border-radius:24px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.14);
     }
 
-    .hero-side h3{font-size:1.6rem;margin-bottom:6px}
-    .hero-side p{color:rgba(255,255,255,.88)}
+    .hero-side h3{
+      font-size:1.6rem;
+      margin-bottom:6px;
+    }
+
+    .hero-side p{
+      color:rgba(255,255,255,.88);
+    }
 
     .stat-card{
-      background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12);
-      border-radius:18px;padding:16px 18px;margin-top:14px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:16px 18px;
+      margin-top:14px;
     }
 
-    .stat-card strong{display:block;font-size:1.35rem;margin-bottom:4px}
+    .stat-card strong{
+      display:block;
+      font-size:1.35rem;
+      margin-bottom:4px;
+    }
 
-    section{padding:42px 0}
+    section{
+      padding:42px 0;
+    }
 
-    .section-head{text-align:center;margin-bottom:26px}
+    .section-head{
+      text-align:center;
+      margin-bottom:26px;
+    }
+
     .section-head h2{
-      color:var(--secondary-2);font-size:clamp(1.8rem, 3vw, 2.6rem);margin-bottom:10px;
+      color:var(--secondary-2);
+      font-size:clamp(1.8rem, 3vw, 2.6rem);
+      margin-bottom:10px;
     }
-    .section-head p{color:var(--muted);max-width:850px;margin:0 auto}
 
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .section-head p{
+      color:var(--muted);
+      max-width:850px;
+      margin:0 auto;
+    }
 
-    .info-card{padding:24px}
-    .info-card h3{color:var(--secondary-2);margin-bottom:10px}
-    .info-card p{color:var(--muted)}
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:22px;
+    }
 
-    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-    .step{border-radius:22px;padding:24px}
+    .info-card{
+      padding:24px;
+    }
+
+    .info-card h3{
+      color:var(--secondary-2);
+      margin-bottom:10px;
+    }
+
+    .info-card p{
+      color:var(--muted);
+    }
+
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .step{
+      border-radius:22px;
+      padding:24px;
+    }
+
     .step-number{
-      width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
       background:linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      color:#fff;font-weight:bold;margin-bottom:14px;
+      color:#fff;
+      font-weight:bold;
+      margin-bottom:14px;
     }
-    .step h4{color:var(--secondary-2);margin-bottom:8px}
-    .step p{color:var(--muted);font-size:.96rem}
+
+    .step h4{
+      color:var(--secondary-2);
+      margin-bottom:8px;
+    }
+
+    .step p{
+      color:var(--muted);
+      font-size:.96rem;
+    }
 
     .register-wrap{
-      display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start;
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:22px;
+      align-items:start;
     }
 
-    .form-card{padding:30px}
-    .form-card h3{color:var(--secondary-2);font-size:1.6rem;margin-bottom:8px}
-    .form-card p{color:var(--muted);margin-bottom:18px}
+    .form-card{
+      padding:30px;
+    }
+
+    .form-card h3{
+      color:var(--secondary-2);
+      font-size:1.6rem;
+      margin-bottom:8px;
+    }
+
+    .form-card p{
+      color:var(--muted);
+      margin-bottom:18px;
+    }
 
     .form-grid{
-      display:grid;grid-template-columns:1fr 1fr;gap:14px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
     }
 
-    .full{grid-column:1 / -1}
+    .full{
+      grid-column:1 / -1;
+    }
 
     label{
-      display:block;color:var(--secondary-2);font-weight:bold;font-size:.93rem;margin-bottom:6px;
+      display:block;
+      color:var(--secondary-2);
+      font-weight:bold;
+      font-size:.93rem;
+      margin-bottom:6px;
     }
 
     input, select, textarea{
-      width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--border);
-      background:#fff;font-size:.98rem;color:var(--text);outline:none;
+      width:100%;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:.98rem;
+      color:var(--text);
+      outline:none;
     }
 
     input:focus, select:focus, textarea:focus{
@@ -193,52 +398,107 @@
       box-shadow:0 0 0 4px rgba(104,196,216,.18);
     }
 
-    textarea{min-height:92px;resize:vertical}
+    textarea{
+      min-height:92px;
+      resize:vertical;
+    }
 
     .checks{
-      display:grid;gap:10px;margin-top:8px;
+      display:grid;
+      gap:10px;
+      margin-top:8px;
     }
 
     .check-row{
-      display:flex;align-items:flex-start;gap:10px;
-      background:#f8fdfe;border:1px solid var(--border);border-radius:14px;padding:12px 14px;
-      color:var(--muted);font-size:.95rem;
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:.95rem;
     }
 
     .check-row input{
-      width:auto;margin-top:2px;
+      width:auto;
+      margin-top:2px;
+      transform:scale(1.15);
     }
 
     .form-actions{
-      display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
     }
 
     .status-msg{
-      margin-top:14px;padding:14px 16px;border-radius:14px;font-weight:bold;display:none;
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:14px;
+      font-weight:bold;
+      display:none;
     }
 
     .status-ok{
-      background:#e6f7ef;border:1px solid #bce8d0;color:#17794d;
+      background:#e6f7ef;
+      border:1px solid #bce8d0;
+      color:#17794d;
     }
 
     .status-error{
-      background:#fdeeee;border:1px solid #f3c9c9;color:#a33d3d;
+      background:#fdeeee;
+      border:1px solid #f3c9c9;
+      color:#a33d3d;
     }
 
-    .side-list{display:grid;gap:12px}
+    .side-list{
+      display:grid;
+      gap:12px;
+    }
+
     .side-item{
-      background:#f8fdfe;border:1px solid var(--border);border-radius:16px;padding:14px 16px;
+      background:#f8fdfe;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 16px;
     }
-    .side-item strong{display:block;color:var(--secondary);margin-bottom:4px}
-    .side-item span{color:var(--muted);font-size:.95rem}
 
-    .faq{display:grid;gap:14px}
-    .faq-item{border-radius:18px;padding:18px 20px}
-    .faq-item h4{color:var(--secondary-2);margin-bottom:8px}
-    .faq-item p{color:var(--muted)}
+    .side-item strong{
+      display:block;
+      color:var(--secondary);
+      margin-bottom:4px;
+    }
+
+    .side-item span{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .faq{
+      display:grid;
+      gap:14px;
+    }
+
+    .faq-item{
+      border-radius:18px;
+      padding:18px 20px;
+    }
+
+    .faq-item h4{
+      color:var(--secondary-2);
+      margin-bottom:8px;
+    }
+
+    .faq-item p{
+      color:var(--muted);
+    }
 
     footer{
-      padding:28px 0 44px;color:var(--muted);
+      padding:28px 0 44px;
+      color:var(--muted);
     }
 
     .footer-box{
@@ -253,23 +513,79 @@
       gap:18px;
     }
 
-    .footer-brand{display:flex;align-items:center;gap:14px}
+    .footer-brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
     .footer-brand img{
-      width:56px;height:56px;object-fit:contain;padding:5px;border-radius:16px;
-      border:1px solid var(--border);background:#fff;
+      width:56px;
+      height:56px;
+      object-fit:contain;
+      padding:5px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+
+    .floating-cta{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:1000;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-2) 100%);
+      color:#fff;
+      padding:15px 20px;
+      border-radius:999px;
+      font-weight:bold;
+      box-shadow:0 18px 35px rgba(17,92,119,.28);
+    }
+
+    .floating-cta:hover{
+      transform:translateY(-2px);
     }
 
     @media (max-width:1100px){
-      .hero-grid,.register-wrap{grid-template-columns:1fr}
-      .hero-points,.steps,.grid-3{grid-template-columns:1fr 1fr}
-      .form-grid{grid-template-columns:1fr}
+      .hero-grid,.register-wrap{
+        grid-template-columns:1fr;
+      }
+
+      .hero-points,.steps,.grid-3{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .form-grid{
+        grid-template-columns:1fr;
+      }
     }
 
     @media (max-width:760px){
-      .topbar-inner{flex-direction:column;align-items:flex-start}
-      .hero-points,.steps,.grid-3{grid-template-columns:1fr}
-      .hero-main,.hero-side,.form-card,.info-card{padding:24px}
-      .footer-box{flex-direction:column;align-items:flex-start}
+      .topbar-inner{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .hero-points,.steps,.grid-3{
+        grid-template-columns:1fr;
+      }
+
+      .hero-main,.hero-side,.form-card,.info-card{
+        padding:24px;
+      }
+
+      .footer-box{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .floating-cta{
+        left:14px;
+        right:14px;
+      }
     }
   </style>
 </head>
@@ -301,9 +617,13 @@
         <div class="eyebrow">Sistema independiente de seguimiento APD</div>
         <h1>Registrate desde la misma web y recibí alertas según tus preferencias</h1>
         <p class="lead">
-          APDocentePBA monitorea publicaciones públicas de Actos Públicos Digitales y permite registrar
-          docentes sin salir de la página.
+          APDocentePBA monitorea publicaciones públicas de Actos Públicos Digitales y permite registrar docentes sin salir de la página.
         </p>
+
+        <div class="hero-actions">
+          <a href="#registro" class="btn btn-primary" style="font-size:18px;padding:18px 28px;">Registrarme para recibir alertas</a>
+          <a href="#como-funciona" class="btn btn-secondary">Ver cómo funciona</a>
+        </div>
 
         <div class="hero-points">
           <div class="hero-point">
@@ -312,11 +632,11 @@
           </div>
           <div class="hero-point">
             <strong>Actualización por mail</strong>
-            <span>Si el docente ya existe, se actualizan sus datos.</span>
+            <span>Después podrá actualizarse sin duplicar datos.</span>
           </div>
           <div class="hero-point">
-            <strong>Misma base docente</strong>
-            <span>Se usa la hoja `docentes` que ya venías usando.</span>
+            <strong>Misma lógica del sistema</strong>
+            <span>Respetando la estructura que ya venías usando.</span>
           </div>
         </div>
       </section>
@@ -331,18 +651,18 @@
         </div>
 
         <div class="stat-card">
-          <strong>Web + Sheets</strong>
-          <span>La web registra y Google Sheets sigue siendo tu base principal.</span>
+          <strong>Más visible</strong>
+          <span>El acceso al registro ahora está arriba y mejor destacado.</span>
         </div>
 
         <div class="stat-card">
-          <strong>Sin duplicar hojas</strong>
-          <span>Respetamos la estructura del formulario anterior.</span>
+          <strong>3 distritos</strong>
+          <span>Distrito principal más dos distritos extra de interés.</span>
         </div>
 
         <div class="stat-card">
-          <strong>Preparado para crecer</strong>
-          <span>Después se puede sumar edición de preferencias y panel en vivo.</span>
+          <strong>Listo para conectar</strong>
+          <span>Después lo enlazamos con Apps Script y la hoja docentes.</span>
         </div>
       </aside>
     </div>
@@ -351,24 +671,24 @@
   <section id="beneficios">
     <div class="container">
       <div class="section-head">
-        <h2>Ventajas de este cambio</h2>
-        <p>La interfaz mejora sin romper el sistema que ya venías armando.</p>
+        <h2>Ventajas de este registro nuevo</h2>
+        <p>La experiencia mejora sin romper la lógica de tu proyecto.</p>
       </div>
 
       <div class="grid-3">
         <article class="info-card">
-          <h3>Más profesional</h3>
-          <p>El docente se registra dentro de tu propia web y no siente que lo estás mandando a otro sitio.</p>
+          <h3>Más claro para el docente</h3>
+          <p>El formulario está mejor ubicado, más visible y más fácil de completar.</p>
         </article>
 
         <article class="info-card">
-          <h3>Sin perder lo anterior</h3>
-          <p>Seguís usando la misma hoja `docentes`, con los mismos campos del formulario que ya habías definido.</p>
+          <h3>Menos errores</h3>
+          <p>Los distritos se eligen desde listas desplegables en vez de escribirlos a mano.</p>
         </article>
 
         <article class="info-card">
-          <h3>Base lista para editar</h3>
-          <p>Como el mail se usa como clave, después se puede evolucionar a “editar preferencias” fácilmente.</p>
+          <h3>Base preparada</h3>
+          <p>El diseño ya queda listo para conectar más adelante con tu backend y guardar datos reales.</p>
         </article>
       </div>
     </div>
@@ -377,33 +697,33 @@
   <section id="como-funciona">
     <div class="container">
       <div class="section-head">
-        <h2>Cómo funciona ahora</h2>
-        <p>El nuevo flujo mantiene tu base y mejora la experiencia de registro.</p>
+        <h2>Cómo va a funcionar</h2>
+        <p>La web ya queda lista para el siguiente paso: conectar el registro con tu base docente.</p>
       </div>
 
       <div class="steps">
         <article class="step">
           <div class="step-number">1</div>
-          <h4>El docente completa el formulario web</h4>
-          <p>Todo ocurre dentro de APDocentePBA.</p>
+          <h4>El docente se registra</h4>
+          <p>Completa datos personales, distritos, materias y preferencias.</p>
         </article>
 
         <article class="step">
           <div class="step-number">2</div>
-          <h4>La web envía los datos al Apps Script</h4>
-          <p>Los datos se procesan sin mostrar Google Forms.</p>
+          <h4>Se valida la información</h4>
+          <p>La interfaz controla que los datos principales estén completos.</p>
         </article>
 
         <article class="step">
           <div class="step-number">3</div>
-          <h4>Se guarda en `docentes`</h4>
-          <p>Si el mail ya existe, la fila se actualiza.</p>
+          <h4>Se enviará al sistema</h4>
+          <p>Luego conectaremos este formulario con Apps Script y Google Sheets.</p>
         </article>
 
         <article class="step">
           <div class="step-number">4</div>
-          <h4>Tu sistema APD sigue usando esa base</h4>
-          <p>No hace falta crear otra hoja docente.</p>
+          <h4>Tu radar usará esa base</h4>
+          <p>El sistema APD seguirá filtrando alertas según esas preferencias.</p>
         </article>
       </div>
     </div>
@@ -413,7 +733,10 @@
     <div class="container register-wrap">
       <div class="form-card">
         <h3>Registro docente</h3>
-        <p>Completá tus datos y preferencias. Si ya estabas registrado con este correo, tu información se actualizará.</p>
+        <p>
+          Completá tus datos y preferencias. Por ahora esta versión deja la interfaz lista y prolija;
+          luego la conectamos con Apps Script.
+        </p>
 
         <form id="registroForm">
           <div class="form-grid">
@@ -434,12 +757,23 @@
 
             <div>
               <label for="distritoPrincipal">Distrito principal</label>
-              <input type="text" id="distritoPrincipal" name="distritoPrincipal" required>
+              <select id="distritoPrincipal" name="distritoPrincipal" required>
+                <option value="">Seleccionar distrito</option>
+              </select>
             </div>
 
             <div>
-              <label for="otrosDistritos">Otros distritos de interés</label>
-              <input type="text" id="otrosDistritos" name="otrosDistritos" placeholder="Ej: Lanús, Quilmes">
+              <label for="distritoInteres2">Distrito de interés 2</label>
+              <select id="distritoInteres2" name="distritoInteres2">
+                <option value="">Seleccionar distrito</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="distritoInteres3">Distrito de interés 3</label>
+              <select id="distritoInteres3" name="distritoInteres3">
+                <option value="">Seleccionar distrito</option>
+              </select>
             </div>
 
             <div>
@@ -459,41 +793,59 @@
 
             <div>
               <label for="nivelModalidad">Nivel / modalidad</label>
-              <input type="text" id="nivelModalidad" name="nivelModalidad">
+              <select id="nivelModalidad" name="nivelModalidad" required>
+                <option value="">Seleccionar nivel / modalidad</option>
+                <option>Inicial</option>
+                <option>Primaria</option>
+                <option>Secundaria</option>
+                <option>Secundaria Técnica</option>
+                <option>Secundaria Agraria</option>
+                <option>Educación de Adultos (CENS)</option>
+                <option>Educación Especial</option>
+                <option>Educación Artística</option>
+                <option>Educación Física</option>
+                <option>Educación Superior</option>
+                <option>Formación Profesional</option>
+              </select>
             </div>
 
             <div>
               <label for="turno">Turno de interés</label>
               <select id="turno" name="turno" required>
-                <option value="">Seleccionar</option>
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Vespertino">Vespertino</option>
-                <option value="Noche">Noche</option>
-                <option value="Cualquiera">Cualquiera</option>
+                <option value="">Seleccionar turno</option>
+                <option>Mañana</option>
+                <option>Tarde</option>
+                <option>Vespertino</option>
+                <option>Noche</option>
+                <option>Cualquiera</option>
               </select>
             </div>
 
             <div class="full">
               <label for="tipoCargo">Tipo de cargo</label>
-              <input type="text" id="tipoCargo" name="tipoCargo">
+              <select id="tipoCargo" name="tipoCargo" required>
+                <option value="">Seleccionar tipo de cargo</option>
+                <option>Módulos / Horas cátedra</option>
+                <option>Cargo</option>
+                <option>Ambos</option>
+              </select>
             </div>
 
             <div class="full checks">
               <label class="check-row">
-                <input type="checkbox" id="aceptoEmail" checked disabled>
+                <input type="checkbox" id="aceptoEmail" checked>
                 <span>Acepto recibir alertas por email</span>
               </label>
 
               <label class="check-row">
-                <input type="checkbox" id="aceptoTyC" checked disabled>
+                <input type="checkbox" id="aceptoTyC" required>
                 <span>Acepto los términos y condiciones</span>
               </label>
             </div>
           </div>
 
           <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Enviar registro</button>
+            <button class="btn btn-primary" type="submit">Confirmar registro</button>
           </div>
 
           <div id="mensajeOk" class="status-msg status-ok"></div>
@@ -502,28 +854,28 @@
       </div>
 
       <aside class="form-card">
-        <h3>Qué se guarda</h3>
-        <p>Se respetan los mismos campos base del formulario anterior.</p>
+        <h3>Qué dejamos listo hoy</h3>
+        <p>Esta versión ya mejora la experiencia visual y ordena la carga de datos.</p>
 
         <div class="side-list">
           <div class="side-item">
-            <strong>Misma hoja `docentes`</strong>
-            <span>No hace falta crear otra hoja ni tocar el sistema de alertas.</span>
+            <strong>Registro más visible</strong>
+            <span>Acceso destacado arriba de la página y botón flotante permanente.</span>
           </div>
 
           <div class="side-item">
-            <strong>Correo como clave</strong>
-            <span>Evita registros duplicados cuando una persona vuelve a cargar sus datos.</span>
+            <strong>Distritos desplegables</strong>
+            <span>Principal + dos distritos extra, sin escribir a mano.</span>
           </div>
 
           <div class="side-item">
-            <strong>Estado alertas</strong>
-            <span>El registro nuevo o actualizado queda como ACTIVO.</span>
+            <strong>Checks funcionales</strong>
+            <span>Ahora sí se pueden aceptar alertas y términos correctamente.</span>
           </div>
 
           <div class="side-item">
-            <strong>Compatibilidad</strong>
-            <span>Respeta la estructura que ya venías usando con el formulario previo.</span>
+            <strong>Próximo paso</strong>
+            <span>Conectar este formulario con Apps Script y tu hoja `docentes`.</span>
           </div>
         </div>
       </aside>
@@ -534,28 +886,28 @@
     <div class="container">
       <div class="section-head">
         <h2>Preguntas frecuentes</h2>
-        <p>Algunas dudas comunes sobre el nuevo registro integrado.</p>
+        <p>Algunas dudas comunes sobre esta nueva interfaz de registro.</p>
       </div>
 
       <div class="faq">
         <div class="faq-item">
-          <h4>¿Se pierde el formulario anterior?</h4>
-          <p>No. Simplemente ahora la web puede registrar directamente en la misma base.</p>
+          <h4>¿Ya guarda datos reales?</h4>
+          <p>Esta versión deja la interfaz completa y lista. Luego conectamos el guardado con Apps Script.</p>
         </div>
 
         <div class="faq-item">
-          <h4>¿Hace falta una hoja nueva?</h4>
-          <p>No. Se usa la misma hoja `docentes` que ya tenías.</p>
+          <h4>¿Por qué tres distritos?</h4>
+          <p>Porque definiste dejar uno principal y hasta dos distritos adicionales por ahora.</p>
         </div>
 
         <div class="faq-item">
-          <h4>¿Qué pasa si el docente ya estaba registrado?</h4>
-          <p>Se busca por correo y se actualiza su fila existente en lugar de duplicar datos.</p>
+          <h4>¿Se puede mejorar más?</h4>
+          <p>Sí. Después podemos sumar actualización de preferencias, APD reales y estadísticas en vivo.</p>
         </div>
 
         <div class="faq-item">
-          <h4>¿Después se puede mejorar más?</h4>
-          <p>Sí. El siguiente paso natural es permitir edición de preferencias y mostrar APD reales en la web.</p>
+          <h4>¿Respeta lo anterior?</h4>
+          <p>Sí. La idea es respetar la lógica que ya venías usando con tu sistema APD.</p>
         </div>
       </div>
     </div>
@@ -577,56 +929,95 @@
     </div>
   </footer>
 
+  <a class="floating-cta" href="#registro">Registrarme</a>
+
   <script>
-    const WEB_APP_URL = "PEGAR_AQUI_LA_URL_DEL_APPS_SCRIPT";
+    const DISTRITOS = [
+      "Adolfo Alsina","Adolfo Gonzales Chaves","Alberti","Almirante Brown","Arrecifes",
+      "Avellaneda","Ayacucho","Azul","Bahía Blanca","Balcarce","Baradero","Benito Juárez",
+      "Berazategui","Berisso","Bolívar","Bragado","Brandsen","Campana","Cañuelas",
+      "Capitán Sarmiento","Carlos Casares","Carlos Tejedor","Carmen de Areco","Castelli",
+      "Chacabuco","Chascomús","Chivilcoy","Colón","Coronel Dorrego","Coronel Pringles",
+      "Coronel Rosales","Coronel Suárez","Daireaux","Dolores","Ensenada","Escobar",
+      "Esteban Echeverría","Exaltación de la Cruz","Ezeiza","Florencio Varela",
+      "Florentino Ameghino","General Alvarado","General Alvear","General Arenales",
+      "General Belgrano","General Guido","General Juan Madariaga","General La Madrid",
+      "General Las Heras","General Lavalle","General Paz","General Pinto",
+      "General Pueyrredón","General Rodríguez","General San Martín","General Viamonte",
+      "General Villegas","Guaminí","Hipólito Yrigoyen","Hurlingham","Ituzaingó",
+      "José C. Paz","Junín","La Costa","La Matanza","La Plata","Lanús","Laprida",
+      "Las Flores","Leandro N. Alem","Lincoln","Lobería","Lobos","Lomas de Zamora",
+      "Luján","Magdalena","Maipú","Malvinas Argentinas","Mar Chiquita","Marcos Paz",
+      "Mercedes","Merlo","Monte","Monte Hermoso","Moreno","Morón","Navarro",
+      "Necochea","Nueve de Julio","Olavarría","Patagones","Pehuajó","Pellegrini",
+      "Pergamino","Pila","Pilar","Pinamar","Presidente Perón","Puán","Punta Indio",
+      "Quilmes","Ramallo","Rauch","Rivadavia","Rojas","Roque Pérez","Saavedra",
+      "Saladillo","Salliqueló","Salto","San Andrés de Giles","San Antonio de Areco",
+      "San Cayetano","San Fernando","San Isidro","San Miguel","San Nicolás","San Pedro",
+      "San Vicente","Suipacha","Tandil","Tapalqué","Tigre","Tordillo","Tornquist",
+      "Trenque Lauquen","Tres Arroyos","Tres de Febrero","Tres Lomas",
+      "Veinticinco de Mayo","Vicente López","Villa Gesell","Villarino","Zárate"
+    ];
+
+    function cargarDistritos() {
+      const selects = [
+        document.getElementById("distritoPrincipal"),
+        document.getElementById("distritoInteres2"),
+        document.getElementById("distritoInteres3")
+      ];
+
+      selects.forEach(select => {
+        DISTRITOS.forEach(distrito => {
+          const option = document.createElement("option");
+          option.value = distrito;
+          option.textContent = distrito;
+          select.appendChild(option);
+        });
+      });
+    }
+
+    cargarDistritos();
 
     const form = document.getElementById("registroForm");
     const msgOk = document.getElementById("mensajeOk");
     const msgError = document.getElementById("mensajeError");
 
-    form.addEventListener("submit", async function(e) {
+    form.addEventListener("submit", function(e) {
       e.preventDefault();
 
       msgOk.style.display = "none";
       msgError.style.display = "none";
 
-      const data = {
-        nombre: document.getElementById("nombre").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        celular: document.getElementById("celular").value.trim(),
-        distritoPrincipal: document.getElementById("distritoPrincipal").value.trim(),
-        otrosDistritos: document.getElementById("otrosDistritos").value.trim(),
-        materia1: document.getElementById("materia1").value.trim(),
-        materia2: document.getElementById("materia2").value.trim(),
-        materia3: document.getElementById("materia3").value.trim(),
-        nivelModalidad: document.getElementById("nivelModalidad").value.trim(),
-        turno: document.getElementById("turno").value.trim(),
-        tipoCargo: document.getElementById("tipoCargo").value.trim()
-      };
+      const distritoPrincipal = document.getElementById("distritoPrincipal").value;
+      const distrito2 = document.getElementById("distritoInteres2").value;
+      const distrito3 = document.getElementById("distritoInteres3").value;
+      const aceptaEmail = document.getElementById("aceptoEmail").checked;
+      const aceptaTyC = document.getElementById("aceptoTyC").checked;
 
-      try {
-        const res = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
+      const distritosElegidos = [distritoPrincipal, distrito2, distrito3].filter(Boolean);
+      const sinDuplicados = new Set(distritosElegidos);
 
-        const json = await res.json();
-
-        if (json.ok) {
-          msgOk.textContent = json.mensaje || "Registro enviado correctamente.";
-          msgOk.style.display = "block";
-          form.reset();
-        } else {
-          msgError.textContent = json.mensaje || "No se pudo enviar el registro.";
-          msgError.style.display = "block";
-        }
-      } catch (error) {
-        msgError.textContent = "Error al conectar con el servidor. Revisá la URL del Apps Script y la implementación.";
+      if (sinDuplicados.size !== distritosElegidos.length) {
+        msgError.textContent = "No repitas el mismo distrito en más de un campo.";
         msgError.style.display = "block";
+        return;
       }
+
+      if (!aceptaEmail) {
+        msgError.textContent = "Debés aceptar recibir alertas por email.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      if (!aceptaTyC) {
+        msgError.textContent = "Debés aceptar los términos y condiciones.";
+        msgError.style.display = "block";
+        return;
+      }
+
+      msgOk.textContent = "La interfaz quedó lista. Después conectamos este formulario con Apps Script para guardar el registro real.";
+      msgOk.style.display = "block";
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   </script>
 
