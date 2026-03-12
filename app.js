@@ -236,16 +236,33 @@ function renderizarDashboard(data) {
   }
 
   if (panelAlertas) {
-    if (alertas.length > 0) {
-      panelAlertas.innerHTML = `
-        <ul class="lista-simple">
-          ${alertas.map(a => `<li>${escapeHtml(String(a))}</li>`).join("")}
-        </ul>
-      `;
-    } else {
-      panelAlertas.innerHTML = `<p>No hay alertas aún.</p>`;
-    }
+  if (alertas.length > 0) {
+    panelAlertas.innerHTML = `
+      <div class="alertas-grid">
+        ${alertas.map(a => `
+          <div class="alerta-item">
+            <h4>${escapeHtml(a.titulo || "APD")}</h4>
+            <p><strong>Distrito:</strong> ${escapeHtml(a.distrito || "-")}</p>
+            <p><strong>Escuela:</strong> ${escapeHtml(a.escuela || "-")}</p>
+            <p><strong>Turno:</strong> ${escapeHtml(a.turno || "-")}</p>
+            <p><strong>Nivel / modalidad:</strong> ${escapeHtml(a.nivel_modalidad || "-")}</p>
+            <p><strong>Cargo:</strong> ${escapeHtml(a.cargo || "-")}</p>
+            <p><strong>Materia:</strong> ${escapeHtml(a.materia || "-")}</p>
+            <p><strong>Curso / división:</strong> ${escapeHtml(a.curso_division || "-")}</p>
+            <p><strong>Jornada:</strong> ${escapeHtml(a.jornada || "-")}</p>
+            <p><strong>Módulos:</strong> ${escapeHtml(a.modulos || "-")}</p>
+            <p><strong>Revista:</strong> ${escapeHtml(a.revista || "-")}</p>
+            <p><strong>Domicilio:</strong> ${escapeHtml(a.domicilio || "-")}</p>
+            <p><strong>Cierre:</strong> ${escapeHtml(a.fecha_cierre_fmt || "-")}</p>
+            <p><strong>ID:</strong> ${escapeHtml(a.iddetalle || "-")}</p>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  } else {
+    panelAlertas.innerHTML = `<p>No hay alertas publicadas compatibles todavía.</p>`;
   }
+}
 
   if (panelHistorial) {
     if (historial.length > 0) {
