@@ -8,89 +8,157 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-badge">APD</div>
-      <div>
-        <h1>APDocentePBA</h1>
-        <p>Alertas y seguimiento de APD</p>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="logo.png" alt="Logo APDocentePBA" class="logo" />
+        <div>
+          <h1>APDocentePBA</h1>
+          <p>Sistema para alertas docentes de la Provincia de Buenos Aires</p>
+        </div>
       </div>
-    </div>
 
-    <div class="top-actions">
-      <button type="button" id="btnHome">Inicio</button>
-      <button type="button" id="btnAuth" class="primary">Ingresar</button>
-      <button type="button" id="btnLogout" hidden>Salir</button>
+      <nav class="nav">
+        <button class="nav-btn" onclick="mostrarSeccion('inicio')">Inicio</button>
+        <button class="nav-btn" onclick="mostrarSeccion('registro')">Registro</button>
+        <button class="nav-btn" onclick="mostrarSeccion('login')">Login</button>
+        <button class="nav-btn hidden" id="btn-nav-panel" onclick="cargarDashboard()">Panel</button>
+      </nav>
     </div>
   </header>
 
   <main>
-    <section id="view-home" class="view active">
-      <div class="hero">
-        <div class="hero-left">
-          <span class="pill">Sistema docente</span>
-          <h2>Recibí APD compatibles con tu perfil</h2>
-          <p>
-            Registrate, configurá tus preferencias y recibí alertas cuando aparezcan APD que coincidan con tu perfil docente.
-          </p>
-          <button type="button" id="btnHeroRegister" class="primary">Crear cuenta</button>
-        </div>
+    <!-- INICIO -->
+    <section id="inicio" class="section">
+      <div class="container hero">
+        <h2>Bienvenido a APDocentePBA</h2>
+        <p>
+          Registrate, iniciá sesión y accedé a tu panel docente para recibir alertas,
+          ver historial y administrar tus preferencias.
+        </p>
+      </div>
+    </section>
 
-        <div class="hero-card">
-          <h3>Qué incluye</h3>
-          <ul>
-            <li>Registro rápido</li>
-            <li>Ingreso con contraseña</li>
-            <li>Ingreso con Google</li>
-            <li>Preferencias por distrito, materia y turno</li>
-            <li>Alertas ordenadas por coincidencia</li>
-            <li>Historial y estadísticas</li>
-          </ul>
+    <!-- REGISTRO -->
+    <section id="registro" class="section hidden">
+      <div class="container card">
+        <h2>Registro docente</h2>
+        <form id="form-registro">
+          <div class="grid-2">
+            <div>
+              <label for="reg-nombre">Nombre</label>
+              <input type="text" id="reg-nombre" required />
+            </div>
+            <div>
+              <label for="reg-apellido">Apellido</label>
+              <input type="text" id="reg-apellido" required />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label for="reg-email">Email</label>
+              <input type="email" id="reg-email" required />
+            </div>
+            <div>
+              <label for="reg-celular">Celular</label>
+              <input type="text" id="reg-celular" />
+            </div>
+          </div>
+
+          <div>
+            <label for="reg-password">Contraseña</label>
+            <input type="password" id="reg-password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Registrarme</button>
+          <p id="registro-msg" class="msg"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="login" class="section hidden">
+      <div class="container card">
+        <h2>Iniciar sesión</h2>
+
+        <form id="form-login">
+          <div>
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required />
+          </div>
+
+          <div>
+            <label for="login-password">Contraseña</label>
+            <input type="password" id="login-password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Ingresar</button>
+          <p id="login-msg" class="msg"></p>
+        </form>
+
+        <hr class="separator" />
+
+        <h3>O ingresar con Google</h3>
+        <div id="google-signin-container">
+          <div id="g_id_onload"
+               data-client_id="PEGAR_AQUI_TU_GOOGLE_CLIENT_ID"
+               data-callback="handleGoogleLogin">
+          </div>
+          <div class="g_id_signin" data-type="standard"></div>
         </div>
       </div>
     </section>
 
-    <section id="view-auth" class="view">
-      <div class="auth-wrapper">
-        <div class="auth-card">
-          <div class="auth-tabs">
-            <button type="button" id="tabLogin" class="active">Ingresar</button>
-            <button type="button" id="tabRegister">Registrarse</button>
+    <!-- PANEL DOCENTE -->
+    <section id="panel-docente" class="section hidden">
+      <div class="container">
+        <div class="panel-header">
+          <div>
+            <h2 id="panel-bienvenida">Bienvenido/a</h2>
+            <p id="panel-subtitulo">Cargando panel...</p>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-recargar-panel" class="btn btn-secondary">Recargar</button>
+            <button id="btn-logout" class="btn btn-danger">Cerrar sesión</button>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="panel-card">
+            <h3>Datos del docente</h3>
+            <div id="panel-datos-docente">
+              <p>Cargando...</p>
+            </div>
           </div>
 
-          <div id="loginBox">
-            <h3>Ingreso</h3>
-
-            <label for="loginEmail">Email</label>
-            <input id="loginEmail" type="email" />
-
-            <label for="loginPassword">Contraseña</label>
-            <input id="loginPassword" type="password" />
-
-            <button type="button" id="btnLogin" class="primary">Ingresar</button>
-
-            <div id="googleLoginBox"></div>
+          <div class="panel-card">
+            <h3>Preferencias</h3>
+            <div id="panel-preferencias">
+              <p>Cargando...</p>
+            </div>
           </div>
 
-          <div id="registerBox" hidden>
-            <h3>Registro docente</h3>
-
-            <label for="regNombre">Nombre</label>
-            <input id="regNombre" type="text" />
-
-            <label for="regApellido">Apellido</label>
-            <input id="regApellido" type="text" />
-
-            <label for="regEmail">Email</label>
-            <input id="regEmail" type="email" />
-
-            <label for="regPassword">Contraseña</label>
-            <input id="regPassword" type="password" />
-
-            <button type="button" id="btnRegister" class="primary">Guardar registro</button>
+          <div class="panel-card">
+            <h3>Alertas APD</h3>
+            <div id="panel-alertas">
+              <p>Cargando...</p>
+            </div>
           </div>
 
-          <div id="authMsg"></div>
+          <div class="panel-card">
+            <h3>Historial</h3>
+            <div id="panel-historial">
+              <p>Cargando...</p>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h3>Estadísticas</h3>
+            <div id="panel-estadisticas">
+              <p>Cargando...</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
