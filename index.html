@@ -28,21 +28,20 @@
   </header>
 
   <main>
-    <!-- INICIO -->
     <section id="inicio" class="section">
       <div class="container hero">
         <h2>Bienvenido a APDocentePBA</h2>
         <p>
-          Registrate, iniciá sesión y accedé a tu panel docente para recibir alertas,
-          ver historial y administrar tus preferencias.
+          Registrate, iniciá sesión y configurá tus preferencias para recibir alertas
+          según distrito, materias, nivel, turnos y cargos.
         </p>
       </div>
     </section>
 
-    <!-- REGISTRO -->
     <section id="registro" class="section hidden">
       <div class="container card">
         <h2>Registro docente</h2>
+
         <form id="form-registro">
           <div class="grid-2">
             <div>
@@ -77,7 +76,6 @@
       </div>
     </section>
 
-    <!-- LOGIN -->
     <section id="login" class="section hidden">
       <div class="container card">
         <h2>Iniciar sesión</h2>
@@ -100,17 +98,15 @@
         <hr class="separator" />
 
         <h3>O ingresar con Google</h3>
-        <div id="google-signin-container">
-          <div id="g_id_onload"
-               data-client_id="650896364013-s3o36ckvoi42947v6ummmgdkdmsgondo.apps.googleusercontent.com"
-               data-callback="handleGoogleLogin">
-          </div>
-          <div class="g_id_signin" data-type="standard"></div>
+
+        <div id="g_id_onload"
+             data-client_id="PEGAR_AQUI_TU_GOOGLE_CLIENT_ID"
+             data-callback="handleGoogleLogin">
         </div>
+        <div class="g_id_signin" data-type="standard"></div>
       </div>
     </section>
 
-    <!-- PANEL DOCENTE -->
     <section id="panel-docente" class="section hidden">
       <div class="container">
         <div class="panel-header">
@@ -118,6 +114,7 @@
             <h2 id="panel-bienvenida">Bienvenido/a</h2>
             <p id="panel-subtitulo">Cargando panel...</p>
           </div>
+
           <div class="panel-actions">
             <button id="btn-recargar-panel" class="btn btn-secondary">Recargar</button>
             <button id="btn-logout" class="btn btn-danger">Cerrar sesión</button>
@@ -133,8 +130,8 @@
           </div>
 
           <div class="panel-card">
-            <h3>Preferencias</h3>
-            <div id="panel-preferencias">
+            <h3>Preferencias guardadas</h3>
+            <div id="panel-preferencias-resumen">
               <p>Cargando...</p>
             </div>
           </div>
@@ -159,6 +156,68 @@
               <p>Cargando...</p>
             </div>
           </div>
+        </div>
+
+        <div class="panel-card preferences-card">
+          <h3>Configurar notificaciones</h3>
+
+          <form id="form-preferencias">
+            <div class="grid-2">
+              <div>
+                <label for="pref-distrito-principal">Distrito principal</label>
+                <input type="text" id="pref-distrito-principal" placeholder="Ej: AVELLANEDA" />
+              </div>
+
+              <div>
+                <label for="pref-otros-distritos">Otros distritos</label>
+                <input type="text" id="pref-otros-distritos" placeholder="Ej: LANUS,QUILMES" />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div>
+                <label for="pref-materias">Materias</label>
+                <input type="text" id="pref-materias" placeholder="Ej: MATEMATICA,INFORMATICA" />
+              </div>
+
+              <div>
+                <label for="pref-nivel-modalidad">Nivel / modalidad</label>
+                <input type="text" id="pref-nivel-modalidad" placeholder="Ej: SECUNDARIA TECNICA" />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div>
+                <label for="pref-turnos">Turnos</label>
+                <input type="text" id="pref-turnos" placeholder="Ej: MAÑANA,TARDE" />
+              </div>
+
+              <div>
+                <label for="pref-cargos">Cargos</label>
+                <input type="text" id="pref-cargos" placeholder="Ej: PROFESOR,PRECEPTOR" />
+              </div>
+            </div>
+
+            <div class="grid-3 checks">
+              <label class="check-item">
+                <input type="checkbox" id="pref-alertas-activas" />
+                Alertas activas
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" id="pref-alertas-email" />
+                Recibir por email
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" id="pref-alertas-whatsapp" />
+                Recibir por WhatsApp
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar preferencias</button>
+            <p id="preferencias-msg" class="msg"></p>
+          </form>
         </div>
       </div>
     </section>
