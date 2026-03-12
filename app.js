@@ -1,164 +1,250 @@
 const WEB_APP_URL = "https://script.google.com/macros/library/d/1ylVMgGnx0IFeoOvqt3nhreEYuKvQdioCJi24V_djUXooLcW8x1jtoJeT/2";
-const GOOGLE_CLIENT_ID = "650896364013-s3o36ckvoi42947v6ummmgdkdmsgondo.apps.googleusercontent.com";
-const TOKEN_KEY = "apd_token";
 
-function qs(id) {
-  return document.getElementById(id);
+function mostrarSeccion(id) {
+  const secciones = document.querySelectorAll("main section");
+  secciones.forEach(sec => sec.classList.add("hidden"));
+
+  const destino = document.getElementById(id);
+  if (destino) destino.classList.remove("hidden");
 }
 
-function setMsg(text) {
-  const box = qs("authMsg");
-  if (box) box.textContent = text || "";
+function guardarToken(token) {
+  localStorage.setItem("apd_token", token);
 }
 
-function showView(id) {
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  const target = qs(id);
-  if (target) target.classList.add("active");
+function obtenerToken() {
+  return localStorage.getItem("apd_token");
 }
 
-function showLogin() {
-  qs("tabLogin").classList.add("active");
-  qs("tabRegister").classList.remove("active");
-  qs("loginBox").hidden = false;
-  qs("registerBox").hidden = true;
-  setMsg("");
+function borrarToken() {
+  localStorage.removeItem("apd_token");
 }
 
-function showRegister() {
-  qs("tabRegister").classList.add("active");
-  qs("tabLogin").classList.remove("active");
-  qs("loginBox").hidden = true;
-  qs("registerBox").hidden = false;
-  setMsg("");
+function setNavPanelVisible(visible) {
+  const btn = document.getElementById("btn-nav-panel");
+  if (!btn) return;
+
+  if (visible) {
+    btn.classList.remove("hidden");
+  } else {
+    btn.classList.add("hidden");
+  }
 }
 
-async function postData(data) {
+function logout() {
+  borrarToken();
+  setNavPanelVisible(false);
+  mostrarSeccion("inicio");
+}
+
+async function enviarPost(payload) {
   const res = await fetch(WEB_APP_URL, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json;charset=utf-8"
+      "Content-Type": "text/plain;charset=utf-8"
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(payload)
   });
 
-  const text = await res.text();
-
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    console.error("Respuesta inválida:", text);
-    throw new Error("La API no devolvió JSON válido");
-  }
+  return await res.json();
 }
 
-async function registerUser() {
+async function registrarDocente(event) {
+  event.preventDefault();
+
+  const msg = document.getElementById("registro-msg");
+  msg.textContent = "Procesando...";
+
+  const payload = {
+    action: "register",
+    nombre: document.getElementById("reg-nombre").value.trim(),
+    apellido: document.getElementById("reg-apellido").value.trim(),
+    email: document.getElementById("reg-email").value.trim(),
+    celular: document.getElementById("reg-celular").value.trim(),
+    password: document.getElementById("reg-password").value
+  };
+
   try {
-    setMsg("Guardando registro...");
+    const data = await enviarPost(payload);
 
-    const data = {
-      action: "register",
-      nombre: qs("regNombre").value.trim(),
-      apellido: qs("regApellido").value.trim(),
-      email: qs("regEmail").value.trim(),
-      password: qs("regPassword").value
-    };
-
-    const j = await postData(data);
-    setMsg(j.message || j.error || "Respuesta recibida");
-  } catch (err) {
-    console.error(err);
-    setMsg("Error al registrar");
-  }
-}
-
-async function loginUser() {
-  try {
-    setMsg("Ingresando...");
-
-    const data = {
-      action: "login_password",
-      email: qs("loginEmail").value.trim(),
-      password: qs("loginPassword").value
-    };
-
-    const j = await postData(data);
-
-    if (j.token) {
-      localStorage.setItem(TOKEN_KEY, j.token);
-      setMsg("Login correcto");
-      qs("btnLogout").hidden = false;
+    if (data.ok) {
+      msg.textContent = data.message || "Registro correcto";
+      document.getElementById("form-registro").reset();
+      mostrarSeccion("login");
     } else {
-      setMsg(j.message || j.error || "No se pudo ingresar");
+      msg.textContent = data.message || "No se pudo registrar";
     }
-  } catch (err) {
-    console.error(err);
-    setMsg("Error al ingresar");
+  } catch (error) {
+    console.error(error);
+    msg.textContent = "Error de conexión al registrar";
   }
 }
 
-function handleGoogleLogin(response) {
-  postData({
-    action: "login_google",
-    credential: response.credential
-  })
-    .then(j => {
-      if (j.token) {
-        localStorage.setItem(TOKEN_KEY, j.token);
-        setMsg("Login con Google correcto");
-        qs("btnLogout").hidden = false;
-      } else {
-        setMsg(j.message || j.error || "No se pudo ingresar con Google");
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      setMsg("Error con Google");
-    });
+async function loginPassword(event) {
+  event.preventDefault();
+
+  const msg = document.getElementById("login-msg");
+  msg.textContent = "Ingresando...";
+
+  const payload = {
+    action: "login_password",
+    email: document.getElementById("login-email").value.trim(),
+    password: document.getElementById("login-password").value
+  };
+
+  try {
+    const data = await enviarPost(payload);
+
+    if (!data.ok || !data.token) {
+      msg.textContent = data.message || "Login incorrecto";
+      return;
+    }
+
+    msg.textContent = "Login correcto";
+    guardarToken(data.token);
+    setNavPanelVisible(true);
+    await cargarDashboard();
+  } catch (error) {
+    console.error(error);
+    msg.textContent = "Error de conexión en login";
+  }
 }
 
-function renderGoogleButtonSafe() {
-  if (!window.google || !window.google.accounts || !qs("googleLoginBox")) {
+async function handleGoogleLogin(response) {
+  const msg = document.getElementById("login-msg");
+  if (msg) msg.textContent = "Validando Google...";
+
+  try {
+    const data = await enviarPost({
+      action: "login_google",
+      credential: response.credential
+    });
+
+    if (!data.ok || !data.token) {
+      if (msg) msg.textContent = data.message || "No se pudo iniciar con Google";
+      return;
+    }
+
+    if (msg) msg.textContent = "Login con Google correcto";
+    guardarToken(data.token);
+    setNavPanelVisible(true);
+    await cargarDashboard();
+  } catch (error) {
+    console.error(error);
+    if (msg) msg.textContent = "Error de conexión con Google";
+  }
+}
+
+async function cargarDashboard() {
+  const token = obtenerToken();
+
+  if (!token) {
+    setNavPanelVisible(false);
+    mostrarSeccion("inicio");
     return;
   }
 
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleGoogleLogin
-  });
+  mostrarSeccion("panel-docente");
 
-  google.accounts.id.renderButton(
-    qs("googleLoginBox"),
-    {
-      theme: "outline",
-      size: "large"
+  try {
+    const data = await enviarPost({
+      action: "dashboard",
+      token: token
+    });
+
+    if (!data.ok) {
+      alert(data.message || "Sesión inválida");
+      logout();
+      return;
     }
-  );
+
+    renderizarDashboard(data);
+    setNavPanelVisible(true);
+  } catch (error) {
+    console.error(error);
+    alert("No se pudo cargar el panel docente");
+  }
 }
 
-function boot() {
-  qs("btnHome").addEventListener("click", () => showView("view-home"));
-  qs("btnAuth").addEventListener("click", () => {
-    showView("view-auth");
-    showLogin();
-  });
-  qs("btnHeroRegister").addEventListener("click", () => {
-    showView("view-auth");
-    showRegister();
-  });
-  qs("tabLogin").addEventListener("click", showLogin);
-  qs("tabRegister").addEventListener("click", showRegister);
-  qs("btnRegister").addEventListener("click", registerUser);
-  qs("btnLogin").addEventListener("click", loginUser);
-  qs("btnLogout").addEventListener("click", () => {
-    localStorage.removeItem(TOKEN_KEY);
-    qs("btnLogout").hidden = true;
-    setMsg("Sesión cerrada");
-    showView("view-home");
-  });
+function renderizarDashboard(data) {
+  const docente = data.docente || {};
+  const preferencias = data.preferencias || {};
+  const alertas = data.alertas || [];
+  const historial = data.historial || [];
+  const estadisticas = data.estadisticas || {};
 
-  renderGoogleButtonSafe();
-  setTimeout(renderGoogleButtonSafe, 1000);
+  const nombreCompleto = `${docente.nombre || ""} ${docente.apellido || ""}`.trim();
+
+  document.getElementById("panel-bienvenida").textContent =
+    nombreCompleto ? `Bienvenido/a, ${nombreCompleto}` : "Bienvenido/a";
+
+  document.getElementById("panel-subtitulo").textContent =
+    docente.email ? `Sesión iniciada con ${docente.email}` : "Panel docente";
+
+  document.getElementById("panel-datos-docente").innerHTML = `
+    <p><strong>ID:</strong> ${docente.id || "-"}</p>
+    <p><strong>Nombre:</strong> ${docente.nombre || "-"}</p>
+    <p><strong>Apellido:</strong> ${docente.apellido || "-"}</p>
+    <p><strong>Email:</strong> ${docente.email || "-"}</p>
+    <p><strong>Celular:</strong> ${docente.celular || "-"}</p>
+    <p><strong>Estado:</strong> ${
+      docente.activo
+        ? '<span class="badge-ok">Activo</span>'
+        : '<span class="badge-off">Inactivo</span>'
+    }</p>
+  `;
+
+  document.getElementById("panel-preferencias").innerHTML = `
+    <p><strong>Modo de alertas:</strong> ${preferencias.modo_alertas || "-"}</p>
+    <p><strong>Distrito:</strong> ${preferencias.distrito || "-"}</p>
+    <p><strong>Nivel:</strong> ${preferencias.nivel || "-"}</p>
+    <p><strong>Materias:</strong> ${preferencias.materias || "-"}</p>
+  `;
+
+  if (alertas.length > 0) {
+    document.getElementById("panel-alertas").innerHTML = `
+      <ul class="lista-simple">
+        ${alertas.map(a => `<li>${a}</li>`).join("")}
+      </ul>
+    `;
+  } else {
+    document.getElementById("panel-alertas").innerHTML = `<p>No hay alertas aún.</p>`;
+  }
+
+  if (historial.length > 0) {
+    document.getElementById("panel-historial").innerHTML = `
+      <ul class="lista-simple">
+        ${historial.map(h => `<li>${h}</li>`).join("")}
+      </ul>
+    `;
+  } else {
+    document.getElementById("panel-historial").innerHTML = `<p>Sin historial todavía.</p>`;
+  }
+
+  document.getElementById("panel-estadisticas").innerHTML = `
+    <p><strong>Total alertas:</strong> ${estadisticas.total_alertas ?? 0}</p>
+    <p><strong>Leídas:</strong> ${estadisticas.alertas_leidas ?? 0}</p>
+    <p><strong>No leídas:</strong> ${estadisticas.alertas_no_leidas ?? 0}</p>
+    <p><strong>Último acceso:</strong> ${estadisticas.ultimo_acceso || "-"}</p>
+  `;
 }
 
-document.addEventListener("DOMContentLoaded", boot);
+document.addEventListener("DOMContentLoaded", () => {
+  const formRegistro = document.getElementById("form-registro");
+  const formLogin = document.getElementById("form-login");
+  const btnLogout = document.getElementById("btn-logout");
+  const btnRecargar = document.getElementById("btn-recargar-panel");
+
+  if (formRegistro) formRegistro.addEventListener("submit", registrarDocente);
+  if (formLogin) formLogin.addEventListener("submit", loginPassword);
+  if (btnLogout) btnLogout.addEventListener("click", logout);
+  if (btnRecargar) btnRecargar.addEventListener("click", cargarDashboard);
+
+  const token = obtenerToken();
+  if (token) {
+    cargarDashboard();
+  } else {
+    setNavPanelVisible(false);
+    mostrarSeccion("inicio");
+  }
+});
