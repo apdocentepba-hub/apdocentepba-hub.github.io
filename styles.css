@@ -267,3 +267,27 @@ input[type="password"] {
     font-size: 24px;
   }
 }
+.alertas-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.alerta-item {
+  background: #f8fafc;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.alerta-item h4 {
+  margin: 0 0 10px 0;
+  color: #133f7c;
+  font-size: 16px;
+}
+
+.alerta-item p {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
