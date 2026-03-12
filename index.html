@@ -1,347 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>APDocentePBA</title>
-  <meta name="color-scheme" content="light dark" />
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>APDocentePBA</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 </head>
+
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-badge">APD</div>
-      <div>
-        <h1>APDocentePBA</h1>
-        <p>Alertas y seguimiento de APD</p>
-      </div>
-    </div>
-    <div class="top-actions">
-      <button id="btnGoHome" class="ghost">Inicio</button>
-      <button id="btnGoAuth" class="primary">Ingresar</button>
-      <button id="btnLogout" class="danger hidden">Salir</button>
-    </div>
-  </header>
 
-  <main>
-    <!-- HOME -->
-    <section id="view-home" class="view active">
-      <div class="hero">
-        <div class="hero-left">
-          <span class="pill">Sistema docente</span>
-          <h2>Recibí APD compatibles con tu perfil</h2>
-          <p>
-            Registrate, configurá tus preferencias y consultá alertas,
-            historial y estadísticas desde un panel único.
-          </p>
-          <div class="hero-buttons">
-            <button id="btnHeroRegister" class="primary">Crear cuenta</button>
-            <button id="btnHeroLogin" class="ghost">Ya tengo cuenta</button>
-          </div>
-        </div>
+<header class="topbar">
 
-        <div class="hero-card">
-          <h3>Qué incluye</h3>
-          <ul>
-            <li>Registro rápido</li>
-            <li>Ingreso con contraseña</li>
-            <li>Ingreso con Google</li>
-            <li>Preferencias por distrito, materia, turno y cargo</li>
-            <li>Alertas ordenadas por coincidencia</li>
-            <li>Historial y estadísticas</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+<div class="brand">
+<div class="brand-badge">APD</div>
+<div>
+<h1>APDocentePBA</h1>
+<p>Alertas y seguimiento de APD</p>
+</div>
+</div>
 
-    <!-- AUTH -->
-    <section id="view-auth" class="view">
-      <div class="auth-wrapper">
-        <div class="auth-card">
-          <div class="tabs">
-            <button class="tab active" data-tab="login">Ingresar</button>
-            <button class="tab" data-tab="register">Registrarse</button>
-          </div>
+<div class="top-actions">
+<button id="btnHome">Inicio</button>
+<button id="btnAuth">Ingresar</button>
+<button id="btnLogout" hidden>Salir</button>
+</div>
 
-          <div id="tab-login" class="tab-content active">
-            <h3>Ingreso</h3>
-            <div class="form-grid one">
-              <div class="field">
-                <label for="login_email">Email</label>
-                <input id="login_email" type="email" placeholder="tuemail@dominio.com" />
-              </div>
-              <div class="field">
-                <label for="login_password">Contraseña</label>
-                <input id="login_password" type="password" placeholder="Tu contraseña" />
-              </div>
-            </div>
+</header>
 
-            <div class="button-row">
-              <button id="btnLogin" class="primary">Ingresar</button>
-            </div>
+<main>
 
-            <div class="divider"><span>o</span></div>
+<section id="view-home" class="view active">
 
-            <div id="googleLoginBox" class="google-box"></div>
+<div class="hero">
 
-            <p id="auth_msg" class="msg"></p>
-          </div>
+<div class="hero-left">
 
-          <div id="tab-register" class="tab-content">
-            <h3>Registro docente</h3>
-            <div class="form-grid two">
-              <div class="field">
-                <label for="reg_nombre">Nombre</label>
-                <input id="reg_nombre" type="text" />
-              </div>
-              <div class="field">
-                <label for="reg_apellido">Apellido</label>
-                <input id="reg_apellido" type="text" />
-              </div>
-              <div class="field full">
-                <label for="reg_email">Email</label>
-                <input id="reg_email" type="email" />
-              </div>
-              <div class="field full">
-                <label for="reg_password">Contraseña</label>
-                <input id="reg_password" type="password" placeholder="Mínimo 6 caracteres" />
-              </div>
-            </div>
+<span class="pill">Sistema docente</span>
 
-            <div class="button-row">
-              <button id="btnRegister" class="primary">Guardar registro</button>
-            </div>
+<h2>Recibí APD compatibles con tu perfil</h2>
 
-            <p id="register_msg" class="msg"></p>
-          </div>
-        </div>
-      </div>
-    </section>
+<p>
+Registrate, configurá tus preferencias y recibí alertas cuando aparezcan APD que coincidan con tu perfil docente.
+</p>
 
-    <!-- PANEL -->
-    <section id="view-panel" class="view">
-      <div class="panel-layout">
-        <aside class="sidebar">
-          <div class="user-mini">
-            <div class="avatar" id="avatarCircle">D</div>
-            <div>
-              <strong id="sideUserName">Docente</strong>
-              <p id="sideUserEmail">email</p>
-            </div>
-          </div>
+<button id="btnHeroRegister" class="primary">
+Crear cuenta
+</button>
 
-          <nav class="menu">
-            <button class="sidebtn active" data-screen="inicio">Inicio</button>
-            <button class="sidebtn" data-screen="perfil">Mi perfil</button>
-            <button class="sidebtn" data-screen="preferencias">Preferencias</button>
-            <button class="sidebtn" data-screen="alertas">Alertas</button>
-            <button class="sidebtn" data-screen="historial">Historial</button>
-            <button class="sidebtn" data-screen="estadisticas">Estadísticas</button>
-          </nav>
-        </aside>
+</div>
 
-        <section class="panel-content">
-          <!-- INICIO -->
-          <div id="screen-inicio" class="screen active">
-            <div class="headline-card">
-              <h2 id="welcomeTitle">Bienvenido/a</h2>
-              <p id="welcomeSub">Panel docente</p>
-            </div>
+<div class="hero-card">
 
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span>Total alertas</span>
-                <strong id="stat_total">0</strong>
-              </div>
-              <div class="stat-card">
-                <span>Distrito más frecuente</span>
-                <strong id="stat_distrito">-</strong>
-              </div>
-              <div class="stat-card">
-                <span>Materia más frecuente</span>
-                <strong id="stat_materia">-</strong>
-              </div>
-              <div class="stat-card">
-                <span>Cargo más frecuente</span>
-                <strong id="stat_cargo">-</strong>
-              </div>
-            </div>
+<h3>Qué incluye</h3>
 
-            <div class="content-card">
-              <h3>Primeras alertas</h3>
-              <div id="homeAlerts" class="cards-list"></div>
-            </div>
-          </div>
+<ul>
+<li>Registro rápido</li>
+<li>Ingreso con contraseña</li>
+<li>Ingreso con Google</li>
+<li>Preferencias por distrito, materia y turno</li>
+<li>Alertas ordenadas por coincidencia</li>
+<li>Historial y estadísticas</li>
+</ul>
 
-          <!-- PERFIL -->
-          <div id="screen-perfil" class="screen">
-            <div class="content-card">
-              <h3>Mi perfil</h3>
+</div>
 
-              <div class="form-grid two">
-                <div class="field">
-                  <label for="perfil_nombre">Nombre</label>
-                  <input id="perfil_nombre" type="text" />
-                </div>
-                <div class="field">
-                  <label for="perfil_apellido">Apellido</label>
-                  <input id="perfil_apellido" type="text" />
-                </div>
-                <div class="field">
-                  <label for="perfil_email">Email</label>
-                  <input id="perfil_email" type="email" />
-                </div>
-                <div class="field">
-                  <label for="perfil_celular">Celular</label>
-                  <input id="perfil_celular" type="text" />
-                </div>
-                <div class="field full">
-                  <label for="perfil_password">Nueva contraseña</label>
-                  <input id="perfil_password" type="password" placeholder="Dejar vacío para no cambiar" />
-                </div>
-              </div>
+</div>
 
-              <div class="button-row">
-                <button id="btnSaveProfile" class="primary">Guardar perfil</button>
-              </div>
+</section>
 
-              <p id="perfil_msg" class="msg"></p>
-            </div>
-          </div>
+<section id="view-auth" class="view">
 
-          <!-- PREFERENCIAS -->
-          <div id="screen-preferencias" class="screen">
-            <div class="content-card">
-              <h3>Preferencias de búsqueda</h3>
+<div class="auth-wrapper">
 
-              <div class="form-grid two">
-                <div class="field">
-                  <label for="pref_distrito_principal">Distrito principal</label>
-                  <input id="pref_distrito_principal" list="distritosList" type="text" placeholder="Elegí o escribí un distrito" />
-                </div>
+<div class="auth-card">
 
-                <div class="field">
-                  <label for="pref_otros_distritos">Otros distritos</label>
-                  <input id="pref_otros_distritos" list="distritosList" type="text" placeholder="Ej: Avellaneda, Lanús, Quilmes" />
-                </div>
+<div class="auth-tabs">
+<button id="tabLogin" class="active">Ingresar</button>
+<button id="tabRegister">Registrarse</button>
+</div>
 
-                <div class="field full">
-                  <label for="pref_materias">Materias / áreas</label>
-                  <input id="pref_materias" type="text" placeholder="Ej: Matemática, Física, Informática" />
-                </div>
+<div id="loginBox">
 
-                <div class="field">
-                  <label for="pref_nivel">Nivel / modalidad</label>
-                  <input id="pref_nivel" type="text" placeholder="Ej: Secundaria técnica" />
-                </div>
+<h3>Ingreso</h3>
 
-                <div class="field">
-                  <label for="pref_turnos">Turnos</label>
-                  <input id="pref_turnos" type="text" placeholder="Ej: Mañana, Tarde, Vespertino" />
-                </div>
+<label>Email</label>
+<input id="loginEmail" type="email">
 
-                <div class="field full">
-                  <label for="pref_cargos">Cargos</label>
-                  <input id="pref_cargos" type="text" placeholder="Ej: Provisional, Suplencia" />
-                </div>
+<label>Contraseña</label>
+<input id="loginPassword" type="password">
 
-                <div class="field full inline-check">
-                  <label>
-                    <input id="pref_acepta_email" type="checkbox" />
-                    Recibir alertas por email
-                  </label>
-                </div>
-              </div>
+<button id="btnLogin" class="primary">
+Ingresar
+</button>
 
-              <div class="button-row">
-                <button id="btnSavePrefs" class="primary">Guardar preferencias</button>
-              </div>
+<div id="googleLoginBox"></div>
 
-              <p id="pref_msg" class="msg"></p>
-            </div>
+</div>
 
-            <datalist id="distritosList">
-              <option value="Avellaneda"></option>
-              <option value="Lanús"></option>
-              <option value="Lomas de Zamora"></option>
-              <option value="Quilmes"></option>
-              <option value="Berazategui"></option>
-              <option value="Florencio Varela"></option>
-              <option value="Almirante Brown"></option>
-              <option value="Esteban Echeverría"></option>
-              <option value="Ezeiza"></option>
-              <option value="La Matanza"></option>
-              <option value="Morón"></option>
-              <option value="Merlo"></option>
-              <option value="San Martín"></option>
-              <option value="Vicente López"></option>
-              <option value="Tres de Febrero"></option>
-              <option value="Hurlingham"></option>
-              <option value="Ituzaingó"></option>
-              <option value="Moreno"></option>
-              <option value="José C. Paz"></option>
-              <option value="Malvinas Argentinas"></option>
-              <option value="San Miguel"></option>
-              <option value="Tigre"></option>
-              <option value="San Isidro"></option>
-              <option value="Pilar"></option>
-              <option value="Escobar"></option>
-              <option value="La Plata"></option>
-              <option value="Ensenada"></option>
-              <option value="Berisso"></option>
-              <option value="Brandsen"></option>
-              <option value="Mar del Plata"></option>
-              <option value="Bahía Blanca"></option>
-            </datalist>
-          </div>
+<div id="registerBox" hidden>
 
-          <!-- ALERTAS -->
-          <div id="screen-alertas" class="screen">
-            <div class="content-card">
-              <h3>Alertas compatibles</h3>
-              <div id="alertsList" class="cards-list"></div>
-            </div>
-          </div>
+<h3>Registro docente</h3>
 
-          <!-- HISTORIAL -->
-          <div id="screen-historial" class="screen">
-            <div class="content-card">
-              <h3>Historial</h3>
-              <div id="historyTable"></div>
-            </div>
-          </div>
+<label>Nombre</label>
+<input id="regNombre">
 
-          <!-- ESTADISTICAS -->
-          <div id="screen-estadisticas" class="screen">
-            <div class="content-card">
-              <h3>Estadísticas</h3>
+<label>Apellido</label>
+<input id="regApellido">
 
-              <div class="stats-columns">
-                <div>
-                  <h4>Por distrito</h4>
-                  <div id="statsDistrito"></div>
-                </div>
-                <div>
-                  <h4>Por materia</h4>
-                  <div id="statsMateria"></div>
-                </div>
-                <div>
-                  <h4>Por turno</h4>
-                  <div id="statsTurno"></div>
-                </div>
-                <div>
-                  <h4>Por cargo</h4>
-                  <div id="statsCargo"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </section>
-  </main>
+<label>Email</label>
+<input id="regEmail" type="email">
 
-  <script src="app.js"></script>
+<label>Contraseña</label>
+<input id="regPassword" type="password">
+
+<button id="btnRegister" class="primary">
+Guardar registro
+</button>
+
+</div>
+
+<div id="authMsg"></div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<script src="app.js"></script>
+
 </body>
+
 </html>
