@@ -21,12 +21,27 @@ function showScreen(id) {
 async function api(action, data = {}) {
   const payload = { action, ...data };
 
-  const res = await fetch(WEB_APP_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
+  const body = new URLSearchParams();
+  Object.entries(payload).forEach(([k, v]) => {
+    body.append(k, v == null ? "" : String(v));
   });
 
-  return await res.json();
+  const res = await fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    body: body.toString()
+  });
+
+  const text = await res.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("Respuesta no JSON del Apps Script:", text);
+    throw new Error("La API no devolvió JSON válido.");
+  }
 }
 
 function getToken() {
@@ -79,9 +94,22 @@ async function registerDocente() {
       acepta_terminos: qs("reg_terms").checked ? "SI" : "NO"
     };
 
+    if (!data.nombre || !data.email) {
+      qs("login_msg").textContent = "Completá al menos nombre y email.";
+      return;
+    }
+
+    qs("login_msg").textContent = "Guardando registro...";
+
     const r = await api("register", data);
-    qs("login_msg").textContent = r.ok ? "Registro guardado. Ahora pedí tu código." : (r.error || "Error");
+
     console.log("register response:", r);
+
+    if (r.ok) {
+      qs("login_msg").textContent = "Registro guardado. Ahora pedí tu código.";
+    } else {
+      qs("login_msg").textContent = r.error || "No se pudo guardar el registro.";
+    }
   } catch (err) {
     console.error("Error en registerDocente:", err);
     qs("login_msg").textContent = "Error al registrar. Revisá la consola.";
@@ -91,9 +119,18 @@ async function registerDocente() {
 async function sendCode() {
   try {
     const email = qs("login_email").value.trim();
+
+    if (!email) {
+      qs("login_msg").textContent = "Ingresá tu email.";
+      return;
+    }
+
+    qs("login_msg").textContent = "Enviando código...";
+
     const r = await api("request_login", { email });
-    qs("login_msg").textContent = r.ok ? "Código enviado a tu email." : (r.error || "Error");
+
     console.log("request_login response:", r);
+    qs("login_msg").textContent = r.ok ? "Código enviado a tu email." : (r.error || "Error");
   } catch (err) {
     console.error("Error en sendCode:", err);
     qs("login_msg").textContent = "Error al enviar código. Revisá la consola.";
@@ -150,7 +187,7 @@ async function loadDashboard() {
       ? probabilities.map(p => `
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
           <span>${p.combinacion}</span>
-          <span class="badge ${p.probabilidad.toLowerCase()}">${p.probabilidad}</span>
+          <span class="badge ${String(p.probabilidad || "").toLowerCase()}">${p.probabilidad}</span>
         </div>
       `).join("")
       : "<p>Sin datos suficientes todavía.</p>";
@@ -178,7 +215,7 @@ function renderNotifications(list) {
   }
 
   qs("notificationsTable").innerHTML = `
-    <table class="table">
+    <table>
       <thead>
         <tr>
           <th>Fecha</th>
@@ -249,7 +286,6 @@ async function boot() {
 
   qs("btnLogout").onclick = logout;
   qs("btnStart").onclick = () => showView("view-login");
-
   qs("btnRegister").onclick = registerDocente;
   qs("btnSendCode").onclick = sendCode;
   qs("btnVerifyCode").onclick = verifyCode;
