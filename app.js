@@ -1,4 +1,4 @@
-const WEB_APP_URL = "PEGAR_AQUI_TU_WEB_APP_URL";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFtHAZ8ItzTK7MQdqn-FaVVO6s4s4HTIttZDC0daJgn6TgkJvFBafgNLTG_PcG0HxMbg/exec";
 const TOKEN_KEY = "apd_token";
 
 function qs(id) {
