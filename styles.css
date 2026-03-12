@@ -1,112 +1,166 @@
 body{
-font-family:Arial;
-margin:0;
-background:#eef2f7;
+  font-family:Arial, Helvetica, sans-serif;
+  margin:0;
+  background:#eef2f7;
 }
 
 .topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#1f3b6d;
-color:white;
-padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1f3b6d;
+  color:white;
+  padding:15px 20px;
+  flex-wrap:wrap;
+  gap:12px;
 }
 
 .brand{
-display:flex;
-align-items:center;
-gap:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .brand-badge{
-background:#2f6df6;
-padding:8px;
-border-radius:6px;
-font-weight:bold;
+  background:#2f6df6;
+  padding:8px 10px;
+  border-radius:6px;
+  font-weight:bold;
+}
+
+.top-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
 .top-actions button{
-margin-left:10px;
+  padding:8px 12px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
 }
 
 .hero{
-display:flex;
-gap:40px;
-padding:40px;
+  display:flex;
+  gap:40px;
+  padding:40px;
+  max-width:1100px;
+  margin:auto;
 }
 
 .hero-left{
-flex:1;
+  flex:1;
 }
 
 .hero-card{
-background:white;
-padding:20px;
-border-radius:10px;
-width:300px;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:320px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
 
 .pill{
-background:#dce6ff;
-padding:5px 10px;
-border-radius:20px;
+  background:#dce6ff;
+  padding:5px 10px;
+  border-radius:20px;
+  display:inline-block;
+  margin-bottom:10px;
 }
 
 .primary{
-background:#2f6df6;
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:6px;
-cursor:pointer;
+  background:#2f6df6;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:8px;
+  cursor:pointer;
 }
 
 .view{
-display:none;
+  display:none;
 }
 
 .view.active{
-display:block;
+  display:block;
 }
 
 .auth-wrapper{
-display:flex;
-justify-content:center;
-margin-top:40px;
+  display:flex;
+  justify-content:center;
+  margin-top:40px;
+  padding:20px;
 }
 
 .auth-card{
-background:white;
-padding:30px;
-border-radius:10px;
-width:420px;
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  width:420px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 .auth-tabs{
-display:flex;
-gap:10px;
-margin-bottom:20px;
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
 }
 
 .auth-tabs button{
-flex:1;
-padding:10px;
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
 }
 
 .auth-tabs .active{
-background:#2f6df6;
-color:white;
+  background:#2f6df6;
+  color:white;
 }
 
 input{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border-radius:6px;
-border:1px solid #ccc;
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  box-sizing:border-box;
 }
 
 #googleLoginBox{
-margin-top:15px;
+  margin-top:15px;
+}
+
+#authMsg{
+  margin-top:14px;
+  color:#333;
+  min-height:20px;
+}
+
+@media (max-width:800px){
+  .hero{
+    flex-direction:column;
+    padding:20px;
+  }
+
+  .hero-card{
+    width:100%;
+    box-sizing:border-box;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .top-actions{
+    width:100%;
+  }
+
+  .auth-card{
+    width:100%;
+    box-sizing:border-box;
+  }
 }
