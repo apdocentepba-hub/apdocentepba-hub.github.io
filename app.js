@@ -1,4 +1,4 @@
-const WEB_APP_URL = "https://script.google.com/macros/library/d/1ylVMgGnx0IFeoOvqt3nhreEYuKvQdioCJi24V_djUXooLcW8x1jtoJeT/2";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFtHAZ8ItzTK7MQdqn-FaVVO6s4s4HTIttZDC0daJgn6TgkJvFBafgNLTG_PcG0HxMbg/exec";
 
 function mostrarSeccion(id) {
   const secciones = document.querySelectorAll("main section");
