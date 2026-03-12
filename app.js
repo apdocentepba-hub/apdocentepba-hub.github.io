@@ -1,5 +1,6 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFtHAZ8ItzTK7MQdqn-FaVVO6s4s4HTIttZDC0daJgn6TgkJvFBafgNLTG_PcG0HxMbg/exec";
-const TOKEN_KEY = "apd_token";
+const GOOGLE_CLIENT_ID = "PONER_AQUI_TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+const TOKEN_KEY = "apd_token_v2";
 
 function qs(id) {
   return document.getElementById(id);
@@ -10,18 +11,33 @@ function showView(id) {
   qs(id).classList.add("active");
 }
 
-function showScreen(id) {
+function showScreen(name) {
   document.querySelectorAll(".screen").forEach(v => v.classList.remove("active"));
-  qs(id).classList.add("active");
+  document.querySelectorAll(".sidebtn").forEach(v => v.classList.remove("active"));
+  qs("screen-" + name).classList.add("active");
+  document.querySelector(`.sidebtn[data-screen="${name}"]`)?.classList.add("active");
+}
 
-  document.querySelectorAll(".sidebtn").forEach(b => b.classList.remove("active"));
-  document.querySelector(`.sidebtn[data-screen="${id.replace("screen-", "")}"]`)?.classList.add("active");
+function setMsg(id, text) {
+  qs(id).textContent = text || "";
+}
+
+function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || "";
+}
+
+function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 async function api(action, data = {}) {
   const payload = { action, ...data };
-
   const body = new URLSearchParams();
+
   Object.entries(payload).forEach(([k, v]) => {
     body.append(k, v == null ? "" : String(v));
   });
@@ -35,27 +51,12 @@ async function api(action, data = {}) {
   });
 
   const text = await res.text();
-
   try {
     return JSON.parse(text);
   } catch (err) {
-    console.error("Respuesta no JSON del Apps Script:", text);
-    throw new Error("La API no devolvió JSON válido.");
+    console.error("Respuesta no JSON:", text);
+    throw new Error("La API no devolvió JSON válido");
   }
-}
-
-function getToken() {
-  return localStorage.getItem(TOKEN_KEY) || "";
-}
-
-function setToken(token) {
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-function logout() {
-  localStorage.removeItem(TOKEN_KEY);
-  qs("btnLogout").classList.add("hidden");
-  showView("view-public");
 }
 
 function setupTabs() {
@@ -63,241 +64,405 @@ function setupTabs() {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-
       btn.classList.add("active");
       qs("tab-" + btn.dataset.tab).classList.add("active");
+      setMsg("auth_msg", "");
+      setMsg("register_msg", "");
     });
   });
 }
 
-function setupScreens() {
+function setupSideMenu() {
   document.querySelectorAll(".sidebtn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      showScreen("screen-" + btn.dataset.screen);
-    });
+    btn.addEventListener("click", () => showScreen(btn.dataset.screen));
   });
 }
 
-async function registerDocente() {
+async function registerUser() {
   try {
-    const data = {
+    setMsg("register_msg", "Guardando registro...");
+
+    const r = await api("register", {
       nombre: qs("reg_nombre").value.trim(),
+      apellido: qs("reg_apellido").value.trim(),
       email: qs("reg_email").value.trim(),
-      celular: qs("reg_celular").value.trim(),
-      distrito_principal: qs("reg_distrito_principal").value.trim(),
-      otros_distritos_csv: qs("reg_otros_distritos").value.trim(),
-      materias_csv: qs("reg_materias").value.trim(),
-      nivel_modalidad: qs("reg_nivel").value.trim(),
-      turno_interes: qs("reg_turno").value.trim(),
-      tipo_cargo: qs("reg_tipo_cargo").value.trim(),
-      acepta_email: qs("reg_email_alerts").checked ? "SI" : "NO",
-      acepta_terminos: qs("reg_terms").checked ? "SI" : "NO"
-    };
-
-    if (!data.nombre || !data.email) {
-      qs("login_msg").textContent = "Completá al menos nombre y email.";
-      return;
-    }
-
-    qs("login_msg").textContent = "Guardando registro...";
-
-    const r = await api("register", data);
-
-    console.log("register response:", r);
-
-    if (r.ok) {
-      qs("login_msg").textContent = "Registro guardado. Ahora pedí tu código.";
-    } else {
-      qs("login_msg").textContent = r.error || "No se pudo guardar el registro.";
-    }
-  } catch (err) {
-    console.error("Error en registerDocente:", err);
-    qs("login_msg").textContent = "Error al registrar. Revisá la consola.";
-  }
-}
-
-async function sendCode() {
-  try {
-    const email = qs("login_email").value.trim();
-
-    if (!email) {
-      qs("login_msg").textContent = "Ingresá tu email.";
-      return;
-    }
-
-    qs("login_msg").textContent = "Enviando código...";
-
-    const r = await api("request_login", { email });
-
-    console.log("request_login response:", r);
-    qs("login_msg").textContent = r.ok ? "Código enviado a tu email." : (r.error || "Error");
-  } catch (err) {
-    console.error("Error en sendCode:", err);
-    qs("login_msg").textContent = "Error al enviar código. Revisá la consola.";
-  }
-}
-
-async function verifyCode() {
-  try {
-    const email = qs("login_email").value.trim();
-    const otp = qs("login_code").value.trim();
-
-    const r = await api("verify_login", { email, otp });
+      password: qs("reg_password").value
+    });
 
     if (!r.ok) {
-      qs("login_msg").textContent = r.error || "Error";
+      setMsg("register_msg", r.error || "No se pudo registrar");
+      return;
+    }
+
+    setMsg("register_msg", "Registro creado. Ahora podés ingresar.");
+    document.querySelector('.tab[data-tab="login"]').click();
+    qs("login_email").value = qs("reg_email").value.trim();
+    qs("login_password").value = "";
+  } catch (err) {
+    console.error(err);
+    setMsg("register_msg", "Error al registrar");
+  }
+}
+
+async function loginPassword() {
+  try {
+    setMsg("auth_msg", "Ingresando...");
+
+    const r = await api("login_password", {
+      email: qs("login_email").value.trim(),
+      password: qs("login_password").value
+    });
+
+    if (!r.ok) {
+      setMsg("auth_msg", r.error || "No se pudo ingresar");
       return;
     }
 
     setToken(r.token);
-    qs("btnLogout").classList.remove("hidden");
+    setMsg("auth_msg", "");
     await loadDashboard();
+    qs("btnLogout").classList.remove("hidden");
     showView("view-panel");
   } catch (err) {
-    console.error("Error en verifyCode:", err);
-    qs("login_msg").textContent = "Error al ingresar. Revisá la consola.";
+    console.error(err);
+    setMsg("auth_msg", "Error al ingresar");
+  }
+}
+
+function renderGoogleButton() {
+  if (!window.google || !window.google.accounts || GOOGLE_CLIENT_ID.indexOf("PONER_AQUI") !== -1) {
+    return;
+  }
+
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential
+  });
+
+  google.accounts.id.renderButton(
+    qs("googleLoginBox"),
+    {
+      theme: "outline",
+      size: "large",
+      shape: "pill",
+      text: "signin_with",
+      width: 280
+    }
+  );
+}
+
+async function handleGoogleCredential(response) {
+  try {
+    setMsg("auth_msg", "Validando Google...");
+
+    const r = await api("login_google", {
+      credential: response.credential
+    });
+
+    if (!r.ok) {
+      setMsg("auth_msg", r.error || "No se pudo ingresar con Google");
+      return;
+    }
+
+    setToken(r.token);
+    setMsg("auth_msg", "");
+    await loadDashboard();
+    qs("btnLogout").classList.remove("hidden");
+    showView("view-panel");
+  } catch (err) {
+    console.error(err);
+    setMsg("auth_msg", "Error al ingresar con Google");
   }
 }
 
 async function loadDashboard() {
-  const token = getToken();
-  if (!token) return;
-
   try {
+    const token = getToken();
+    if (!token) return;
+
     const r = await api("dashboard", { token });
 
     if (!r.ok) {
-      logout();
+      clearToken();
+      qs("btnLogout").classList.add("hidden");
+      showView("view-auth");
       return;
     }
 
-    const { docente, stats, probabilities, notifications } = r;
+    const docente = r.docente || {};
+    const alerts = r.alerts || [];
+    const history = r.history || [];
+    const stats = r.stats || {};
 
-    qs("welcomeBox").innerHTML = `
-      <h3>Bienvenido/a</h3>
-      <p><b>${docente.nombre || ""}</b><br>${docente.email || ""}</p>
-      <p>Plan: ${docente.plan || "FREE"}</p>
-    `;
+    const fullName = `${docente.nombre || ""} ${docente.apellido || ""}`.trim() || "Docente";
 
-    qs("stat_total").textContent = stats.total || 0;
-    qs("stat_top_distrito").textContent = stats.porDistrito?.[0]?.label || "-";
-    qs("stat_top_materia").textContent = stats.porMateria?.[0]?.label || "-";
+    qs("sideUserName").textContent = fullName;
+    qs("sideUserEmail").textContent = docente.email || "";
+    qs("avatarCircle").textContent = (docente.nombre || "D").charAt(0).toUpperCase();
 
-    qs("probabilities").innerHTML = probabilities.length
-      ? probabilities.map(p => `
-        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
-          <span>${p.combinacion}</span>
-          <span class="badge ${String(p.probabilidad || "").toLowerCase()}">${p.probabilidad}</span>
-        </div>
-      `).join("")
-      : "<p>Sin datos suficientes todavía.</p>";
+    qs("welcomeTitle").textContent = "Hola, " + fullName;
+    qs("welcomeSub").textContent = "Gestioná tu perfil, tus preferencias y tus alertas";
 
-    qs("pref_nombre").value = docente.nombre || "";
-    qs("pref_celular").value = docente.celular || "";
+    qs("perfil_nombre").value = docente.nombre || "";
+    qs("perfil_apellido").value = docente.apellido || "";
+    qs("perfil_email").value = docente.email || "";
+    qs("perfil_celular").value = docente.celular || "";
+    qs("perfil_password").value = "";
+
     qs("pref_distrito_principal").value = docente.distrito_principal || "";
     qs("pref_otros_distritos").value = docente.otros_distritos_csv || "";
     qs("pref_materias").value = docente.materias_csv || "";
     qs("pref_nivel").value = docente.nivel_modalidad || "";
-    qs("pref_turno").value = docente.turno_interes || "";
-    qs("pref_tipo_cargo").value = docente.tipo_cargo || "";
-    qs("pref_alertas").checked = String(docente.acepta_email || "").toUpperCase() === "SI";
+    qs("pref_turnos").value = docente.turnos_csv || "";
+    qs("pref_cargos").value = docente.cargos_csv || "";
+    qs("pref_acepta_email").checked = String(docente.acepta_email || "").toUpperCase() === "SI";
 
-    renderNotifications(notifications);
+    qs("stat_total").textContent = stats.total_alertas || 0;
+    qs("stat_distrito").textContent = stats.por_distrito?.[0]?.label || "-";
+    qs("stat_materia").textContent = stats.por_materia?.[0]?.label || "-";
+    qs("stat_cargo").textContent = stats.por_cargo?.[0]?.label || "-";
+
+    renderAlerts("homeAlerts", alerts.slice(0, 5));
+    renderAlerts("alertsList", alerts);
+    renderHistory(history);
+
+    renderStatList("statsDistrito", stats.por_distrito || []);
+    renderStatList("statsMateria", stats.por_materia || []);
+    renderStatList("statsTurno", stats.por_turno || []);
+    renderStatList("statsCargo", stats.por_cargo || []);
   } catch (err) {
-    console.error("Error en loadDashboard:", err);
+    console.error(err);
   }
 }
 
-function renderNotifications(list) {
-  if (!list?.length) {
-    qs("notificationsTable").innerHTML = "<p>No hay notificaciones todavía.</p>";
+function renderAlerts(containerId, alerts) {
+  const box = qs(containerId);
+
+  if (!alerts.length) {
+    box.innerHTML = "<p>No hay alertas para mostrar todavía.</p>";
     return;
   }
 
-  qs("notificationsTable").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Distrito</th>
-          <th>Materia</th>
-          <th>Turno</th>
-          <th>Estado</th>
-          <th>Cierre</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${list.map(n => `
+  box.innerHTML = alerts.map(a => `
+    <article class="alert-card">
+      <div class="alert-top">
+        <div>
+          <h4 class="alert-title">${escapeHtml(a.materia || "APD sin materia")}</h4>
+          <div class="alert-meta">
+            <div><strong>Distrito:</strong> ${escapeHtml(a.distrito || "-")}</div>
+            <div><strong>Turno:</strong> ${escapeHtml(a.turno || "-")}</div>
+            <div><strong>Cargo:</strong> ${escapeHtml(a.cargo || "-")}</div>
+            <div><strong>Publicado:</strong> ${escapeHtml(a.fecha_fmt || "-")}</div>
+            <div><strong>Cierre:</strong> ${escapeHtml(a.fecha_cierre_fmt || "-")}</div>
+          </div>
+        </div>
+        <span class="badge ${String(a.coincidencia || "").toLowerCase()}">${escapeHtml(a.coincidencia || "-")}</span>
+      </div>
+
+      <div class="alert-actions">
+        <button onclick='recordAlertAction(${JSON.stringify(encodeURIComponent(JSON.stringify(a)))}, "me_interesa")'>Me interesa</button>
+        <button onclick='recordAlertAction(${JSON.stringify(encodeURIComponent(JSON.stringify(a)))}, "ya_me_postule")'>Ya me postulé</button>
+        <button onclick='recordAlertAction(${JSON.stringify(encodeURIComponent(JSON.stringify(a)))}, "no_me_interesa")'>No me interesa</button>
+        ${a.link ? `<button onclick="window.open('${escapeAttr(a.link)}','_blank')">Abrir APD</button>` : ""}
+      </div>
+    </article>
+  `).join("");
+}
+
+async function recordAlertAction(encodedAlert, action) {
+  try {
+    const a = JSON.parse(decodeURIComponent(encodedAlert));
+
+    const r = await api("record_alert_action", {
+      token: getToken(),
+      apd_id: a.apd_id || "",
+      distrito: a.distrito || "",
+      materia: a.materia || "",
+      turno: a.turno || "",
+      cargo: a.cargo || "",
+      alert_action: action
+    });
+
+    if (r.ok) {
+      await loadDashboard();
+      showScreen("historial");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderHistory(history) {
+  const box = qs("historyTable");
+
+  if (!history.length) {
+    box.innerHTML = "<p>No hay historial todavía.</p>";
+    return;
+  }
+
+  box.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
           <tr>
-            <td>${n.created_at || ""}</td>
-            <td>${n.distrito || ""}</td>
-            <td>${n.materia || ""}</td>
-            <td>${n.turno || ""}</td>
-            <td>${n.estado || ""}</td>
-            <td>${n.fecha_cierre_fmt || ""}</td>
+            <th>Fecha</th>
+            <th>APD</th>
+            <th>Distrito</th>
+            <th>Materia</th>
+            <th>Turno</th>
+            <th>Cargo</th>
+            <th>Acción</th>
           </tr>
-        `).join("")}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          ${history.map(h => `
+            <tr>
+              <td>${escapeHtml(h.fecha || "")}</td>
+              <td>${escapeHtml(h.apd_id || "")}</td>
+              <td>${escapeHtml(h.distrito || "")}</td>
+              <td>${escapeHtml(h.materia || "")}</td>
+              <td>${escapeHtml(h.turno || "")}</td>
+              <td>${escapeHtml(h.cargo || "")}</td>
+              <td>${escapeHtml(h.accion || "")}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
   `;
+}
+
+function renderStatList(containerId, items) {
+  const box = qs(containerId);
+  if (!items.length) {
+    box.innerHTML = "<p>Sin datos.</p>";
+    return;
+  }
+
+  box.innerHTML = items.map(i => `
+    <div class="stat-list-item">
+      <span>${escapeHtml(i.label || "-")}</span>
+      <strong>${escapeHtml(String(i.value || 0))}</strong>
+    </div>
+  `).join("");
+}
+
+async function saveProfile() {
+  try {
+    setMsg("perfil_msg", "Guardando perfil...");
+
+    const r = await api("save_profile", {
+      token: getToken(),
+      nombre: qs("perfil_nombre").value.trim(),
+      apellido: qs("perfil_apellido").value.trim(),
+      email: qs("perfil_email").value.trim(),
+      celular: qs("perfil_celular").value.trim(),
+      password: qs("perfil_password").value
+    });
+
+    if (!r.ok) {
+      setMsg("perfil_msg", r.error || "No se pudo guardar");
+      return;
+    }
+
+    setMsg("perfil_msg", "Perfil guardado");
+    await loadDashboard();
+  } catch (err) {
+    console.error(err);
+    setMsg("perfil_msg", "Error al guardar perfil");
+  }
 }
 
 async function savePreferences() {
   try {
-    const token = getToken();
+    setMsg("pref_msg", "Guardando preferencias...");
 
-    const data = {
-      token,
-      nombre: qs("pref_nombre").value.trim(),
-      celular: qs("pref_celular").value.trim(),
+    const r = await api("save_preferences", {
+      token: getToken(),
       distrito_principal: qs("pref_distrito_principal").value.trim(),
       otros_distritos_csv: qs("pref_otros_distritos").value.trim(),
       materias_csv: qs("pref_materias").value.trim(),
       nivel_modalidad: qs("pref_nivel").value.trim(),
-      turno_interes: qs("pref_turno").value.trim(),
-      tipo_cargo: qs("pref_tipo_cargo").value.trim(),
-      acepta_email: qs("pref_alertas").checked ? "SI" : "NO"
-    };
+      turnos_csv: qs("pref_turnos").value.trim(),
+      cargos_csv: qs("pref_cargos").value.trim(),
+      acepta_email: qs("pref_acepta_email").checked ? "SI" : "NO"
+    });
 
-    const r = await api("save_preferences", data);
-    qs("pref_msg").textContent = r.ok ? "Preferencias guardadas." : (r.error || "Error");
+    if (!r.ok) {
+      setMsg("pref_msg", r.error || "No se pudieron guardar");
+      return;
+    }
+
+    setMsg("pref_msg", "Preferencias guardadas");
+    await loadDashboard();
   } catch (err) {
-    console.error("Error en savePreferences:", err);
-    qs("pref_msg").textContent = "Error al guardar.";
+    console.error(err);
+    setMsg("pref_msg", "Error al guardar preferencias");
   }
+}
+
+async function logout() {
+  try {
+    const token = getToken();
+    if (token) {
+      await api("logout", { token });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  clearToken();
+  qs("btnLogout").classList.add("hidden");
+  showView("view-home");
+}
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function escapeAttr(str) {
+  return String(str ?? "").replaceAll("'", "%27");
+}
+
+function bootNavigation() {
+  qs("btnGoHome").onclick = () => showView("view-home");
+  qs("btnGoAuth").onclick = () => showView("view-auth");
+  qs("btnHeroRegister").onclick = () => {
+    showView("view-auth");
+    document.querySelector('.tab[data-tab="register"]').click();
+  };
+  qs("btnHeroLogin").onclick = () => {
+    showView("view-auth");
+    document.querySelector('.tab[data-tab="login"]').click();
+  };
+  qs("btnLogout").onclick = logout;
 }
 
 async function boot() {
   setupTabs();
-  setupScreens();
+  setupSideMenu();
+  bootNavigation();
 
-  qs("btnGoPublic").onclick = () => showView("view-public");
-  qs("btnGoLogin").onclick = () => showView("view-login");
-  qs("btnGoLogin2").onclick = () => showView("view-login");
-
-  qs("btnGoPanel").onclick = async () => {
-    if (!getToken()) {
-      showView("view-login");
-      return;
-    }
-    await loadDashboard();
-    showView("view-panel");
-  };
-
-  qs("btnLogout").onclick = logout;
-  qs("btnStart").onclick = () => showView("view-login");
-  qs("btnRegister").onclick = registerDocente;
-  qs("btnSendCode").onclick = sendCode;
-  qs("btnVerifyCode").onclick = verifyCode;
+  qs("btnRegister").onclick = registerUser;
+  qs("btnLogin").onclick = loginPassword;
+  qs("btnSaveProfile").onclick = saveProfile;
   qs("btnSavePrefs").onclick = savePreferences;
+
+  renderGoogleButton();
 
   if (getToken()) {
     qs("btnLogout").classList.remove("hidden");
     await loadDashboard();
     showView("view-panel");
   } else {
-    showView("view-public");
+    showView("view-home");
   }
 }
 
+window.recordAlertAction = recordAlertAction;
 boot();
