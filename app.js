@@ -23,12 +23,7 @@ function borrarToken() {
 function setNavPanelVisible(visible) {
   const btn = document.getElementById("btn-nav-panel");
   if (!btn) return;
-
-  if (visible) {
-    btn.classList.remove("hidden");
-  } else {
-    btn.classList.add("hidden");
-  }
+  btn.classList.toggle("hidden", !visible);
 }
 
 function logout() {
@@ -37,10 +32,12 @@ function logout() {
   mostrarSeccion("inicio");
 
   const loginMsg = document.getElementById("login-msg");
-  if (loginMsg) loginMsg.textContent = "";
-
   const registroMsg = document.getElementById("registro-msg");
+  const prefMsg = document.getElementById("preferencias-msg");
+
+  if (loginMsg) loginMsg.textContent = "";
   if (registroMsg) registroMsg.textContent = "";
+  if (prefMsg) prefMsg.textContent = "";
 }
 
 async function enviarPost(payload) {
@@ -82,8 +79,7 @@ async function registrarDocente(event) {
 
     if (data.ok) {
       if (msg) msg.textContent = data.message || "Registro correcto";
-      const form = document.getElementById("form-registro");
-      if (form) form.reset();
+      document.getElementById("form-registro")?.reset();
 
       setTimeout(() => {
         mostrarSeccion("login");
@@ -163,22 +159,6 @@ async function cargarDashboard() {
 
   mostrarSeccion("panel-docente");
 
-  const panelBienvenida = document.getElementById("panel-bienvenida");
-  const panelSubtitulo = document.getElementById("panel-subtitulo");
-  const panelDatos = document.getElementById("panel-datos-docente");
-  const panelPreferencias = document.getElementById("panel-preferencias");
-  const panelAlertas = document.getElementById("panel-alertas");
-  const panelHistorial = document.getElementById("panel-historial");
-  const panelEstadisticas = document.getElementById("panel-estadisticas");
-
-  if (panelBienvenida) panelBienvenida.textContent = "Cargando panel...";
-  if (panelSubtitulo) panelSubtitulo.textContent = "Consultando sesión y datos del docente...";
-  if (panelDatos) panelDatos.innerHTML = "<p>Cargando...</p>";
-  if (panelPreferencias) panelPreferencias.innerHTML = "<p>Cargando...</p>";
-  if (panelAlertas) panelAlertas.innerHTML = "<p>Cargando...</p>";
-  if (panelHistorial) panelHistorial.innerHTML = "<p>Cargando...</p>";
-  if (panelEstadisticas) panelEstadisticas.innerHTML = "<p>Cargando...</p>";
-
   try {
     const data = await enviarPost({
       action: "dashboard",
@@ -192,6 +172,7 @@ async function cargarDashboard() {
     }
 
     renderizarDashboard(data);
+    cargarFormularioPreferenciasDesdeDashboard(data);
     setNavPanelVisible(true);
   } catch (error) {
     console.error("Error al cargar dashboard:", error);
@@ -212,30 +193,26 @@ function renderizarDashboard(data) {
   const panelBienvenida = document.getElementById("panel-bienvenida");
   const panelSubtitulo = document.getElementById("panel-subtitulo");
   const panelDatos = document.getElementById("panel-datos-docente");
-  const panelPreferencias = document.getElementById("panel-preferencias");
+  const panelPreferenciasResumen = document.getElementById("panel-preferencias-resumen");
   const panelAlertas = document.getElementById("panel-alertas");
   const panelHistorial = document.getElementById("panel-historial");
   const panelEstadisticas = document.getElementById("panel-estadisticas");
 
   if (panelBienvenida) {
-    panelBienvenida.textContent = nombreCompleto
-      ? `Bienvenido/a, ${nombreCompleto}`
-      : "Bienvenido/a";
+    panelBienvenida.textContent = nombreCompleto ? `Bienvenido/a, ${nombreCompleto}` : "Bienvenido/a";
   }
 
   if (panelSubtitulo) {
-    panelSubtitulo.textContent = docente.email
-      ? `Sesión iniciada con ${docente.email}`
-      : "Panel docente";
+    panelSubtitulo.textContent = docente.email ? `Sesión iniciada con ${docente.email}` : "Panel docente";
   }
 
   if (panelDatos) {
     panelDatos.innerHTML = `
-      <p><strong>ID:</strong> ${docente.id || "-"}</p>
-      <p><strong>Nombre:</strong> ${docente.nombre || "-"}</p>
-      <p><strong>Apellido:</strong> ${docente.apellido || "-"}</p>
-      <p><strong>Email:</strong> ${docente.email || "-"}</p>
-      <p><strong>Celular:</strong> ${docente.celular || "-"}</p>
+      <p><strong>ID:</strong> ${escapeHtml(docente.id || "-")}</p>
+      <p><strong>Nombre:</strong> ${escapeHtml(docente.nombre || "-")}</p>
+      <p><strong>Apellido:</strong> ${escapeHtml(docente.apellido || "-")}</p>
+      <p><strong>Email:</strong> ${escapeHtml(docente.email || "-")}</p>
+      <p><strong>Celular:</strong> ${escapeHtml(docente.celular || "-")}</p>
       <p><strong>Estado:</strong> ${
         docente.activo
           ? '<span class="badge-ok">Activo</span>'
@@ -244,12 +221,17 @@ function renderizarDashboard(data) {
     `;
   }
 
-  if (panelPreferencias) {
-    panelPreferencias.innerHTML = `
-      <p><strong>Modo de alertas:</strong> ${preferencias.modo_alertas || "-"}</p>
-      <p><strong>Distrito:</strong> ${preferencias.distrito || "-"}</p>
-      <p><strong>Nivel:</strong> ${preferencias.nivel || "-"}</p>
-      <p><strong>Materias:</strong> ${preferencias.materias || "-"}</p>
+  if (panelPreferenciasResumen) {
+    panelPreferenciasResumen.innerHTML = `
+      <p><strong>Distrito principal:</strong> ${escapeHtml(preferencias.distrito_principal || "-")}</p>
+      <p><strong>Otros distritos:</strong> ${escapeHtml(preferencias.otros_distritos_c || "-")}</p>
+      <p><strong>Materias:</strong> ${escapeHtml(preferencias.materias_csv || "-")}</p>
+      <p><strong>Nivel / modalidad:</strong> ${escapeHtml(preferencias.nivel_modalidad || "-")}</p>
+      <p><strong>Turnos:</strong> ${escapeHtml(preferencias.turnos_csv || "-")}</p>
+      <p><strong>Cargos:</strong> ${escapeHtml(preferencias.cargos_csv || "-")}</p>
+      <p><strong>Alertas activas:</strong> ${preferencias.alertas_activas ? "Sí" : "No"}</p>
+      <p><strong>Email:</strong> ${preferencias.alertas_email ? "Sí" : "No"}</p>
+      <p><strong>WhatsApp:</strong> ${preferencias.alertas_whatsapp ? "Sí" : "No"}</p>
     `;
   }
 
@@ -282,13 +264,89 @@ function renderizarDashboard(data) {
       <p><strong>Total alertas:</strong> ${estadisticas.total_alertas ?? 0}</p>
       <p><strong>Leídas:</strong> ${estadisticas.alertas_leidas ?? 0}</p>
       <p><strong>No leídas:</strong> ${estadisticas.alertas_no_leidas ?? 0}</p>
-      <p><strong>Último acceso:</strong> ${estadisticas.ultimo_acceso || "-"}</p>
+      <p><strong>Último acceso:</strong> ${escapeHtml(estadisticas.ultimo_acceso || "-")}</p>
     `;
   }
 }
 
-function escapeHtml(texto) {
+function cargarFormularioPreferenciasDesdeDashboard(data) {
+  const preferencias = data.preferencias || {};
+
+  setInputValue("pref-distrito-principal", preferencias.distrito_principal || "");
+  setInputValue("pref-otros-distritos", preferencias.otros_distritos_c || "");
+  setInputValue("pref-materias", preferencias.materias_csv || "");
+  setInputValue("pref-nivel-modalidad", preferencias.nivel_modalidad || "");
+  setInputValue("pref-turnos", preferencias.turnos_csv || "");
+  setInputValue("pref-cargos", preferencias.cargos_csv || "");
+
+  setCheckboxValue("pref-alertas-activas", !!preferencias.alertas_activas);
+  setCheckboxValue("pref-alertas-email", !!preferencias.alertas_email);
+  setCheckboxValue("pref-alertas-whatsapp", !!preferencias.alertas_whatsapp);
+}
+
+function setInputValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value;
+}
+
+function setCheckboxValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.checked = !!value;
+}
+
+async function guardarPreferencias(event) {
+  event.preventDefault();
+
+  const token = obtenerToken();
+  const msg = document.getElementById("preferencias-msg");
+
+  if (!token) {
+    if (msg) msg.textContent = "Sesión no válida";
+    return;
+  }
+
+  if (msg) msg.textContent = "Guardando preferencias...";
+
+  const payload = {
+    action: "save_preferences",
+    token: token,
+    distrito_principal: (document.getElementById("pref-distrito-principal")?.value || "").trim().toUpperCase(),
+    otros_distritos_c: normalizarListaCSV(document.getElementById("pref-otros-distritos")?.value || ""),
+    materias_csv: normalizarListaCSV(document.getElementById("pref-materias")?.value || ""),
+    nivel_modalidad: (document.getElementById("pref-nivel-modalidad")?.value || "").trim().toUpperCase(),
+    turnos_csv: normalizarListaCSV(document.getElementById("pref-turnos")?.value || ""),
+    cargos_csv: normalizarListaCSV(document.getElementById("pref-cargos")?.value || ""),
+    alertas_activas: document.getElementById("pref-alertas-activas")?.checked || false,
+    alertas_email: document.getElementById("pref-alertas-email")?.checked || false,
+    alertas_whatsapp: document.getElementById("pref-alertas-whatsapp")?.checked || false
+  };
+
+  try {
+    const data = await enviarPost(payload);
+
+    if (!data.ok) {
+      if (msg) msg.textContent = data.message || "No se pudieron guardar las preferencias";
+      return;
+    }
+
+    if (msg) msg.textContent = data.message || "Preferencias guardadas";
+    await cargarDashboard();
+  } catch (error) {
+    console.error("Error al guardar preferencias:", error);
+    if (msg) msg.textContent = "Error de conexión al guardar preferencias";
+  }
+}
+
+function normalizarListaCSV(texto) {
   return texto
+    .split(",")
+    .map(x => x.trim().toUpperCase())
+    .filter(Boolean)
+    .join(",");
+}
+
+function escapeHtml(texto) {
+  return String(texto)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -299,24 +357,15 @@ function escapeHtml(texto) {
 document.addEventListener("DOMContentLoaded", () => {
   const formRegistro = document.getElementById("form-registro");
   const formLogin = document.getElementById("form-login");
+  const formPreferencias = document.getElementById("form-preferencias");
   const btnLogout = document.getElementById("btn-logout");
   const btnRecargar = document.getElementById("btn-recargar-panel");
 
-  if (formRegistro) {
-    formRegistro.addEventListener("submit", registrarDocente);
-  }
-
-  if (formLogin) {
-    formLogin.addEventListener("submit", loginPassword);
-  }
-
-  if (btnLogout) {
-    btnLogout.addEventListener("click", logout);
-  }
-
-  if (btnRecargar) {
-    btnRecargar.addEventListener("click", cargarDashboard);
-  }
+  if (formRegistro) formRegistro.addEventListener("submit", registrarDocente);
+  if (formLogin) formLogin.addEventListener("submit", loginPassword);
+  if (formPreferencias) formPreferencias.addEventListener("submit", guardarPreferencias);
+  if (btnLogout) btnLogout.addEventListener("click", logout);
+  if (btnRecargar) btnRecargar.addEventListener("click", cargarDashboard);
 
   const token = obtenerToken();
 
