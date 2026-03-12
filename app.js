@@ -64,90 +64,111 @@ function setupScreens() {
 }
 
 async function registerDocente() {
-  const data = {
-    nombre: qs("reg_nombre").value.trim(),
-    email: qs("reg_email").value.trim(),
-    celular: qs("reg_celular").value.trim(),
-    distrito_principal: qs("reg_distrito_principal").value.trim(),
-    otros_distritos_csv: qs("reg_otros_distritos").value.trim(),
-    materias_csv: qs("reg_materias").value.trim(),
-    nivel_modalidad: qs("reg_nivel").value.trim(),
-    turno_interes: qs("reg_turno").value.trim(),
-    tipo_cargo: qs("reg_tipo_cargo").value.trim(),
-    acepta_email: qs("reg_email_alerts").checked ? "SI" : "NO",
-    acepta_terminos: qs("reg_terms").checked ? "SI" : "NO"
-  };
+  try {
+    const data = {
+      nombre: qs("reg_nombre").value.trim(),
+      email: qs("reg_email").value.trim(),
+      celular: qs("reg_celular").value.trim(),
+      distrito_principal: qs("reg_distrito_principal").value.trim(),
+      otros_distritos_csv: qs("reg_otros_distritos").value.trim(),
+      materias_csv: qs("reg_materias").value.trim(),
+      nivel_modalidad: qs("reg_nivel").value.trim(),
+      turno_interes: qs("reg_turno").value.trim(),
+      tipo_cargo: qs("reg_tipo_cargo").value.trim(),
+      acepta_email: qs("reg_email_alerts").checked ? "SI" : "NO",
+      acepta_terminos: qs("reg_terms").checked ? "SI" : "NO"
+    };
 
-  const r = await api("register", data);
-  qs("login_msg").textContent = r.ok ? "Registro guardado. Ahora pedí tu código." : (r.error || "Error");
+    const r = await api("register", data);
+    qs("login_msg").textContent = r.ok ? "Registro guardado. Ahora pedí tu código." : (r.error || "Error");
+    console.log("register response:", r);
+  } catch (err) {
+    console.error("Error en registerDocente:", err);
+    qs("login_msg").textContent = "Error al registrar. Revisá la consola.";
+  }
 }
 
 async function sendCode() {
-  const email = qs("login_email").value.trim();
-  const r = await api("request_login", { email });
-  qs("login_msg").textContent = r.ok ? "Código enviado a tu email." : (r.error || "Error");
+  try {
+    const email = qs("login_email").value.trim();
+    const r = await api("request_login", { email });
+    qs("login_msg").textContent = r.ok ? "Código enviado a tu email." : (r.error || "Error");
+    console.log("request_login response:", r);
+  } catch (err) {
+    console.error("Error en sendCode:", err);
+    qs("login_msg").textContent = "Error al enviar código. Revisá la consola.";
+  }
 }
 
 async function verifyCode() {
-  const email = qs("login_email").value.trim();
-  const otp = qs("login_code").value.trim();
+  try {
+    const email = qs("login_email").value.trim();
+    const otp = qs("login_code").value.trim();
 
-  const r = await api("verify_login", { email, otp });
+    const r = await api("verify_login", { email, otp });
 
-  if (!r.ok) {
-    qs("login_msg").textContent = r.error || "Error";
-    return;
+    if (!r.ok) {
+      qs("login_msg").textContent = r.error || "Error";
+      return;
+    }
+
+    setToken(r.token);
+    qs("btnLogout").classList.remove("hidden");
+    await loadDashboard();
+    showView("view-panel");
+  } catch (err) {
+    console.error("Error en verifyCode:", err);
+    qs("login_msg").textContent = "Error al ingresar. Revisá la consola.";
   }
-
-  setToken(r.token);
-  qs("btnLogout").classList.remove("hidden");
-  await loadDashboard();
-  showView("view-panel");
 }
 
 async function loadDashboard() {
   const token = getToken();
   if (!token) return;
 
-  const r = await api("dashboard", { token });
+  try {
+    const r = await api("dashboard", { token });
 
-  if (!r.ok) {
-    logout();
-    return;
+    if (!r.ok) {
+      logout();
+      return;
+    }
+
+    const { docente, stats, probabilities, notifications } = r;
+
+    qs("welcomeBox").innerHTML = `
+      <h3>Bienvenido/a</h3>
+      <p><b>${docente.nombre || ""}</b><br>${docente.email || ""}</p>
+      <p>Plan: ${docente.plan || "FREE"}</p>
+    `;
+
+    qs("stat_total").textContent = stats.total || 0;
+    qs("stat_top_distrito").textContent = stats.porDistrito?.[0]?.label || "-";
+    qs("stat_top_materia").textContent = stats.porMateria?.[0]?.label || "-";
+
+    qs("probabilities").innerHTML = probabilities.length
+      ? probabilities.map(p => `
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
+          <span>${p.combinacion}</span>
+          <span class="badge ${p.probabilidad.toLowerCase()}">${p.probabilidad}</span>
+        </div>
+      `).join("")
+      : "<p>Sin datos suficientes todavía.</p>";
+
+    qs("pref_nombre").value = docente.nombre || "";
+    qs("pref_celular").value = docente.celular || "";
+    qs("pref_distrito_principal").value = docente.distrito_principal || "";
+    qs("pref_otros_distritos").value = docente.otros_distritos_csv || "";
+    qs("pref_materias").value = docente.materias_csv || "";
+    qs("pref_nivel").value = docente.nivel_modalidad || "";
+    qs("pref_turno").value = docente.turno_interes || "";
+    qs("pref_tipo_cargo").value = docente.tipo_cargo || "";
+    qs("pref_alertas").checked = String(docente.acepta_email || "").toUpperCase() === "SI";
+
+    renderNotifications(notifications);
+  } catch (err) {
+    console.error("Error en loadDashboard:", err);
   }
-
-  const { docente, stats, probabilities, notifications } = r;
-
-  qs("welcomeBox").innerHTML = `
-    <h3>Bienvenido/a</h3>
-    <p><b>${docente.nombre || ""}</b><br>${docente.email || ""}</p>
-    <p>Plan: ${docente.plan || "FREE"}</p>
-  `;
-
-  qs("stat_total").textContent = stats.total || 0;
-  qs("stat_top_distrito").textContent = stats.porDistrito?.[0]?.label || "-";
-  qs("stat_top_materia").textContent = stats.porMateria?.[0]?.label || "-";
-
-  qs("probabilities").innerHTML = probabilities.length
-    ? probabilities.map(p => `
-      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
-        <span>${p.combinacion}</span>
-        <span class="badge ${p.probabilidad.toLowerCase()}">${p.probabilidad}</span>
-      </div>
-    `).join("")
-    : "<p>Sin datos suficientes todavía.</p>";
-
-  qs("pref_nombre").value = docente.nombre || "";
-  qs("pref_celular").value = docente.celular || "";
-  qs("pref_distrito_principal").value = docente.distrito_principal || "";
-  qs("pref_otros_distritos").value = docente.otros_distritos_csv || "";
-  qs("pref_materias").value = docente.materias_csv || "";
-  qs("pref_nivel").value = docente.nivel_modalidad || "";
-  qs("pref_turno").value = docente.turno_interes || "";
-  qs("pref_tipo_cargo").value = docente.tipo_cargo || "";
-  qs("pref_alertas").checked = String(docente.acepta_email || "").toUpperCase() === "SI";
-
-  renderNotifications(notifications);
 }
 
 function renderNotifications(list) {
@@ -185,23 +206,28 @@ function renderNotifications(list) {
 }
 
 async function savePreferences() {
-  const token = getToken();
+  try {
+    const token = getToken();
 
-  const data = {
-    token,
-    nombre: qs("pref_nombre").value.trim(),
-    celular: qs("pref_celular").value.trim(),
-    distrito_principal: qs("pref_distrito_principal").value.trim(),
-    otros_distritos_csv: qs("pref_otros_distritos").value.trim(),
-    materias_csv: qs("pref_materias").value.trim(),
-    nivel_modalidad: qs("pref_nivel").value.trim(),
-    turno_interes: qs("pref_turno").value.trim(),
-    tipo_cargo: qs("pref_tipo_cargo").value.trim(),
-    acepta_email: qs("pref_alertas").checked ? "SI" : "NO"
-  };
+    const data = {
+      token,
+      nombre: qs("pref_nombre").value.trim(),
+      celular: qs("pref_celular").value.trim(),
+      distrito_principal: qs("pref_distrito_principal").value.trim(),
+      otros_distritos_csv: qs("pref_otros_distritos").value.trim(),
+      materias_csv: qs("pref_materias").value.trim(),
+      nivel_modalidad: qs("pref_nivel").value.trim(),
+      turno_interes: qs("pref_turno").value.trim(),
+      tipo_cargo: qs("pref_tipo_cargo").value.trim(),
+      acepta_email: qs("pref_alertas").checked ? "SI" : "NO"
+    };
 
-  const r = await api("save_preferences", data);
-  qs("pref_msg").textContent = r.ok ? "Preferencias guardadas." : (r.error || "Error");
+    const r = await api("save_preferences", data);
+    qs("pref_msg").textContent = r.ok ? "Preferencias guardadas." : (r.error || "Error");
+  } catch (err) {
+    console.error("Error en savePreferences:", err);
+    qs("pref_msg").textContent = "Error al guardar.";
+  }
 }
 
 async function boot() {
