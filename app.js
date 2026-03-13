@@ -370,6 +370,89 @@ function escapeHtml(texto) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+function debounce(fn, delay) {
+  let timer = null;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay || 250);
+  };
+}
+
+async function buscarSugerencias(tipo, texto) {
+  const url =
+    `${WEB_APP_URL}?accion=sugerencias&tipo=${encodeURIComponent(tipo)}&q=${encodeURIComponent(texto)}`;
+
+  const res = await fetch(url);
+  return await res.json();
+}
+
+function renderizarListaAutocomplete(lista, items, input) {
+  if (!items || !items.length) {
+    lista.innerHTML = "";
+    lista.style.display = "none";
+    return;
+  }
+
+  lista.innerHTML = items.map(item => {
+    return `<div class="autocomplete-item">${escapeHtml(item.label || "")}</div>`;
+  }).join("");
+
+  lista.style.display = "block";
+
+  lista.querySelectorAll(".autocomplete-item").forEach(el => {
+    el.addEventListener("mousedown", function (e) {
+      e.preventDefault();
+      input.value = this.textContent.trim();
+      lista.innerHTML = "";
+      lista.style.display = "none";
+    });
+  });
+}
+
+function activarAutocomplete(inputId, listaId, tipo) {
+  const input = document.getElementById(inputId);
+  const lista = document.getElementById(listaId);
+
+  if (!input || !lista) return;
+
+  input.addEventListener("input", debounce(async function () {
+    const texto = input.value.trim();
+
+    if (texto.length < 1) {
+      lista.innerHTML = "";
+      lista.style.display = "none";
+      return;
+    }
+
+    try {
+      const data = await buscarSugerencias(tipo, texto);
+
+      if (!data.ok) {
+        lista.innerHTML = "";
+        lista.style.display = "none";
+        return;
+      }
+
+      renderizarListaAutocomplete(lista, data.items || [], input);
+    } catch (error) {
+      console.error("Error autocomplete:", error);
+      lista.innerHTML = "";
+      lista.style.display = "none";
+    }
+  }, 200));
+
+  input.addEventListener("blur", function () {
+    setTimeout(() => {
+      lista.style.display = "none";
+    }, 150);
+  });
+
+  input.addEventListener("focus", function () {
+    if (input.value.trim().length > 0) {
+      input.dispatchEvent(new Event("input"));
+    }
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const formRegistro = document.getElementById("form-registro");
@@ -383,6 +466,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formPreferencias) formPreferencias.addEventListener("submit", guardarPreferencias);
   if (btnLogout) btnLogout.addEventListener("click", logout);
   if (btnRecargar) btnRecargar.addEventListener("click", cargarDashboard);
+  activarAutocomplete("pref-distrito-principal", "sugerencias-distrito-principal", "distrito");
+  activarAutocomplete("pref-cargos", "sugerencias-cargos", "cargo_area");
 
   const token = obtenerToken();
 
