@@ -111,6 +111,10 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
+.grid-2 > div,
+.grid-3 > div {
+  position: relative;
+}
 
 .grid-3 {
   display: grid;
@@ -290,4 +294,34 @@ input[type="password"] {
   margin: 6px 0;
   font-size: 14px;
   line-height: 1.35;
+}
+.autocomplete-lista {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #c9d2de;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  max-height: 220px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1000;
+}
+
+.autocomplete-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eef1f5;
+  font-size: 14px;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.activo {
+  background: #eef4ff;
 }
