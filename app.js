@@ -63,12 +63,10 @@ async function enviarPost(payload) {
 }
 
 function setButtonLoading(btn, text) {
-  if (!btn) return "";
-  const original = btn.dataset.originalText || btn.textContent;
-  btn.dataset.originalText = original;
+  if (!btn) return;
+  btn.dataset.originalText = btn.textContent;
   btn.disabled = true;
   btn.textContent = text;
-  return original;
 }
 
 function restoreButton(btn) {
@@ -254,7 +252,7 @@ function renderizarDashboard(data) {
       <p><strong>Tercer distrito:</strong> ${escapeHtml(preferencias.tercer_distrito || "-")}</p>
       <p><strong>Materia / cargo:</strong> ${escapeHtml(preferencias.cargos_csv || preferencias.materias_csv || "-")}</p>
       <p><strong>Nivel / modalidad:</strong> ${escapeHtml(preferencias.nivel_modalidad || "-")}</p>
-      <p><strong>Turno:</strong> ${escapeHtml(preferencias.turnos_csv || "-")}</p>
+      <p><strong>Turno:</strong> ${traducirTurnoPlano(preferencias.turnos_csv || "-")}</p>
       <p><strong>Alertas activas:</strong> ${preferencias.alertas_activas ? "Sí" : "No"}</p>
       <p><strong>Email:</strong> ${preferencias.alertas_email ? "Sí" : "No"}</p>
       <p><strong>WhatsApp:</strong> ${preferencias.alertas_whatsapp ? "Sí" : "No"}</p>
@@ -270,7 +268,7 @@ function renderizarDashboard(data) {
               <h4>${escapeHtml(a.titulo || "APD")}</h4>
               <p><strong>Distrito:</strong> ${escapeHtml(a.distrito || "-")}</p>
               <p><strong>Escuela:</strong> ${escapeHtml(a.escuela || "-")}</p>
-              <p><strong>Turno:</strong> ${traducirTurno(a.turno || "-")}</p>
+              <p><strong>Turno:</strong> ${traducirTurnoPlano(a.turno || "-")}</p>
               <p><strong>Nivel / modalidad:</strong> ${escapeHtml(a.nivel_modalidad || "-")}</p>
               <p><strong>Cierre:</strong> ${formatearFechaCorta(a.fecha_cierre_fmt || "-")}</p>
             </div>
@@ -304,13 +302,18 @@ function renderizarDashboard(data) {
   }
 }
 
-function traducirTurno(valor) {
-  const v = String(valor || "").toUpperCase().trim();
-  if (v === "M") return "Mañana";
-  if (v === "T") return "Tarde";
-  if (v === "N") return "Noche";
-  if (v === "V") return "Vespertino";
-  return escapeHtml(valor || "-");
+function traducirTurnoPlano(valor) {
+  const txt = String(valor || "").trim().toUpperCase();
+  if (!txt || txt === "-") return "-";
+
+  return txt.split(",").map(v => {
+    if (v === "M") return "Mañana";
+    if (v === "T") return "Tarde";
+    if (v === "N") return "Noche";
+    if (v === "V") return "Vespertino";
+    if (v === "ALTERNADO") return "Alternado";
+    return v;
+  }).join(", ");
 }
 
 function formatearFechaCorta(valor) {
@@ -420,7 +423,7 @@ async function guardarPreferencias(event) {
       return;
     }
 
-    if (msg) msg.textContent = data.message || "Preferencias guardadas";
+    if (msg) msg.textContent = data.message || "Preferencias guardadas correctamente";
     await cargarDashboard();
   } catch (error) {
     console.error("Error al guardar preferencias:", error);
@@ -549,19 +552,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnLogoutPanel) btnLogoutPanel.addEventListener("click", logout);
   if (btnCerrarSesion) btnCerrarSesion.addEventListener("click", logout);
 
- if (btnRecargar) {
-  btnRecargar.addEventListener("click", async () => {
-    console.log("CLICK EN RECARGAR");
-    setButtonLoading(btnRecargar, "Recargando...");
-    try {
-      await cargarDashboard();
-    } catch (e) {
-      console.error("Error en recargar:", e);
-    } finally {
-      restoreButton(btnRecargar);
-    }
-  });
-}
+  if (btnRecargar) {
+    btnRecargar.addEventListener("click", async () => {
+      console.log("CLICK EN RECARGAR");
+      setButtonLoading(btnRecargar, "Recargando...");
+      try {
+        await cargarDashboard();
+      } catch (e) {
+        console.error("Error en recargar:", e);
+      } finally {
+        restoreButton(btnRecargar);
+      }
+    });
+  }
 
   if (btnLogin) btnLogin.addEventListener("click", () => mostrarSeccion("login"));
   if (btnRegistro) btnRegistro.addEventListener("click", () => mostrarSeccion("registro"));
