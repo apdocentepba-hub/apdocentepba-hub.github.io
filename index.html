@@ -18,12 +18,17 @@
         </div>
       </div>
 
-      <nav class="nav">
-        <button class="nav-btn" onclick="mostrarSeccion('inicio')">Inicio</button>
-        <button class="nav-btn" onclick="mostrarSeccion('registro')">Registro</button>
-        <button class="nav-btn" onclick="mostrarSeccion('login')">Login</button>
-        <button class="nav-btn hidden" id="btn-nav-panel" onclick="cargarDashboard()">Panel</button>
-      </nav>
+      <nav class="top-nav">
+  <div id="navPublico">
+    <button id="btnLogin">Ingresar</button>
+    <button id="btnRegistro">Registrarse</button>
+  </div>
+
+  <div id="navPrivado" style="display:none;">
+    <button id="btnMiPanel">Mi panel</button>
+    <button id="btnCerrarSesion">Cerrar sesión</button>
+  </div>
+</nav>
     </div>
   </header>
 
