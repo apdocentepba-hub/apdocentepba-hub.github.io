@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>APDocentePBA</title>
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+
   <header class="header">
     <div class="header-inner">
       <div class="brand">
@@ -20,12 +21,11 @@
 
       <nav class="top-nav">
         <div id="navPublico" class="nav-group">
-          <button id="btnLogin" class="btn btn-light" type="button">Ingresar</button>
+          <button id="btnLogin"    class="btn btn-light" type="button">Ingresar</button>
           <button id="btnRegistro" class="btn btn-light" type="button">Registrarse</button>
         </div>
-
         <div id="navPrivado" class="nav-group hidden">
-          <button id="btnMiPanel" class="btn btn-light" type="button">Mi panel</button>
+          <button id="btnMiPanel"      class="btn btn-light"  type="button">Mi panel</button>
           <button id="btnCerrarSesion" class="btn btn-danger" type="button">Cerrar sesión</button>
         </div>
       </nav>
@@ -33,6 +33,8 @@
   </header>
 
   <main>
+
+    <!-- INICIO -->
     <section id="inicio" class="section">
       <div class="container hero">
         <h2>Bienvenido/a a APDocentePBA</h2>
@@ -43,10 +45,10 @@
       </div>
     </section>
 
+    <!-- REGISTRO -->
     <section id="registro" class="section hidden">
       <div class="container auth-card">
         <h2>Registro docente</h2>
-
         <form id="form-registro">
           <div class="grid-2">
             <div class="field">
@@ -58,7 +60,6 @@
               <input type="text" id="reg-apellido" required />
             </div>
           </div>
-
           <div class="grid-2">
             <div class="field">
               <label for="reg-email">Email</label>
@@ -69,45 +70,39 @@
               <input type="text" id="reg-celular" />
             </div>
           </div>
-
           <div class="field">
             <label for="reg-password">Contraseña</label>
             <input type="password" id="reg-password" required />
           </div>
-
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Registrarme</button>
           </div>
-          <p id="registro-msg" class="msg"></p>
+          <span id="registro-msg" class="msg"></span>
         </form>
       </div>
     </section>
 
+    <!-- LOGIN -->
     <section id="login" class="section hidden">
       <div class="container auth-card">
         <h2>Iniciar sesión</h2>
-
         <form id="form-login">
           <div class="field">
             <label for="login-email">Email</label>
             <input type="email" id="login-email" required />
           </div>
-
           <div class="field">
             <label for="login-password">Contraseña</label>
             <input type="password" id="login-password" required />
           </div>
-
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Ingresar</button>
           </div>
-          <p id="login-msg" class="msg"></p>
+          <span id="login-msg" class="msg"></span>
         </form>
 
         <hr class="separator" />
-
         <h3>O ingresar con Google</h3>
-
         <div id="g_id_onload"
              data-client_id="650896364013-s3o36ckvoi42947v6ummmgdkdmsgondo.apps.googleusercontent.com"
              data-callback="handleGoogleLogin">
@@ -116,77 +111,77 @@
       </div>
     </section>
 
+    <!-- PANEL DOCENTE -->
     <section id="panel-docente" class="section hidden">
       <div class="container">
+
+        <!-- Header con overlay de carga -->
         <div class="panel-header">
-          <div>
-            <h2 id="panel-bienvenida">Bienvenido/a</h2>
-            <p id="panel-subtitulo">Cargando panel...</p>
+          <!-- OVERLAY DE CARGA ← NUEVO -->
+          <div id="panel-loading-overlay" class="panel-loading-overlay hidden">
+            Cargando panel...
           </div>
 
+          <div>
+            <h2 id="panel-bienvenida">Bienvenido/a</h2>
+            <p  id="panel-subtitulo">Cargando panel...</p>
+          </div>
           <div class="panel-actions">
             <button id="btn-recargar-panel" class="btn btn-secondary" type="button">Recargar</button>
-            <button id="btn-logout" class="btn btn-danger" type="button">Cerrar sesión</button>
+            <button id="btn-logout"         class="btn btn-danger"    type="button">Cerrar sesión</button>
           </div>
         </div>
 
+        <!-- Tarjetas -->
         <div class="cards-grid">
+
           <div class="panel-card">
             <h3>Datos del docente</h3>
-            <div id="panel-datos-docente">
-              <p>Cargando...</p>
-            </div>
+            <div id="panel-datos-docente"><p>Cargando...</p></div>
           </div>
 
           <div class="panel-card">
             <h3>Preferencias guardadas</h3>
-            <div id="panel-preferencias-resumen">
-              <p>Cargando...</p>
-            </div>
+            <div id="panel-preferencias-resumen"><p>Cargando...</p></div>
           </div>
 
           <div class="panel-card panel-card-wide">
             <h3>Alertas APD</h3>
-            <div id="panel-alertas">
-              <p>Cargando...</p>
-            </div>
+            <div id="panel-alertas"><p>Cargando...</p></div>
           </div>
 
           <div class="panel-card">
             <h3>Historial</h3>
-            <div id="panel-historial">
-              <p>Cargando...</p>
-            </div>
+            <div id="panel-historial"><p>Cargando...</p></div>
           </div>
 
           <div class="panel-card">
             <h3>Estadísticas</h3>
-            <div id="panel-estadisticas">
-              <p>Cargando...</p>
-            </div>
+            <div id="panel-estadisticas"><p>Cargando...</p></div>
           </div>
+
         </div>
 
+        <!-- Formulario de preferencias -->
         <div class="panel-card preferences-card">
           <h3>Configurar notificaciones</h3>
 
           <form id="form-preferencias">
+
             <div class="grid-3">
               <div class="field">
                 <label for="pref-distrito-principal">Distrito principal</label>
-                <input type="text" id="pref-distrito-principal" placeholder="Ej: AVELLANEDA" />
+                <input type="text" id="pref-distrito-principal" placeholder="Ej: AVELLANEDA" autocomplete="off" />
                 <div id="sugerencias-distrito-principal" class="autocomplete-lista"></div>
               </div>
-
               <div class="field">
                 <label for="pref-segundo-distrito">Segundo distrito</label>
-                <input type="text" id="pref-segundo-distrito" placeholder="Ej: LANÚS" />
+                <input type="text" id="pref-segundo-distrito" placeholder="Ej: LANÚS" autocomplete="off" />
                 <div id="sugerencias-segundo-distrito" class="autocomplete-lista"></div>
               </div>
-
               <div class="field">
                 <label for="pref-tercer-distrito">Tercer distrito</label>
-                <input type="text" id="pref-tercer-distrito" placeholder="Ej: QUILMES" />
+                <input type="text" id="pref-tercer-distrito" placeholder="Ej: QUILMES" autocomplete="off" />
                 <div id="sugerencias-tercer-distrito" class="autocomplete-lista"></div>
               </div>
             </div>
@@ -194,49 +189,49 @@
             <div class="grid-2">
               <div class="field">
                 <label for="pref-cargos">Materia / cargo</label>
-                <input type="text" id="pref-cargos" placeholder="Ej: MATEMÁTICA o PRECEPTOR" />
+                <input type="text" id="pref-cargos" placeholder="Ej: MATEMÁTICA o PRECEPTOR" autocomplete="off" />
                 <div id="sugerencias-cargos" class="autocomplete-lista"></div>
               </div>
-
               <div class="field">
                 <label for="pref-turnos">Turno</label>
                 <select id="pref-turnos">
-                  <option value="">Seleccionar</option>
+                  <option value="">Todos los turnos</option>
                   <option value="M">Mañana</option>
                   <option value="T">Tarde</option>
                   <option value="N">Noche</option>
+                  <option value="V">Vespertino</option>
                   <option value="ALTERNADO">Alternado</option>
                 </select>
               </div>
             </div>
 
+            <!-- Nivel/Modalidad — checkboxes agrupados por categoría -->
             <div class="field">
-              <label>Nivel / modalidad</label>
+              <label>Nivel / modalidad <small style="font-weight:400;color:#6b7280">(podés elegir más de uno)</small></label>
               <div id="pref-nivel-modalidad-box" class="checks-grid checks-grid-2">
                 <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="INICIAL"> Inicial</label>
                 <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="PRIMARIO"> Primario</label>
                 <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="SECUNDARIO"> Secundario</label>
-                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="SUPERIOR FORMACION DOCENTE INICIAL"> Superior Formación Docente Inicial</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="SUPERIOR FORMACION DOCENTE INICIAL"> Superior / Formación Docente</label>
                 <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ESPECIAL"> Educación Especial</label>
-                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES"> Educación de Jóvenes, Adultos y Adultos Mayores</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES"> Jóvenes y Adultos</label>
                 <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION FISICA"> Educación Física</label>
-                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL"> Psicología Comunitaria y Pedagogía Social</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL"> Psicología Comunitaria</label>
                 <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ARTISTICA"> Educación Artística</label>
-                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION TECNICO-PROFESIONAL"> Educación Técnico-Profesional</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION TECNICO-PROFESIONAL"> Técnico-Profesional</label>
               </div>
             </div>
 
+            <!-- Opciones de alerta -->
             <div class="checks-grid checks-grid-3">
               <label class="check-card">
                 <input type="checkbox" id="pref-alertas-activas" />
                 Alertas activas
               </label>
-
               <label class="check-card">
                 <input type="checkbox" id="pref-alertas-email" />
                 Recibir por email
               </label>
-
               <label class="check-card">
                 <input type="checkbox" id="pref-alertas-whatsapp" />
                 Recibir por WhatsApp
@@ -246,13 +241,16 @@
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">Guardar preferencias</button>
             </div>
-            <p id="preferencias-msg" class="msg"></p>
+            <span id="preferencias-msg" class="msg"></span>
+
           </form>
         </div>
+
       </div>
     </section>
+
   </main>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>
