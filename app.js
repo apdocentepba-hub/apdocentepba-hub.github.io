@@ -545,20 +545,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnLogoutPanel) btnLogoutPanel.addEventListener("click", logout);
   if (btnCerrarSesion) btnCerrarSesion.addEventListener("click", logout);
 
-  if (btnRecargar) {
-    btnRecargar.addEventListener("click", async () => {
-      setButtonLoading(btnRecargar, "Recargando...");
-      try {
-        await cargarDashboard();
-      } finally {
-        restoreButton(btnRecargar);
-      }
-    });
-  }
+ if (btnRecargar) {
+  btnRecargar.addEventListener("click", async () => {
+    console.log("CLICK EN RECARGAR");
+    setButtonLoading(btnRecargar, "Recargando...");
+    try {
+      await cargarDashboard();
+    } catch (e) {
+      console.error("Error en recargar:", e);
+    } finally {
+      restoreButton(btnRecargar);
+    }
+  });
+}
 
   if (btnLogin) btnLogin.addEventListener("click", () => mostrarSeccion("login"));
   if (btnRegistro) btnRegistro.addEventListener("click", () => mostrarSeccion("registro"));
-  if (btnMiPanel) btnMiPanel.addEventListener("click", () => mostrarSeccion("panel-docente"));
+  if (btnMiPanel) btnMiPanel.addEventListener("click", () => cargarDashboard());
 
   activarAutocomplete("pref-distrito-principal", "sugerencias-distrito-principal", "distrito");
   activarAutocomplete("pref-segundo-distrito", "sugerencias-segundo-distrito", "distrito");
