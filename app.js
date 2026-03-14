@@ -1,32 +1,24 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFtHAZ8ItzTK7MQdqn-FaVVO6s4s4HTIttZDC0daJgn6TgkJvFBafgNLTG_PcG0HxMbg/exec";
 
+/* =====================
+   NAVEGACIÓN
+===================== */
+
 function mostrarSeccion(id) {
   document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
   const destino = document.getElementById(id);
   if (destino) destino.classList.remove("hidden");
+  window.scrollTo(0, 0);
 }
 
-function guardarToken(token) {
-  localStorage.setItem("apd_token", token);
-}
-
-function obtenerToken() {
-  return localStorage.getItem("apd_token");
-}
-
-function borrarToken() {
-  localStorage.removeItem("apd_token");
-}
+function guardarToken(token)  { localStorage.setItem("apd_token", token); }
+function obtenerToken()       { return localStorage.getItem("apd_token"); }
+function borrarToken()        { localStorage.removeItem("apd_token"); }
 
 function actualizarNavSegunSesion() {
-  const navPublico = document.getElementById("navPublico");
-  const navPrivado = document.getElementById("navPrivado");
   const hayToken = !!obtenerToken();
-
-  if (!navPublico || !navPrivado) return;
-
-  navPublico.classList.toggle("hidden", hayToken);
-  navPrivado.classList.toggle("hidden", !hayToken);
+  document.getElementById("navPublico")?.classList.toggle("hidden", hayToken);
+  document.getElementById("navPrivado")?.classList.toggle("hidden", !hayToken);
 }
 
 function logout() {
@@ -37,425 +29,381 @@ function logout() {
 }
 
 function limpiarMensajes() {
-  ["login-msg", "registro-msg", "preferencias-msg"].forEach(id => {
+  ["login-msg","registro-msg","preferencias-msg"].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = "";
+    if (el) { el.textContent = ""; el.className = "msg"; }
   });
 }
+
+function showMsg(id, texto, tipo = "info") {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = texto;
+  el.className   = "msg msg-" + tipo;   // msg-info | msg-ok | msg-error
+}
+
+/* =====================
+   PANEL DE CARGA
+===================== */
+
+function mostrarCargandoPanel(activo) {
+  const overlay = document.getElementById("panel-loading-overlay");
+  if (overlay) overlay.classList.toggle("hidden", !activo);
+}
+
+/* =====================
+   HTTP
+===================== */
 
 async function enviarPost(payload) {
-  const res = await fetch(WEB_APP_URL, {
+  const res  = await fetch(WEB_APP_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(payload)
   });
-
   const text = await res.text();
-
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    console.error("Respuesta no JSON:", text);
-    throw new Error("El backend no devolvió JSON válido");
-  }
+  try { return JSON.parse(text); }
+  catch(e) { console.error("Respuesta no JSON:", text); throw new Error("El backend no devolvió JSON válido"); }
 }
+
+/* =====================
+   BOTONES LOADING
+===================== */
 
 function setButtonLoading(btn, text) {
   if (!btn) return;
   btn.dataset.originalText = btn.textContent;
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = text;
 }
 
 function restoreButton(btn) {
   if (!btn) return;
-  btn.disabled = false;
+  btn.disabled    = false;
   btn.textContent = btn.dataset.originalText || btn.textContent;
 }
 
+/* =====================
+   REGISTRO
+===================== */
+
 async function registrarDocente(event) {
   event.preventDefault();
-
-  const msg = document.getElementById("registro-msg");
   const btnSubmit = event.submitter || document.querySelector("#form-registro button[type='submit']");
   setButtonLoading(btnSubmit, "Registrando...");
-
-  if (msg) msg.textContent = "Procesando registro...";
+  showMsg("registro-msg", "Procesando registro...", "info");
 
   const payload = {
-    action: "register",
-    nombre: document.getElementById("reg-nombre")?.value.trim() || "",
+    action:   "register",
+    nombre:   document.getElementById("reg-nombre")?.value.trim()   || "",
     apellido: document.getElementById("reg-apellido")?.value.trim() || "",
-    email: document.getElementById("reg-email")?.value.trim() || "",
-    celular: document.getElementById("reg-celular")?.value.trim() || "",
-    password: document.getElementById("reg-password")?.value || ""
+    email:    document.getElementById("reg-email")?.value.trim()    || "",
+    celular:  document.getElementById("reg-celular")?.value.trim()  || "",
+    password: document.getElementById("reg-password")?.value        || ""
   };
 
   try {
     const data = await enviarPost(payload);
-
     if (data.ok) {
-      if (msg) msg.textContent = data.message || "Registro correcto";
+      showMsg("registro-msg", data.message || "Registro correcto ✓", "ok");
       document.getElementById("form-registro")?.reset();
-      setTimeout(() => mostrarSeccion("login"), 600);
+      setTimeout(() => mostrarSeccion("login"), 900);
     } else {
-      if (msg) msg.textContent = data.message || "No se pudo registrar";
+      showMsg("registro-msg", data.message || "No se pudo registrar", "error");
     }
-  } catch (error) {
-    console.error("Error en registro:", error);
-    if (msg) msg.textContent = "Error de conexión al registrar";
+  } catch(error) {
+    console.error(error);
+    showMsg("registro-msg", "Error de conexión al registrar", "error");
   } finally {
     restoreButton(btnSubmit);
   }
 }
 
+/* =====================
+   LOGIN
+===================== */
+
 async function loginPassword(event) {
   event.preventDefault();
-
-  const msg = document.getElementById("login-msg");
   const btnSubmit = event.submitter || document.querySelector("#form-login button[type='submit']");
   setButtonLoading(btnSubmit, "Ingresando...");
-
-  if (msg) msg.textContent = "Ingresando...";
+  showMsg("login-msg", "Verificando credenciales...", "info");
 
   const payload = {
-    action: "login_password",
-    email: document.getElementById("login-email")?.value.trim() || "",
-    password: document.getElementById("login-password")?.value || ""
+    action:   "login_password",
+    email:    document.getElementById("login-email")?.value.trim() || "",
+    password: document.getElementById("login-password")?.value     || ""
   };
 
   try {
     const data = await enviarPost(payload);
-
     if (!data.ok || !data.token) {
-      if (msg) msg.textContent = data.message || "Login incorrecto";
+      showMsg("login-msg", data.message || "Login incorrecto", "error");
       return;
     }
-
     guardarToken(data.token);
     actualizarNavSegunSesion();
-    if (msg) msg.textContent = "Login correcto";
+    showMsg("login-msg", "Login correcto ✓", "ok");
     await cargarDashboard();
-  } catch (error) {
-    console.error("Error en login:", error);
-    if (msg) msg.textContent = "Error de conexión en login";
+  } catch(error) {
+    console.error(error);
+    showMsg("login-msg", "Error de conexión en login", "error");
   } finally {
     restoreButton(btnSubmit);
   }
 }
 
 async function handleGoogleLogin(response) {
-  const msg = document.getElementById("login-msg");
-  if (msg) msg.textContent = "Validando Google...";
-
+  showMsg("login-msg", "Validando Google...", "info");
   try {
-    const data = await enviarPost({
-      action: "login_google",
-      credential: response.credential
-    });
-
+    const data = await enviarPost({ action: "login_google", credential: response.credential });
     if (!data.ok || !data.token) {
-      if (msg) msg.textContent = data.message || "No se pudo iniciar con Google";
+      showMsg("login-msg", data.message || "No se pudo iniciar con Google", "error");
       return;
     }
-
     guardarToken(data.token);
     actualizarNavSegunSesion();
-    if (msg) msg.textContent = "Login con Google correcto";
     await cargarDashboard();
-  } catch (error) {
-    console.error("Error en login Google:", error);
-    if (msg) msg.textContent = "Error de conexión con Google";
+  } catch(error) {
+    console.error(error);
+    showMsg("login-msg", "Error de conexión con Google", "error");
   }
 }
 
+/* =====================
+   DASHBOARD
+===================== */
+
 async function cargarDashboard() {
   const token = obtenerToken();
-
-  if (!token) {
-    actualizarNavSegunSesion();
-    mostrarSeccion("inicio");
-    return;
-  }
+  if (!token) { actualizarNavSegunSesion(); mostrarSeccion("inicio"); return; }
 
   mostrarSeccion("panel-docente");
+  mostrarCargandoPanel(true);   // ← mostrar overlay de carga
 
   try {
-    const data = await enviarPost({
-      action: "dashboard",
-      token
-    });
-
-    if (!data.ok) {
-      alert(data.message || "Sesión inválida");
-      logout();
-      return;
-    }
-
+    const data = await enviarPost({ action: "dashboard", token });
+    if (!data.ok) { alert(data.message || "Sesión inválida"); logout(); return; }
     renderizarDashboard(data);
     limpiarFormularioPreferencias();
     cargarChecksPreferenciasDesdeDashboard(data);
     actualizarNavSegunSesion();
-  } catch (error) {
-    console.error("Error al cargar dashboard:", error);
+  } catch(error) {
+    console.error(error);
     alert("No se pudo cargar el panel docente");
     logout();
+  } finally {
+    mostrarCargandoPanel(false);  // ← ocultar overlay siempre
   }
 }
 
 function renderizarDashboard(data) {
-  const docente = data.docente || {};
+  const docente      = data.docente      || {};
   const preferencias = data.preferencias || {};
-  const alertas = Array.isArray(data.alertas) ? data.alertas : [];
-  const historial = Array.isArray(data.historial) ? data.historial : [];
+  const alertas      = Array.isArray(data.alertas)   ? data.alertas   : [];
+  const historial    = Array.isArray(data.historial)  ? data.historial : [];
   const estadisticas = data.estadisticas || {};
+  const nombreCompleto = `${docente.nombre||""} ${docente.apellido||""}`.trim();
 
-  const nombreCompleto = `${docente.nombre || ""} ${docente.apellido || ""}`.trim();
+  setText("panel-bienvenida",  nombreCompleto ? `Bienvenido/a, ${nombreCompleto}` : "Bienvenido/a");
+  setText("panel-subtitulo",   docente.email  ? `Sesión iniciada con ${docente.email}` : "Panel docente");
 
-  const panelBienvenida = document.getElementById("panel-bienvenida");
-  const panelSubtitulo = document.getElementById("panel-subtitulo");
-  const panelDatos = document.getElementById("panel-datos-docente");
-  const panelPreferenciasResumen = document.getElementById("panel-preferencias-resumen");
+  setInner("panel-datos-docente", `
+    <p><strong>ID:</strong> ${esc(docente.id||"-")}</p>
+    <p><strong>Nombre:</strong> ${esc(docente.nombre||"-")}</p>
+    <p><strong>Apellido:</strong> ${esc(docente.apellido||"-")}</p>
+    <p><strong>Email:</strong> ${esc(docente.email||"-")}</p>
+    <p><strong>Celular:</strong> ${esc(docente.celular||"-")}</p>
+    <p><strong>Estado:</strong> ${docente.activo
+      ? '<span class="badge badge-ok">● Activo</span>'
+      : '<span class="badge badge-off">● Inactivo</span>'}</p>
+  `);
+
+  setInner("panel-preferencias-resumen", `
+    <p><strong>Distrito principal:</strong> ${esc(preferencias.distrito_principal||"-")}</p>
+    <p><strong>Segundo distrito:</strong>   ${esc(preferencias.segundo_distrito||"-")}</p>
+    <p><strong>Tercer distrito:</strong>    ${esc(preferencias.tercer_distrito||"-")}</p>
+    <p><strong>Materia / cargo:</strong>    ${esc(preferencias.cargos_csv||preferencias.materias_csv||"-")}</p>
+    <p><strong>Nivel / modalidad:</strong>  ${esc(preferencias.nivel_modalidad||"-")}</p>
+    <p><strong>Turno:</strong>              ${traducirTurnoPlano(preferencias.turnos_csv||"-")}</p>
+    <p><strong>Alertas activas:</strong>    ${preferencias.alertas_activas ? "✓ Sí" : "✗ No"}</p>
+    <p><strong>Email:</strong>              ${preferencias.alertas_email    ? "✓ Sí" : "✗ No"}</p>
+    <p><strong>WhatsApp:</strong>           ${preferencias.alertas_whatsapp ? "✓ Sí" : "✗ No"}</p>
+  `);
+
+  // ALERTAS APD — tarjetas mejoradas
   const panelAlertas = document.getElementById("panel-alertas");
-  const panelHistorial = document.getElementById("panel-historial");
-  const panelEstadisticas = document.getElementById("panel-estadisticas");
-
-  if (panelBienvenida) {
-    panelBienvenida.textContent = nombreCompleto ? `Bienvenido/a, ${nombreCompleto}` : "Bienvenido/a";
-  }
-
-  if (panelSubtitulo) {
-    panelSubtitulo.textContent = docente.email ? `Sesión iniciada con ${docente.email}` : "Panel docente";
-  }
-
-  if (panelDatos) {
-    panelDatos.innerHTML = `
-      <p><strong>ID:</strong> ${escapeHtml(docente.id || "-")}</p>
-      <p><strong>Nombre:</strong> ${escapeHtml(docente.nombre || "-")}</p>
-      <p><strong>Apellido:</strong> ${escapeHtml(docente.apellido || "-")}</p>
-      <p><strong>Email:</strong> ${escapeHtml(docente.email || "-")}</p>
-      <p><strong>Celular:</strong> ${escapeHtml(docente.celular || "-")}</p>
-      <p><strong>Estado:</strong> ${
-        docente.activo
-          ? '<span class="badge-ok">Activo</span>'
-          : '<span class="badge-off">Inactivo</span>'
-      }</p>
-    `;
-  }
-
-  if (panelPreferenciasResumen) {
-    panelPreferenciasResumen.innerHTML = `
-      <p><strong>Distrito principal:</strong> ${escapeHtml(preferencias.distrito_principal || "-")}</p>
-      <p><strong>Segundo distrito:</strong> ${escapeHtml(preferencias.segundo_distrito || "-")}</p>
-      <p><strong>Tercer distrito:</strong> ${escapeHtml(preferencias.tercer_distrito || "-")}</p>
-      <p><strong>Materia / cargo:</strong> ${escapeHtml(preferencias.cargos_csv || preferencias.materias_csv || "-")}</p>
-      <p><strong>Nivel / modalidad:</strong> ${escapeHtml(preferencias.nivel_modalidad || "-")}</p>
-      <p><strong>Turno:</strong> ${traducirTurnoPlano(preferencias.turnos_csv || "-")}</p>
-      <p><strong>Alertas activas:</strong> ${preferencias.alertas_activas ? "Sí" : "No"}</p>
-      <p><strong>Email:</strong> ${preferencias.alertas_email ? "Sí" : "No"}</p>
-      <p><strong>WhatsApp:</strong> ${preferencias.alertas_whatsapp ? "Sí" : "No"}</p>
-    `;
-  }
-
   if (panelAlertas) {
     if (alertas.length > 0) {
       panelAlertas.innerHTML = `
+        <p class="alertas-contador"><strong>${alertas.length}</strong> alerta${alertas.length>1?"s":""} compatible${alertas.length>1?"s":""}</p>
         <div class="alertas-grid">
           ${alertas.map(a => `
             <div class="alerta-item">
-              <h4>${escapeHtml(a.titulo || "APD")}</h4>
-              <p><strong>Distrito:</strong> ${escapeHtml(a.distrito || "-")}</p>
-              <p><strong>Escuela:</strong> ${escapeHtml(a.escuela || "-")}</p>
-              <p><strong>Turno:</strong> ${traducirTurnoPlano(a.turno || "-")}</p>
-              <p><strong>Nivel / modalidad:</strong> ${escapeHtml(a.nivel_modalidad || "-")}</p>
-              <p><strong>Cierre:</strong> ${formatearFechaCorta(a.fecha_cierre_fmt || "-")}</p>
+              <div class="alerta-header">
+                <span class="alerta-badge">${esc(a.turno ? traducirTurnoPlano(a.turno) : "")}</span>
+                <span class="alerta-nivel">${esc(a.nivel_modalidad||"")}</span>
+              </div>
+              <h4>${esc(a.titulo||"APD")}</h4>
+              <div class="alerta-body">
+                <p><span class="label">Cargo/Materia</span> ${esc(a.cargo||a.materia||"-")}</p>
+                <p><span class="label">Distrito</span> ${esc(a.distrito||"-")}</p>
+                <p><span class="label">Escuela</span> ${esc(a.escuela||"-")}</p>
+                ${a.domicilio ? `<p><span class="label">Domicilio</span> ${esc(a.domicilio)}</p>` : ""}
+                ${a.jornada   ? `<p><span class="label">Jornada</span> ${esc(a.jornada)}</p>`   : ""}
+                ${a.modulos   ? `<p><span class="label">Módulos</span> ${esc(a.modulos)}</p>`   : ""}
+              </div>
+              <div class="alerta-footer">
+                <span class="alerta-cierre">⏱ Cierre: ${formatearFechaCorta(a.fecha_cierre_fmt||"-")}</span>
+              </div>
             </div>
           `).join("")}
-        </div>
-      `;
+        </div>`;
     } else {
-      panelAlertas.innerHTML = `<p>No hay alertas publicadas compatibles todavía.</p>`;
+      panelAlertas.innerHTML = `<div class="empty-state">
+        <p>No hay alertas compatibles todavía.</p>
+        <p class="empty-hint">Revisá tus preferencias: distrito, materia y turno deben coincidir con los APD publicados.</p>
+      </div>`;
     }
   }
 
+  // HISTORIAL
+  const panelHistorial = document.getElementById("panel-historial");
   if (panelHistorial) {
-    if (historial.length > 0) {
-      panelHistorial.innerHTML = `
-        <ul class="lista-simple">
-          ${historial.map(h => `<li>${escapeHtml(String(h))}</li>`).join("")}
-        </ul>
-      `;
-    } else {
-      panelHistorial.innerHTML = `<p>Sin historial todavía.</p>`;
-    }
+    panelHistorial.innerHTML = historial.length > 0
+      ? `<ul class="lista-simple">${historial.map(h=>`<li>${esc(String(h))}</li>`).join("")}</ul>`
+      : `<p class="empty-state">Sin historial todavía.</p>`;
   }
 
-  if (panelEstadisticas) {
-    panelEstadisticas.innerHTML = `
-      <p><strong>Total alertas:</strong> ${estadisticas.total_alertas ?? 0}</p>
-      <p><strong>Leídas:</strong> ${estadisticas.alertas_leidas ?? 0}</p>
-      <p><strong>No leídas:</strong> ${estadisticas.alertas_no_leidas ?? 0}</p>
-      <p><strong>Último acceso:</strong> ${formatearFechaCorta(estadisticas.ultimo_acceso || "-")}</p>
-    `;
-  }
+  // ESTADÍSTICAS
+  setInner("panel-estadisticas", `
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-num">${estadisticas.total_alertas ?? 0}</span>
+        <span class="stat-label">Total alertas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">${estadisticas.alertas_leidas ?? 0}</span>
+        <span class="stat-label">Vistas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">${estadisticas.alertas_no_leidas ?? 0}</span>
+        <span class="stat-label">Sin ver</span>
+      </div>
+    </div>
+    <p class="ultimo-acceso">Último acceso: ${formatearFechaCorta(estadisticas.ultimo_acceso||"-")}</p>
+  `);
 }
 
-function traducirTurnoPlano(valor) {
-  const txt = String(valor || "").trim().toUpperCase();
-  if (!txt || txt === "-") return "-";
-
-  return txt.split(",").map(v => {
-    if (v === "M") return "Mañana";
-    if (v === "T") return "Tarde";
-    if (v === "N") return "Noche";
-    if (v === "V") return "Vespertino";
-    if (v === "ALTERNADO") return "Alternado";
-    return v;
-  }).join(", ");
-}
-
-function formatearFechaCorta(valor) {
-  const txt = String(valor || "").trim();
-  if (!txt || txt === "-") return "-";
-
-  const d = new Date(txt);
-  if (!isNaN(d.getTime())) {
-    return d.toLocaleString("es-AR");
-  }
-  return escapeHtml(txt);
-}
+/* =====================
+   PREFERENCIAS
+===================== */
 
 function limpiarFormularioPreferencias() {
-  const form = document.getElementById("form-preferencias");
-  if (form) form.reset();
-
-  setInputValue("pref-distrito-principal", "");
-  setInputValue("pref-segundo-distrito", "");
-  setInputValue("pref-tercer-distrito", "");
-  setInputValue("pref-cargos", "");
-  setInputValue("pref-turnos", "");
-
-  document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(chk => {
-    chk.checked = false;
+  document.getElementById("form-preferencias")?.reset();
+  ["pref-distrito-principal","pref-segundo-distrito","pref-tercer-distrito","pref-cargos","pref-turnos"].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = "";
   });
-
-  [
-    "sugerencias-distrito-principal",
-    "sugerencias-segundo-distrito",
-    "sugerencias-tercer-distrito",
-    "sugerencias-cargos"
-  ].forEach(id => {
-    const box = document.getElementById(id);
-    if (box) {
-      box.innerHTML = "";
-      box.style.display = "none";
-    }
+  document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(c => c.checked = false);
+  ["sugerencias-distrito-principal","sugerencias-segundo-distrito","sugerencias-tercer-distrito","sugerencias-cargos"].forEach(id => {
+    const b = document.getElementById(id); if (b) { b.innerHTML = ""; b.style.display = "none"; }
   });
 }
 
 function cargarChecksPreferenciasDesdeDashboard(data) {
-  const preferencias = data.preferencias || {};
-
-  setCheckboxValue("pref-alertas-activas", !!preferencias.alertas_activas);
-  setCheckboxValue("pref-alertas-email", !!preferencias.alertas_email);
-  setCheckboxValue("pref-alertas-whatsapp", !!preferencias.alertas_whatsapp);
+  const pref = data.preferencias || {};
+  setCheckboxValue("pref-alertas-activas",   !!pref.alertas_activas);
+  setCheckboxValue("pref-alertas-email",     !!pref.alertas_email);
+  setCheckboxValue("pref-alertas-whatsapp",  !!pref.alertas_whatsapp);
 }
 
 function obtenerNivelModalidadSeleccionadoCSV() {
   return Array.from(document.querySelectorAll('input[name="pref-nivel-modalidad"]:checked'))
-    .map(el => String(el.value || "").trim().toUpperCase())
-    .filter(Boolean)
-    .join(",");
-}
-
-function setInputValue(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.value = value;
-}
-
-function setCheckboxValue(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.checked = !!value;
+    .map(el => String(el.value||"").trim().toUpperCase()).filter(Boolean).join(",");
 }
 
 async function guardarPreferencias(event) {
   event.preventDefault();
-
   const token = obtenerToken();
-  const msg = document.getElementById("preferencias-msg");
+  if (!token) { showMsg("preferencias-msg","Sesión no válida","error"); return; }
+
   const btnSubmit = event.submitter || document.querySelector("#form-preferencias button[type='submit']");
-
-  if (!token) {
-    if (msg) msg.textContent = "Sesión no válida";
-    return;
-  }
-
   setButtonLoading(btnSubmit, "Guardando...");
-  if (msg) msg.textContent = "Guardando preferencias...";
+  showMsg("preferencias-msg", "Guardando preferencias...", "info");
 
-  const segundoDistrito = (document.getElementById("pref-segundo-distrito")?.value || "").trim().toUpperCase();
-  const tercerDistrito = (document.getElementById("pref-tercer-distrito")?.value || "").trim().toUpperCase();
-  const otrosDistritos = [segundoDistrito, tercerDistrito].filter(Boolean).join(",");
-
-  const materiaCargo = (document.getElementById("pref-cargos")?.value || "").trim().toUpperCase();
+  const segundo = (document.getElementById("pref-segundo-distrito")?.value||"").trim().toUpperCase();
+  const tercero = (document.getElementById("pref-tercer-distrito")?.value||"").trim().toUpperCase();
+  const materiaCargo = (document.getElementById("pref-cargos")?.value||"").trim().toUpperCase();
 
   const payload = {
-    action: "save_preferences",
-    token: token,
-    distrito_principal: (document.getElementById("pref-distrito-principal")?.value || "").trim().toUpperCase(),
-    otros_distritos_c: normalizarListaCSV(otrosDistritos),
-    materias_csv: normalizarListaCSV(materiaCargo),
-    cargos_csv: normalizarListaCSV(materiaCargo),
-    nivel_modalidad: normalizarListaCSV(obtenerNivelModalidadSeleccionadoCSV()),
-    turnos_csv: normalizarListaCSV(document.getElementById("pref-turnos")?.value || ""),
-    alertas_activas: document.getElementById("pref-alertas-activas")?.checked || false,
-    alertas_email: document.getElementById("pref-alertas-email")?.checked || false,
-    alertas_whatsapp: document.getElementById("pref-alertas-whatsapp")?.checked || false
+    action: "save_preferences", token,
+    distrito_principal: (document.getElementById("pref-distrito-principal")?.value||"").trim().toUpperCase(),
+    otros_distritos_c:  normalizarListaCSV([segundo,tercero].filter(Boolean).join(",")),
+    materias_csv:       normalizarListaCSV(materiaCargo),
+    cargos_csv:         normalizarListaCSV(materiaCargo),
+    nivel_modalidad:    normalizarListaCSV(obtenerNivelModalidadSeleccionadoCSV()),
+    turnos_csv:         normalizarListaCSV(document.getElementById("pref-turnos")?.value||""),
+    alertas_activas:    document.getElementById("pref-alertas-activas")?.checked  || false,
+    alertas_email:      document.getElementById("pref-alertas-email")?.checked    || false,
+    alertas_whatsapp:   document.getElementById("pref-alertas-whatsapp")?.checked || false
   };
 
   try {
     const data = await enviarPost(payload);
-
-    if (!data.ok) {
-      if (msg) msg.textContent = data.message || "No se pudieron guardar las preferencias";
-      return;
-    }
-
-    if (msg) msg.textContent = data.message || "Preferencias guardadas correctamente";
+    if (!data.ok) { showMsg("preferencias-msg", data.message||"No se pudieron guardar", "error"); return; }
+    showMsg("preferencias-msg", data.message || "Preferencias guardadas ✓", "ok");
     await cargarDashboard();
-  } catch (error) {
-    console.error("Error al guardar preferencias:", error);
-    if (msg) msg.textContent = "Error de conexión al guardar preferencias";
+  } catch(error) {
+    console.error(error);
+    showMsg("preferencias-msg", "Error de conexión al guardar", "error");
   } finally {
     restoreButton(btnSubmit);
   }
 }
 
+/* =====================
+   HELPERS UI
+===================== */
+
 function normalizarListaCSV(texto) {
-  return String(texto || "")
-    .split(",")
-    .map(x => x.trim().toUpperCase())
-    .filter(Boolean)
-    .join(",");
+  return String(texto||"").split(",").map(x=>x.trim().toUpperCase()).filter(Boolean).join(",");
 }
 
-function escapeHtml(texto) {
-  return String(texto)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+function esc(texto) {
+  return String(texto).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
 
-function debounce(fn, delay = 320) {
-  let timer = null;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
+function setText(id, texto) { const el=document.getElementById(id); if(el) el.textContent=texto; }
+function setInner(id, html) { const el=document.getElementById(id); if(el) el.innerHTML=html; }
+function setCheckboxValue(id, val) { const el=document.getElementById(id); if(el) el.checked=!!val; }
+
+function traducirTurnoPlano(valor) {
+  const txt = String(valor||"").trim().toUpperCase();
+  if (!txt||txt==="-") return "-";
+  return txt.split(",").map(v=>{
+    if(v==="M") return "Mañana";
+    if(v==="T") return "Tarde";
+    if(v==="N") return "Noche";
+    if(v==="V") return "Vespertino";
+    if(v==="ALTERNADO") return "Alternado";
+    return v;
+  }).join(", ");
+}
+
+function formatearFechaCorta(valor) {
+  const txt = String(valor||"").trim();
+  if (!txt||txt==="-") return "-";
+  const d = new Date(txt);
+  return !isNaN(d.getTime()) ? d.toLocaleString("es-AR") : esc(txt);
+}
+
+/* =====================
+   AUTOCOMPLETE
+===================== */
+
+function debounce(fn, delay=320) {
+  let timer=null;
+  return function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args),delay); };
 }
 
 async function buscarSugerencias(tipo, texto) {
@@ -465,100 +413,53 @@ async function buscarSugerencias(tipo, texto) {
 }
 
 function renderizarListaAutocomplete(lista, items, input) {
-  if (!items || !items.length) {
-    lista.innerHTML = "";
-    lista.style.display = "none";
-    return;
-  }
-
-  lista.innerHTML = items.map(item => `
-    <div class="autocomplete-item">${escapeHtml(item.label || "")}</div>
-  `).join("");
-
+  if (!items||!items.length) { lista.innerHTML=""; lista.style.display="none"; return; }
+  lista.innerHTML = items.map(item=>`<div class="autocomplete-item">${esc(item.label||"")}</div>`).join("");
   lista.style.display = "block";
-
   lista.querySelectorAll(".autocomplete-item").forEach(el => {
-    el.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-      input.value = this.textContent.trim();
-      lista.innerHTML = "";
-      lista.style.display = "none";
-    });
+    el.addEventListener("mousedown", function(e){ e.preventDefault(); input.value=this.textContent.trim(); lista.innerHTML=""; lista.style.display="none"; });
   });
 }
 
 function activarAutocomplete(inputId, listaId, tipo) {
-  const input = document.getElementById(inputId);
-  const lista = document.getElementById(listaId);
-
-  if (!input || !lista) return;
-
-  input.addEventListener("input", debounce(async function () {
-    const texto = input.value.trim();
-
-    if (texto.length < 2) {
-      lista.innerHTML = "";
-      lista.style.display = "none";
-      return;
-    }
-
+  const input=document.getElementById(inputId), lista=document.getElementById(listaId);
+  if(!input||!lista) return;
+  input.addEventListener("input", debounce(async function(){
+    const texto=input.value.trim();
+    if(texto.length<2){lista.innerHTML="";lista.style.display="none";return;}
     try {
-      const data = await buscarSugerencias(tipo, texto);
-
-      if (!data.ok) {
-        lista.innerHTML = "";
-        lista.style.display = "none";
-        return;
-      }
-
-      renderizarListaAutocomplete(lista, data.items || [], input);
-    } catch (error) {
-      console.error("Error autocomplete:", error);
-      lista.innerHTML = "";
-      lista.style.display = "none";
-    }
-  }, 320));
-
-  input.addEventListener("blur", function () {
-    setTimeout(() => {
-      lista.style.display = "none";
-    }, 120);
-  });
-
-  input.addEventListener("focus", function () {
-    if (input.value.trim().length >= 2) {
-      input.dispatchEvent(new Event("input"));
-    }
-  });
+      const data=await buscarSugerencias(tipo,texto);
+      if(!data.ok){lista.innerHTML="";lista.style.display="none";return;}
+      renderizarListaAutocomplete(lista,data.items||[],input);
+    } catch(error){lista.innerHTML="";lista.style.display="none";}
+  },320));
+  input.addEventListener("blur",  ()=>setTimeout(()=>{lista.style.display="none";},120));
+  input.addEventListener("focus", ()=>{ if(input.value.trim().length>=2) input.dispatchEvent(new Event("input")); });
 }
 
+/* =====================
+   INIT
+===================== */
+
 document.addEventListener("DOMContentLoaded", () => {
-  const formRegistro = document.getElementById("form-registro");
-  const formLogin = document.getElementById("form-login");
-  const formPreferencias = document.getElementById("form-preferencias");
+  // Formularios
+  document.getElementById("form-registro")?.addEventListener("submit", registrarDocente);
+  document.getElementById("form-login")?.addEventListener("submit", loginPassword);
+  document.getElementById("form-preferencias")?.addEventListener("submit", guardarPreferencias);
 
-  const btnLogoutPanel = document.getElementById("btn-logout");
+  // Logout
+  document.getElementById("btn-logout")?.addEventListener("click", logout);
+  document.getElementById("btnCerrarSesion")?.addEventListener("click", logout);
+
+  // FIX BOTÓN RECARGAR: el problema era que restoreButton se llamaba antes de
+  // que cargarDashboard terminara. Ahora está dentro del bloque try/finally.
   const btnRecargar = document.getElementById("btn-recargar-panel");
-
-  const btnLogin = document.getElementById("btnLogin");
-  const btnRegistro = document.getElementById("btnRegistro");
-  const btnMiPanel = document.getElementById("btnMiPanel");
-  const btnCerrarSesion = document.getElementById("btnCerrarSesion");
-
-  if (formRegistro) formRegistro.addEventListener("submit", registrarDocente);
-  if (formLogin) formLogin.addEventListener("submit", loginPassword);
-  if (formPreferencias) formPreferencias.addEventListener("submit", guardarPreferencias);
-
-  if (btnLogoutPanel) btnLogoutPanel.addEventListener("click", logout);
-  if (btnCerrarSesion) btnCerrarSesion.addEventListener("click", logout);
-
   if (btnRecargar) {
     btnRecargar.addEventListener("click", async () => {
-      console.log("CLICK EN RECARGAR");
       setButtonLoading(btnRecargar, "Recargando...");
       try {
         await cargarDashboard();
-      } catch (e) {
+      } catch(e) {
         console.error("Error en recargar:", e);
       } finally {
         restoreButton(btnRecargar);
@@ -566,20 +467,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (btnLogin) btnLogin.addEventListener("click", () => mostrarSeccion("login"));
-  if (btnRegistro) btnRegistro.addEventListener("click", () => mostrarSeccion("registro"));
-  if (btnMiPanel) btnMiPanel.addEventListener("click", () => cargarDashboard());
+  // Navegación pública
+  document.getElementById("btnLogin")?.addEventListener("click",   () => mostrarSeccion("login"));
+  document.getElementById("btnRegistro")?.addEventListener("click", () => mostrarSeccion("registro"));
+  document.getElementById("btnMiPanel")?.addEventListener("click",  () => cargarDashboard());
 
+  // Autocomplete
   activarAutocomplete("pref-distrito-principal", "sugerencias-distrito-principal", "distrito");
-  activarAutocomplete("pref-segundo-distrito", "sugerencias-segundo-distrito", "distrito");
-  activarAutocomplete("pref-tercer-distrito", "sugerencias-tercer-distrito", "distrito");
-  activarAutocomplete("pref-cargos", "sugerencias-cargos", "cargo_area");
+  activarAutocomplete("pref-segundo-distrito",   "sugerencias-segundo-distrito",   "distrito");
+  activarAutocomplete("pref-tercer-distrito",    "sugerencias-tercer-distrito",    "distrito");
+  activarAutocomplete("pref-cargos",             "sugerencias-cargos",             "cargo_area");
 
+  // Estado inicial
   actualizarNavSegunSesion();
-
-  if (obtenerToken()) {
-    cargarDashboard();
-  } else {
-    mostrarSeccion("inicio");
-  }
+  if (obtenerToken()) { cargarDashboard(); } else { mostrarSeccion("inicio"); }
 });
