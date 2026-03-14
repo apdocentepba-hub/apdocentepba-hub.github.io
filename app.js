@@ -1,9 +1,7 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFtHAZ8ItzTK7MQdqn-FaVVO6s4s4HTIttZDC0daJgn6TgkJvFBafgNLTG_PcG0HxMbg/exec";
 
 function mostrarSeccion(id) {
-  const secciones = document.querySelectorAll("main section");
-  secciones.forEach(sec => sec.classList.add("hidden"));
-
+  document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
   const destino = document.getElementById(id);
   if (destino) destino.classList.remove("hidden");
 }
@@ -23,32 +21,26 @@ function borrarToken() {
 function actualizarNavSegunSesion() {
   const navPublico = document.getElementById("navPublico");
   const navPrivado = document.getElementById("navPrivado");
+  const hayToken = !!obtenerToken();
 
   if (!navPublico || !navPrivado) return;
 
-  const token = obtenerToken();
-
-  if (token) {
-    navPublico.style.display = "none";
-    navPrivado.style.display = "flex";
-  } else {
-    navPublico.style.display = "flex";
-    navPrivado.style.display = "none";
-  }
+  navPublico.classList.toggle("hidden", hayToken);
+  navPrivado.classList.toggle("hidden", !hayToken);
 }
 
 function logout() {
   borrarToken();
   actualizarNavSegunSesion();
+  limpiarMensajes();
   mostrarSeccion("inicio");
+}
 
-  const loginMsg = document.getElementById("login-msg");
-  const registroMsg = document.getElementById("registro-msg");
-  const prefMsg = document.getElementById("preferencias-msg");
-
-  if (loginMsg) loginMsg.textContent = "";
-  if (registroMsg) registroMsg.textContent = "";
-  if (prefMsg) prefMsg.textContent = "";
+function limpiarMensajes() {
+  ["login-msg", "registro-msg", "preferencias-msg"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "";
+  });
 }
 
 async function enviarPost(payload) {
@@ -70,16 +62,27 @@ async function enviarPost(payload) {
   }
 }
 
+function setButtonLoading(btn, text) {
+  if (!btn) return "";
+  const original = btn.dataset.originalText || btn.textContent;
+  btn.dataset.originalText = original;
+  btn.disabled = true;
+  btn.textContent = text;
+  return original;
+}
+
+function restoreButton(btn) {
+  if (!btn) return;
+  btn.disabled = false;
+  btn.textContent = btn.dataset.originalText || btn.textContent;
+}
+
 async function registrarDocente(event) {
   event.preventDefault();
 
   const msg = document.getElementById("registro-msg");
   const btnSubmit = event.submitter || document.querySelector("#form-registro button[type='submit']");
-
-  if (btnSubmit) {
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Registrando...";
-  }
+  setButtonLoading(btnSubmit, "Registrando...");
 
   if (msg) msg.textContent = "Procesando registro...";
 
@@ -98,10 +101,7 @@ async function registrarDocente(event) {
     if (data.ok) {
       if (msg) msg.textContent = data.message || "Registro correcto";
       document.getElementById("form-registro")?.reset();
-
-      setTimeout(() => {
-        mostrarSeccion("login");
-      }, 700);
+      setTimeout(() => mostrarSeccion("login"), 600);
     } else {
       if (msg) msg.textContent = data.message || "No se pudo registrar";
     }
@@ -109,10 +109,7 @@ async function registrarDocente(event) {
     console.error("Error en registro:", error);
     if (msg) msg.textContent = "Error de conexión al registrar";
   } finally {
-    if (btnSubmit) {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Registrarme";
-    }
+    restoreButton(btnSubmit);
   }
 }
 
@@ -121,11 +118,7 @@ async function loginPassword(event) {
 
   const msg = document.getElementById("login-msg");
   const btnSubmit = event.submitter || document.querySelector("#form-login button[type='submit']");
-
-  if (btnSubmit) {
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Ingresando...";
-  }
+  setButtonLoading(btnSubmit, "Ingresando...");
 
   if (msg) msg.textContent = "Ingresando...";
 
@@ -143,18 +136,15 @@ async function loginPassword(event) {
       return;
     }
 
-    if (msg) msg.textContent = "Login correcto";
     guardarToken(data.token);
     actualizarNavSegunSesion();
+    if (msg) msg.textContent = "Login correcto";
     await cargarDashboard();
   } catch (error) {
     console.error("Error en login:", error);
     if (msg) msg.textContent = "Error de conexión en login";
   } finally {
-    if (btnSubmit) {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Ingresar";
-    }
+    restoreButton(btnSubmit);
   }
 }
 
@@ -173,9 +163,9 @@ async function handleGoogleLogin(response) {
       return;
     }
 
-    if (msg) msg.textContent = "Login con Google correcto";
     guardarToken(data.token);
     actualizarNavSegunSesion();
+    if (msg) msg.textContent = "Login con Google correcto";
     await cargarDashboard();
   } catch (error) {
     console.error("Error en login Google:", error);
@@ -197,7 +187,7 @@ async function cargarDashboard() {
   try {
     const data = await enviarPost({
       action: "dashboard",
-      token: token
+      token
     });
 
     if (!data.ok) {
@@ -207,7 +197,8 @@ async function cargarDashboard() {
     }
 
     renderizarDashboard(data);
-    cargarFormularioPreferenciasDesdeDashboard(data);
+    limpiarFormularioPreferencias();
+    cargarChecksPreferenciasDesdeDashboard(data);
     actualizarNavSegunSesion();
   } catch (error) {
     console.error("Error al cargar dashboard:", error);
@@ -279,9 +270,9 @@ function renderizarDashboard(data) {
               <h4>${escapeHtml(a.titulo || "APD")}</h4>
               <p><strong>Distrito:</strong> ${escapeHtml(a.distrito || "-")}</p>
               <p><strong>Escuela:</strong> ${escapeHtml(a.escuela || "-")}</p>
-              <p><strong>Turno:</strong> ${escapeHtml(a.turno || "-")}</p>
+              <p><strong>Turno:</strong> ${traducirTurno(a.turno || "-")}</p>
               <p><strong>Nivel / modalidad:</strong> ${escapeHtml(a.nivel_modalidad || "-")}</p>
-              <p><strong>Cierre:</strong> ${escapeHtml(a.fecha_cierre_fmt || "-")}</p>
+              <p><strong>Cierre:</strong> ${formatearFechaCorta(a.fecha_cierre_fmt || "-")}</p>
             </div>
           `).join("")}
         </div>
@@ -308,24 +299,68 @@ function renderizarDashboard(data) {
       <p><strong>Total alertas:</strong> ${estadisticas.total_alertas ?? 0}</p>
       <p><strong>Leídas:</strong> ${estadisticas.alertas_leidas ?? 0}</p>
       <p><strong>No leídas:</strong> ${estadisticas.alertas_no_leidas ?? 0}</p>
-      <p><strong>Último acceso:</strong> ${escapeHtml(estadisticas.ultimo_acceso || "-")}</p>
+      <p><strong>Último acceso:</strong> ${formatearFechaCorta(estadisticas.ultimo_acceso || "-")}</p>
     `;
   }
 }
 
-function cargarFormularioPreferenciasDesdeDashboard(data) {
-  const preferencias = data.preferencias || {};
+function traducirTurno(valor) {
+  const v = String(valor || "").toUpperCase().trim();
+  if (v === "M") return "Mañana";
+  if (v === "T") return "Tarde";
+  if (v === "N") return "Noche";
+  if (v === "V") return "Vespertino";
+  return escapeHtml(valor || "-");
+}
 
-  setInputValue("pref-distrito-principal", preferencias.distrito_principal || "");
-  setInputValue("pref-segundo-distrito", preferencias.segundo_distrito || "");
-  setInputValue("pref-tercer-distrito", preferencias.tercer_distrito || "");
-  setInputValue("pref-cargos", preferencias.cargos_csv || preferencias.materias_csv || "");
-  setInputValue("pref-nivel-modalidad", preferencias.nivel_modalidad || "");
-  setInputValue("pref-turnos", preferencias.turnos_csv || "");
+function formatearFechaCorta(valor) {
+  const txt = String(valor || "").trim();
+  if (!txt || txt === "-") return "-";
+
+  const d = new Date(txt);
+  if (!isNaN(d.getTime())) {
+    return d.toLocaleString("es-AR");
+  }
+  return escapeHtml(txt);
+}
+
+function limpiarFormularioPreferencias() {
+  setInputValue("pref-distrito-principal", "");
+  setInputValue("pref-segundo-distrito", "");
+  setInputValue("pref-tercer-distrito", "");
+  setInputValue("pref-cargos", "");
+  setInputValue("pref-turnos", "");
+
+  document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(chk => {
+    chk.checked = false;
+  });
+
+  const box1 = document.getElementById("sugerencias-distrito-principal");
+  const box2 = document.getElementById("sugerencias-segundo-distrito");
+  const box3 = document.getElementById("sugerencias-tercer-distrito");
+  const box4 = document.getElementById("sugerencias-cargos");
+
+  [box1, box2, box3, box4].forEach(box => {
+    if (box) {
+      box.innerHTML = "";
+      box.style.display = "none";
+    }
+  });
+}
+
+function cargarChecksPreferenciasDesdeDashboard(data) {
+  const preferencias = data.preferencias || {};
 
   setCheckboxValue("pref-alertas-activas", !!preferencias.alertas_activas);
   setCheckboxValue("pref-alertas-email", !!preferencias.alertas_email);
   setCheckboxValue("pref-alertas-whatsapp", !!preferencias.alertas_whatsapp);
+}
+
+function obtenerNivelModalidadSeleccionadoCSV() {
+  return Array.from(document.querySelectorAll('input[name="pref-nivel-modalidad"]:checked'))
+    .map(el => String(el.value || "").trim().toUpperCase())
+    .filter(Boolean)
+    .join(",");
 }
 
 function setInputValue(id, value) {
@@ -350,19 +385,12 @@ async function guardarPreferencias(event) {
     return;
   }
 
-  if (btnSubmit) {
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Guardando...";
-  }
-
+  setButtonLoading(btnSubmit, "Guardando...");
   if (msg) msg.textContent = "Guardando preferencias...";
 
   const segundoDistrito = (document.getElementById("pref-segundo-distrito")?.value || "").trim().toUpperCase();
   const tercerDistrito = (document.getElementById("pref-tercer-distrito")?.value || "").trim().toUpperCase();
-
-  const otrosDistritos = [segundoDistrito, tercerDistrito]
-    .filter(Boolean)
-    .join(",");
+  const otrosDistritos = [segundoDistrito, tercerDistrito].filter(Boolean).join(",");
 
   const materiaCargo = (document.getElementById("pref-cargos")?.value || "").trim().toUpperCase();
 
@@ -373,7 +401,7 @@ async function guardarPreferencias(event) {
     otros_distritos_c: normalizarListaCSV(otrosDistritos),
     materias_csv: normalizarListaCSV(materiaCargo),
     cargos_csv: normalizarListaCSV(materiaCargo),
-    nivel_modalidad: (document.getElementById("pref-nivel-modalidad")?.value || "").trim().toUpperCase(),
+    nivel_modalidad: normalizarListaCSV(obtenerNivelModalidadSeleccionadoCSV()),
     turnos_csv: normalizarListaCSV(document.getElementById("pref-turnos")?.value || ""),
     alertas_activas: document.getElementById("pref-alertas-activas")?.checked || false,
     alertas_email: document.getElementById("pref-alertas-email")?.checked || false,
@@ -394,15 +422,12 @@ async function guardarPreferencias(event) {
     console.error("Error al guardar preferencias:", error);
     if (msg) msg.textContent = "Error de conexión al guardar preferencias";
   } finally {
-    if (btnSubmit) {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Guardar preferencias";
-    }
+    restoreButton(btnSubmit);
   }
 }
 
 function normalizarListaCSV(texto) {
-  return texto
+  return String(texto || "")
     .split(",")
     .map(x => x.trim().toUpperCase())
     .filter(Boolean)
@@ -418,11 +443,11 @@ function escapeHtml(texto) {
     .replace(/'/g, "&#039;");
 }
 
-function debounce(fn, delay) {
+function debounce(fn, delay = 320) {
   let timer = null;
   return function (...args) {
     clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay || 320);
+    timer = setTimeout(() => fn.apply(this, args), delay);
   };
 }
 
@@ -439,9 +464,9 @@ function renderizarListaAutocomplete(lista, items, input) {
     return;
   }
 
-  lista.innerHTML = items.map(item => {
-    return `<div class="autocomplete-item">${escapeHtml(item.label || "")}</div>`;
-  }).join("");
+  lista.innerHTML = items.map(item => `
+    <div class="autocomplete-item">${escapeHtml(item.label || "")}</div>
+  `).join("");
 
   lista.style.display = "block";
 
@@ -490,7 +515,7 @@ function activarAutocomplete(inputId, listaId, tipo) {
   input.addEventListener("blur", function () {
     setTimeout(() => {
       lista.style.display = "none";
-    }, 150);
+    }, 120);
   });
 
   input.addEventListener("focus", function () {
@@ -522,21 +547,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnRecargar) {
     btnRecargar.addEventListener("click", async () => {
-      btnRecargar.disabled = true;
-      const textoOriginal = btnRecargar.textContent;
-      btnRecargar.textContent = "Recargando...";
+      setButtonLoading(btnRecargar, "Recargando...");
       try {
         await cargarDashboard();
       } finally {
-        btnRecargar.disabled = false;
-        btnRecargar.textContent = textoOriginal;
+        restoreButton(btnRecargar);
       }
     });
   }
 
   if (btnLogin) btnLogin.addEventListener("click", () => mostrarSeccion("login"));
   if (btnRegistro) btnRegistro.addEventListener("click", () => mostrarSeccion("registro"));
-  if (btnMiPanel) btnMiPanel.addEventListener("click", () => cargarDashboard());
+  if (btnMiPanel) btnMiPanel.addEventListener("click", () => mostrarSeccion("panel-docente"));
 
   activarAutocomplete("pref-distrito-principal", "sugerencias-distrito-principal", "distrito");
   activarAutocomplete("pref-segundo-distrito", "sugerencias-segundo-distrito", "distrito");
@@ -545,9 +567,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   actualizarNavSegunSesion();
 
-  const token = obtenerToken();
-
-  if (token) {
+  if (obtenerToken()) {
     cargarDashboard();
   } else {
     mostrarSeccion("inicio");
