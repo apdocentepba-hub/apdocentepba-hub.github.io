@@ -1,748 +1,317 @@
-/* ══════════════════════════════════════════
-   APDocentePBA — styles.css v10
-   Diseño: institucional/profesional, azul profundo,
-   tipografía DM Sans, tarjetas con sombra suave.
-══════════════════════════════════════════ */
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --azul:        #0f3460;
-  --azul-mid:    #1a4f8a;
-  --azul-claro:  #1f66ff;
-  --azul-light:  #e8f0fe;
-  --acento:      #f0a500;
-  --verde:       #0d7a3e;
-  --verde-bg:    #e6f4ec;
-  --rojo:        #c62828;
-  --rojo-bg:     #fce8e6;
-  --naranja:     #b45309;
-  --gris-bg:     #f0f2f7;
-  --gris-card:   #ffffff;
-  --gris-borde:  #d1d9e6;
-  --gris-borde2: #e8ecf4;
-  --texto:       #111827;
-  --texto-mid:   #374151;
-  --texto-suave: #6b7280;
-  --sombra:      0 2px 12px rgba(15,52,96,.08);
-  --sombra-md:   0 6px 24px rgba(15,52,96,.12);
-  --radius:      14px;
-  --radius-sm:   10px;
-  --radius-lg:   20px;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-  background: var(--gris-bg);
-  color: var(--texto);
-  font-size: 15px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-}
-
-.hidden { display: none !important; }
-
-/* ══════════════════════════════════════════
-   HEADER
-══════════════════════════════════════════ */
-
-.header {
-  background: var(--azul);
-  padding: 0;
-  box-shadow: 0 2px 20px rgba(0,0,0,.2);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 14px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.brand { display: flex; align-items: center; gap: 14px; }
-
-.brand-icon {
-  width: 48px; height: 48px;
-  background: rgba(255,255,255,.15);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.brand-title {
-  color: white;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -.3px;
-}
-
-.brand-sub {
-  color: rgba(255,255,255,.65);
-  font-size: 12px;
-  margin-top: 2px;
-}
-
-.top-nav, .nav-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-
-/* ══════════════════════════════════════════
-   BOTONES
-══════════════════════════════════════════ */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 10px 18px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .18s ease;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.btn:hover   { transform: translateY(-1px); filter: brightness(1.08); }
-.btn:active  { transform: translateY(0); filter: brightness(.95); }
-.btn:disabled{ opacity: .6; cursor: not-allowed; transform: none; filter: none; }
-
-.btn-primary         { background: var(--azul-claro); color: #fff; }
-.btn-primary:hover   { background: #1557e0; }
-.btn-primary-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
-.btn-primary-outline:hover { background: rgba(255,255,255,.12); border-color: white; }
-.btn-ghost           { background: transparent; color: rgba(255,255,255,.85); }
-.btn-ghost:hover     { background: rgba(255,255,255,.12); color: white; }
-.btn-secondary       { background: #e5e7eb; color: #111827; }
-.btn-secondary:hover { background: #d1d5db; }
-.btn-danger          { background: var(--rojo); color: #fff; }
-.btn-danger:hover    { background: #b71c1c; }
-.btn-outline         { background: transparent; color: var(--azul); border: 2px solid var(--azul); }
-.btn-outline:hover   { background: var(--azul-light); }
-.btn-full            { width: 100%; justify-content: center; padding: 13px; font-size: 15px; }
-.btn-lg              { padding: 13px 28px; font-size: 16px; border-radius: var(--radius); }
-
-/* ══════════════════════════════════════════
-   LAYOUT
-══════════════════════════════════════════ */
-
-.section   { padding: 40px 0; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.form-wrap { max-width: 520px; }
-
-/* ══════════════════════════════════════════
-   HERO
-══════════════════════════════════════════ */
-
-.hero-card {
-  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-mid) 100%);
-  border-radius: var(--radius-lg);
-  padding: 56px 48px;
-  color: white;
-  text-align: center;
-  box-shadow: var(--sombra-md);
-}
-
-.hero-eyebrow {
-  display: inline-block;
-  background: rgba(255,255,255,.15);
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: 999px;
-  padding: 5px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
-
-.hero-title {
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 18px;
-  letter-spacing: -.5px;
-}
-
-.hero-desc {
-  font-size: 17px;
-  color: rgba(255,255,255,.82);
-  max-width: 560px;
-  margin: 0 auto 32px;
-  line-height: 1.6;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 40px;
-}
-
-.hero-features {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-  flex-wrap: wrap;
-  border-top: 1px solid rgba(255,255,255,.2);
-  padding-top: 28px;
-}
-
-.hfeat {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: rgba(255,255,255,.8);
-  font-weight: 500;
-}
-
-.hfeat-icon { font-size: 18px; }
-
-/* ══════════════════════════════════════════
-   FORM CARD
-══════════════════════════════════════════ */
-
-.form-card {
-  background: var(--gris-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--sombra-md);
-  overflow: hidden;
-}
-
-.form-card-hdr {
-  background: var(--azul);
-  padding: 28px 32px;
-  color: white;
-}
-
-.form-card-hdr h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-.form-card-hdr p  { color: rgba(255,255,255,.7); font-size: 14px; }
-
-.form-card form { padding: 28px 32px 32px; }
-
-.form-foot {
-  text-align: center;
-  font-size: 14px;
-  color: var(--texto-suave);
-  margin-top: 16px;
-}
-
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--azul-claro);
-  font-weight: 600;
-  cursor: pointer;
-  font-size: inherit;
-  padding: 0;
-  text-decoration: underline;
-  font-family: inherit;
-}
-
-.link-btn:hover { opacity: .8; }
-
-.separator {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 32px;
-  margin: 4px 0 20px;
-  color: var(--texto-suave);
-  font-size: 13px;
-}
-.separator::before, .separator::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--gris-borde);
-}
-
-.google-wrap { padding: 0 32px 28px; }
-
-/* ══════════════════════════════════════════
-   FIELDS
-══════════════════════════════════════════ */
-
-.field { position: relative; margin-bottom: 16px; }
-.field:last-of-type { margin-bottom: 0; }
-
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-
-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--texto-mid);
-  margin-bottom: 6px;
-}
-
-.req { color: var(--rojo); }
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-select {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid var(--gris-borde);
-  border-radius: var(--radius-sm);
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--texto);
-  background: #fff;
-  transition: border-color .15s, box-shadow .15s;
-  appearance: none;
-}
-
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--azul-claro);
-  box-shadow: 0 0 0 3px rgba(31,102,255,.13);
-}
-
-input::placeholder { color: #b0b7c3; }
-
-.pw-wrap { position: relative; }
-.pw-wrap input { padding-right: 44px; }
-.pw-toggle {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; cursor: pointer; font-size: 16px;
-  color: var(--texto-suave); padding: 4px; opacity: .7;
-  transition: opacity .15s;
-}
-.pw-toggle:hover { opacity: 1; }
-
-.form-actions { margin-top: 22px; }
-
-/* ══════════════════════════════════════════
-   MENSAJES
-══════════════════════════════════════════ */
-
-.msg {
-  display: block;
-  margin-top: 14px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.msg:empty { display: none; }
-.msg-info  { background: var(--azul-light); color: var(--azul); }
-.msg-ok    { background: var(--verde-bg);   color: var(--verde); }
-.msg-error { background: var(--rojo-bg);    color: var(--rojo); }
-
-/* ══════════════════════════════════════════
-   PANEL HEADER
-══════════════════════════════════════════ */
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.panel-header h2 { font-size: 26px; font-weight: 700; color: var(--azul); margin-bottom: 4px; }
-.panel-sub       { color: var(--texto-suave); font-size: 14px; }
-.panel-actions   { display: flex; gap: 10px; flex-wrap: wrap; }
-
-/* ══════════════════════════════════════════
-   LOADING
-══════════════════════════════════════════ */
-
-.panel-loading {
-  background: rgba(240,242,247,.9);
-  border-radius: var(--radius);
-  padding: 48px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  font-weight: 600;
-  color: var(--azul);
-  margin-bottom: 24px;
-}
-
-.spinner {
-  width: 36px; height: 36px;
-  border: 3px solid var(--gris-borde);
-  border-top-color: var(--azul-claro);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ══════════════════════════════════════════
-   CARDS GRID
-══════════════════════════════════════════ */
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 18px;
-  margin-bottom: 18px;
-}
-
-.panel-card {
-  background: var(--gris-card);
-  border-radius: var(--radius);
-  padding: 22px 24px;
-  box-shadow: var(--sombra);
-  border: 1px solid var(--gris-borde2);
-}
-
-.span-4  { grid-column: span 4; }
-.span-8  { grid-column: span 8; }
-.span-12 { grid-column: span 12; }
-
-.prefs-card { margin-bottom: 0; }
-
-.card-lbl {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  color: var(--texto-suave);
-  margin-bottom: 14px;
-}
-
-.card-lbl-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.badge-num {
-  background: var(--azul-claro);
-  color: white;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 10px;
-  min-width: 24px;
-  text-align: center;
-}
-
-.ph { color: var(--texto-suave); font-size: 14px; }
-
-/* ══════════════════════════════════════════
-   DATOS DOCENTE
-══════════════════════════════════════════ */
-
-#panel-datos-docente p,
-#panel-preferencias-resumen p {
-  font-size: 13px;
-  color: var(--texto-mid);
-  margin-bottom: 6px;
-  line-height: 1.4;
-}
-
-#panel-datos-docente strong,
-#panel-preferencias-resumen strong {
-  color: var(--texto);
-}
-
-.badge-ok  { display:inline-block;padding:2px 10px;border-radius:999px;background:var(--verde-bg);color:var(--verde);font-size:12px;font-weight:700; }
-.badge-off { display:inline-block;padding:2px 10px;border-radius:999px;background:var(--rojo-bg);color:var(--rojo);font-size:12px;font-weight:700; }
-
-/* ══════════════════════════════════════════
-   ESTADÍSTICAS
-══════════════════════════════════════════ */
-
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.stat-box {
-  background: var(--gris-bg);
-  border-radius: var(--radius-sm);
-  padding: 14px 10px;
-  text-align: center;
-}
-
-.stat-n { display: block; font-size: 28px; font-weight: 700; color: var(--azul); line-height: 1; }
-.stat-l { display: block; font-size: 11px; font-weight: 600; color: var(--texto-suave); margin-top: 4px; text-transform: uppercase; letter-spacing: .4px; }
-.stat-acceso { font-size: 12px; color: var(--texto-suave); margin-top: 4px; }
-
-/* ══════════════════════════════════════════
-   ALERTAS APD
-══════════════════════════════════════════ */
-
-.alertas-count { font-size: 13px; color: var(--texto-suave); margin-bottom: 14px; }
-
-.alertas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
-}
-
-.alerta-card {
-  background: #f8fafd;
-  border: 1px solid var(--gris-borde);
-  border-left: 4px solid var(--azul-claro);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: box-shadow .15s;
-}
-
-.alerta-card:hover { box-shadow: 0 4px 16px rgba(15,52,96,.1); }
-
-.alerta-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-
-.tag {
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-}
-
-.tag-turno  { background: var(--azul);       color: white; }
-.tag-nivel  { background: var(--azul-light);  color: var(--azul); }
-.tag-estado { background: var(--verde-bg);    color: var(--verde); }
-
-.alerta-titulo {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--azul);
-  line-height: 1.35;
-}
-
-.alerta-info { display: flex; flex-direction: column; gap: 4px; }
-
-.alerta-row {
-  display: flex;
-  gap: 6px;
-  font-size: 12px;
-  line-height: 1.3;
-}
-
-.alerta-key {
-  font-weight: 700;
-  color: var(--texto-suave);
-  text-transform: uppercase;
-  font-size: 10px;
-  letter-spacing: .4px;
-  white-space: nowrap;
-  padding-top: 1px;
-  min-width: 70px;
-}
-
-.alerta-val { color: var(--texto-mid); }
-
-.alerta-cierre {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--naranja);
-  border-top: 1px solid var(--gris-borde2);
-  padding-top: 8px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  color: var(--texto-suave);
-}
-
-.empty-state p { margin-bottom: 6px; }
-.empty-hint { font-size: 13px; color: var(--texto-suave); }
-
-/* ══════════════════════════════════════════
-   HISTORIAL
-══════════════════════════════════════════ */
-
-.hist-list { list-style: none; padding: 0; }
-.hist-list li {
-  font-size: 13px;
-  color: var(--texto-mid);
-  padding: 7px 0;
-  border-bottom: 1px solid var(--gris-borde2);
-  line-height: 1.4;
-}
-.hist-list li:last-child { border-bottom: none; }
-
-/* ══════════════════════════════════════════
-   PREFERENCIAS
-══════════════════════════════════════════ */
-
-.sec-label {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .6px;
-  color: var(--texto-suave);
-  margin: 22px 0 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--gris-borde2);
-}
-
-.hint-sm { font-size: 11px; font-weight: 400; color: var(--texto-suave); text-transform: none; letter-spacing: 0; }
-
-.prefs-hint {
-  font-size: 13px;
-  color: var(--texto-suave);
-  margin-bottom: 4px;
-  line-height: 1.5;
-}
-
-/* CHECKBOXES */
-.checks-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.chk-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--gris-bg);
-  border: 1.5px solid var(--gris-borde);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  cursor: pointer;
-  transition: border-color .15s, background .15s;
-  user-select: none;
-}
-
-.chk-card:hover {
-  border-color: var(--azul-claro);
-  background: var(--azul-light);
-}
-
-.chk-card:has(input:checked) {
-  background: var(--azul-light);
-  border-color: var(--azul-claro);
-}
-
-.chk-card input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--azul-claro);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.chk-lbl { font-size: 13px; font-weight: 600; color: var(--texto); }
-
-.chk-card:has(input:checked) .chk-lbl { color: var(--azul); }
-
-/* Notificaciones */
-.notif-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
-.chk-notif { flex-direction: row; align-items: flex-start; padding: 14px; }
-.chk-notif input { margin-top: 2px; }
-.chk-notif > div { display: flex; flex-direction: column; gap: 3px; }
-.chk-sub { font-size: 11px; font-weight: 400; color: var(--texto-suave); }
-
-/* ══════════════════════════════════════════
-   AUTOCOMPLETE
-══════════════════════════════════════════ */
-
-.ac-list {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  width: 100%;
-  background: #fff;
-  border: 1.5px solid var(--azul-claro);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(15,52,96,.12);
-  max-height: 220px;
-  overflow-y: auto;
-  display: none;
-  z-index: 200;
-}
-
-.ac-item {
-  padding: 10px 14px;
-  cursor: pointer;
-  font-size: 14px;
-  border-bottom: 1px solid var(--gris-borde2);
-  color: var(--texto-mid);
-  transition: background .1s;
-}
-.ac-item:last-child { border-bottom: none; }
-.ac-item:hover { background: var(--azul-light); color: var(--azul); font-weight: 600; }
-
-/* ══════════════════════════════════════════
-   FOOTER
-══════════════════════════════════════════ */
-
-.footer { background: var(--azul); padding: 20px 0; margin-top: 40px; }
-.footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  color: rgba(255,255,255,.5);
-  font-size: 13px;
-  text-align: center;
-}
-
-/* ══════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════ */
-
-@media (max-width: 1024px) {
-  .span-4, .span-8 { grid-column: span 6; }
-}
-
-@media (max-width: 768px) {
-  .header-inner { padding: 12px 16px; }
-  .hero-card { padding: 36px 24px; }
-  .cards-grid { grid-template-columns: 1fr; }
-  .span-4, .span-8, .span-12 { grid-column: span 1; }
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  .notif-grid { grid-template-columns: 1fr; }
-  .alertas-grid { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: repeat(3,1fr); }
-  .form-card form { padding: 22px 20px 24px; }
-  .form-card-hdr  { padding: 22px 20px; }
-  .google-wrap { padding: 0 20px 24px; }
-  .separator { padding: 0 20px; }
-  .checks-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 480px) {
-  .hero-title { font-size: 26px; }
-  .hero-actions { flex-direction: column; }
-  .hero-actions .btn { width: 100%; justify-content: center; }
-  .hero-features { gap: 14px; }
-  .panel-header { flex-direction: column; }
-  .stats-row { grid-template-columns: 1fr; }
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APDocentePBA — Alertas docentes PBA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">📋</div>
+        <div>
+          <h1 class="brand-title">APDocentePBA</h1>
+          <p class="brand-sub">Alertas de Actos Públicos Digitales · Provincia de Buenos Aires</p>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <div id="navPublico" class="nav-group">
+          <button id="btnLogin"    class="btn btn-ghost"           type="button">Ingresar</button>
+          <button id="btnRegistro" class="btn btn-primary-outline" type="button">Registrarse</button>
+        </div>
+        <div id="navPrivado" class="nav-group hidden">
+          <button id="btnMiPanel"      class="btn btn-ghost"  type="button">Mi panel</button>
+          <button id="btnCerrarSesion" class="btn btn-danger" type="button">Cerrar sesión</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- INICIO -->
+    <section id="inicio" class="section">
+      <div class="container">
+        <div class="hero-card">
+          <div class="hero-eyebrow">🎯 Sistema gratuito para docentes PBA</div>
+          <h2 class="hero-title">Nunca más te pierdas<br>un Acto Público Digital</h2>
+          <p class="hero-desc">
+            Configurá tus preferencias de distrito, materia, nivel y turno,
+            y recibí alertas automáticas por email cuando se publique un APD que te interese.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" onclick="mostrarSeccion('registro')">Registrarme gratis</button>
+            <button class="btn btn-outline  btn-lg" onclick="mostrarSeccion('login')">Ya tengo cuenta</button>
+          </div>
+          <div class="hero-features">
+            <div class="hfeat"><span class="hfeat-icon">⚡</span><span>APD en tiempo real</span></div>
+            <div class="hfeat"><span class="hfeat-icon">📧</span><span>Alertas por email</span></div>
+            <div class="hfeat"><span class="hfeat-icon">🎯</span><span>Filtros por perfil</span></div>
+            <div class="hfeat"><span class="hfeat-icon">🔓</span><span>100% gratuito</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTRO -->
+    <section id="registro" class="section hidden">
+      <div class="container form-wrap">
+        <div class="form-card">
+          <div class="form-card-hdr">
+            <h2>Crear cuenta</h2>
+            <p>Completá tus datos para empezar a recibir alertas</p>
+          </div>
+          <form id="form-registro" novalidate>
+            <div class="grid-2">
+              <div class="field">
+                <label for="reg-nombre">Nombre <span class="req">*</span></label>
+                <input type="text" id="reg-nombre" placeholder="Tu nombre" required autocomplete="given-name"/>
+              </div>
+              <div class="field">
+                <label for="reg-apellido">Apellido <span class="req">*</span></label>
+                <input type="text" id="reg-apellido" placeholder="Tu apellido" required autocomplete="family-name"/>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="reg-email">Email <span class="req">*</span></label>
+                <input type="email" id="reg-email" placeholder="tu@email.com" required autocomplete="email"/>
+              </div>
+              <div class="field">
+                <label for="reg-celular">Celular</label>
+                <input type="text" id="reg-celular" placeholder="11 1234-5678" autocomplete="tel"/>
+              </div>
+            </div>
+            <div class="field">
+              <label for="reg-password">Contraseña <span class="req">*</span></label>
+              <div class="pw-wrap">
+                <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" required autocomplete="new-password"/>
+                <button type="button" class="pw-toggle" data-target="reg-password" tabindex="-1">👁</button>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-full">Crear mi cuenta</button>
+            </div>
+            <div class="form-foot">¿Ya tenés cuenta?
+              <button type="button" class="link-btn" onclick="mostrarSeccion('login')">Iniciá sesión</button>
+            </div>
+            <span id="registro-msg" class="msg"></span>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="login" class="section hidden">
+      <div class="container form-wrap">
+        <div class="form-card">
+          <div class="form-card-hdr">
+            <h2>Iniciar sesión</h2>
+            <p>Ingresá para ver tus alertas y preferencias</p>
+          </div>
+          <form id="form-login" novalidate>
+            <div class="field">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" placeholder="tu@email.com" required autocomplete="email"/>
+            </div>
+            <div class="field">
+              <label for="login-password">Contraseña</label>
+              <div class="pw-wrap">
+                <input type="password" id="login-password" placeholder="Tu contraseña" required autocomplete="current-password"/>
+                <button type="button" class="pw-toggle" data-target="login-password" tabindex="-1">👁</button>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+            </div>
+            <div class="form-foot">¿No tenés cuenta?
+              <button type="button" class="link-btn" onclick="mostrarSeccion('registro')">Registrate gratis</button>
+            </div>
+            <span id="login-msg" class="msg"></span>
+          </form>
+          <div class="separator"><span>o ingresá con</span></div>
+          <div class="google-wrap">
+            <div id="g_id_onload"
+                 data-client_id="650896364013-s3o36ckvoi42947v6ummmgdkdmsgondo.apps.googleusercontent.com"
+                 data-callback="handleGoogleLogin">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-width="100%" data-logo_alignment="left"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL DOCENTE -->
+    <section id="panel-docente" class="section hidden">
+      <div class="container">
+
+        <div class="panel-header">
+          <div>
+            <h2 id="panel-bienvenida">Bienvenido/a</h2>
+            <p id="panel-subtitulo" class="panel-sub">Cargando...</p>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-recargar-panel" class="btn btn-secondary" type="button">↻ Recargar</button>
+            <button id="btn-logout"         class="btn btn-danger"    type="button">Cerrar sesión</button>
+          </div>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="panel-loading" class="panel-loading hidden">
+          <div class="spinner"></div>
+          <span>Cargando panel...</span>
+        </div>
+
+        <div id="panel-content" class="cards-grid">
+
+          <div class="panel-card span-4">
+            <div class="card-lbl">👤 Mi cuenta</div>
+            <div id="panel-datos-docente"><p class="ph">Cargando...</p></div>
+          </div>
+
+          <div class="panel-card span-4">
+            <div class="card-lbl">⚙️ Mis preferencias</div>
+            <div id="panel-preferencias-resumen"><p class="ph">Cargando...</p></div>
+          </div>
+
+          <div class="panel-card span-4">
+            <div class="card-lbl">📊 Estadísticas</div>
+            <div id="panel-estadisticas"><p class="ph">Cargando...</p></div>
+          </div>
+
+          <div class="panel-card span-8">
+            <div class="card-lbl-row">
+              <span class="card-lbl">🔔 Alertas APD activas</span>
+              <span id="alertas-badge" class="badge-num hidden"></span>
+            </div>
+            <div id="panel-alertas"><p class="ph">Cargando...</p></div>
+          </div>
+
+          <div class="panel-card span-4">
+            <div class="card-lbl">📋 Historial</div>
+            <div id="panel-historial"><p class="ph">Cargando...</p></div>
+          </div>
+
+        </div>
+
+        <!-- PREFERENCIAS -->
+        <div class="panel-card prefs-card">
+          <div class="card-lbl">✏️ Configurar mis preferencias de alerta</div>
+          <p class="prefs-hint">Las alertas se envían cuando un APD coincide con tu distrito, cargo/materia, nivel y turno. Dejá un campo vacío para aceptar cualquier valor en ese filtro.</p>
+
+          <form id="form-preferencias">
+
+            <!-- Distritos -->
+            <div class="sec-label">Distritos</div>
+            <div class="grid-3">
+              <div class="field">
+                <label for="pref-distrito-principal">Distrito principal</label>
+                <input type="text" id="pref-distrito-principal" placeholder="Ej: AVELLANEDA" autocomplete="off"/>
+                <div id="sug-distrito-1" class="ac-list"></div>
+              </div>
+              <div class="field">
+                <label for="pref-segundo-distrito">Segundo distrito</label>
+                <input type="text" id="pref-segundo-distrito" placeholder="Ej: LANÚS" autocomplete="off"/>
+                <div id="sug-distrito-2" class="ac-list"></div>
+              </div>
+              <div class="field">
+                <label for="pref-tercer-distrito">Tercer distrito</label>
+                <input type="text" id="pref-tercer-distrito" placeholder="Ej: QUILMES" autocomplete="off"/>
+                <div id="sug-distrito-3" class="ac-list"></div>
+              </div>
+            </div>
+
+            <!-- Cargos / Materias — AHORA 3 CAMPOS -->
+            <div class="sec-label">Cargos / Materias <span class="hint-sm">(hasta 3 — dejá vacío para no filtrar)</span></div>
+            <div class="grid-3">
+              <div class="field">
+                <label for="pref-cargo-1">Cargo / Materia 1</label>
+                <input type="text" id="pref-cargo-1" placeholder="Ej: PRECEPTOR" autocomplete="off"/>
+                <div id="sug-cargo-1" class="ac-list"></div>
+              </div>
+              <div class="field">
+                <label for="pref-cargo-2">Cargo / Materia 2</label>
+                <input type="text" id="pref-cargo-2" placeholder="Ej: MATEMÁTICA" autocomplete="off"/>
+                <div id="sug-cargo-2" class="ac-list"></div>
+              </div>
+              <div class="field">
+                <label for="pref-cargo-3">Cargo / Materia 3</label>
+                <input type="text" id="pref-cargo-3" placeholder="Ej: INGLÉS" autocomplete="off"/>
+                <div id="sug-cargo-3" class="ac-list"></div>
+              </div>
+            </div>
+
+            <!-- Turno -->
+            <div class="sec-label">Turno</div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="pref-turnos">Turno preferido</label>
+                <select id="pref-turnos">
+                  <!-- value="" = cualquier turno, el backend lo interpreta como sin filtro -->
+                  <option value="">Cualquier turno</option>
+                  <option value="M">Mañana</option>
+                  <option value="T">Tarde</option>
+                  <option value="V">Vespertino</option>
+                  <option value="N">Noche</option>
+                  <option value="ALTERNADO">Alternado</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Nivel / Modalidad -->
+            <div class="sec-label">Nivel / Modalidad <span class="hint-sm">(podés elegir más de uno — sin selección = cualquier nivel)</span></div>
+            <div id="pref-nivel-modalidad-box" class="checks-grid">
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="INICIAL"><span class="chk-lbl">Inicial</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="PRIMARIO"><span class="chk-lbl">Primario</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="SECUNDARIO"><span class="chk-lbl">Secundario</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="SUPERIOR FORMACION DOCENTE INICIAL"><span class="chk-lbl">Superior / Form. Docente</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ESPECIAL"><span class="chk-lbl">Ed. Especial</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES"><span class="chk-lbl">Jóvenes y Adultos</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION FISICA"><span class="chk-lbl">Ed. Física</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL"><span class="chk-lbl">Psicología Comunitaria</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ARTISTICA"><span class="chk-lbl">Ed. Artística</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION TECNICO-PROFESIONAL"><span class="chk-lbl">Técnico-Profesional</span></label>
+            </div>
+
+            <!-- Notificaciones -->
+            <div class="sec-label">Notificaciones</div>
+            <div class="notif-grid">
+              <label class="chk-card chk-notif">
+                <input type="checkbox" id="pref-alertas-activas"/>
+                <div><span class="chk-lbl">🔔 Alertas activas</span><span class="chk-sub">Recibir alertas de APD compatibles</span></div>
+              </label>
+              <label class="chk-card chk-notif">
+                <input type="checkbox" id="pref-alertas-email"/>
+                <div><span class="chk-lbl">📧 Email</span><span class="chk-sub">Notificación por correo electrónico</span></div>
+              </label>
+              <label class="chk-card chk-notif">
+                <input type="checkbox" id="pref-alertas-whatsapp"/>
+                <div><span class="chk-lbl">💬 WhatsApp</span><span class="chk-sub">Próximamente disponible</span></div>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Guardar preferencias</button>
+            </div>
+            <span id="preferencias-msg" class="msg"></span>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">APDocentePBA · Sistema gratuito de alertas para docentes PBA · 2025</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
