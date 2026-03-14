@@ -19,16 +19,16 @@
       </div>
 
       <nav class="top-nav">
-  <div id="navPublico">
-    <button id="btnLogin">Ingresar</button>
-    <button id="btnRegistro">Registrarse</button>
-  </div>
+        <div id="navPublico">
+          <button id="btnLogin">Ingresar</button>
+          <button id="btnRegistro">Registrarse</button>
+        </div>
 
-  <div id="navPrivado" style="display:none;">
-    <button id="btnMiPanel">Mi panel</button>
-    <button id="btnCerrarSesion">Cerrar sesión</button>
-  </div>
-</nav>
+        <div id="navPrivado" style="display:none;">
+          <button id="btnMiPanel">Mi panel</button>
+          <button id="btnCerrarSesion">Cerrar sesión</button>
+        </div>
+      </nav>
     </div>
   </header>
 
@@ -38,7 +38,7 @@
         <h2>Bienvenido a APDocentePBA</h2>
         <p>
           Registrate, iniciá sesión y configurá tus preferencias para recibir alertas
-          según distrito, materias, nivel, turnos y cargos.
+          según distrito, materia/cargo, nivel/modalidad y turnos.
         </p>
       </div>
     </section>
@@ -167,7 +167,7 @@
           <h3>Configurar notificaciones</h3>
 
           <form id="form-preferencias">
-            <div class="grid-2">
+            <div class="grid-3">
               <div>
                 <label for="pref-distrito-principal">Distrito principal</label>
                 <input type="text" id="pref-distrito-principal" placeholder="Ej: AVELLANEDA" />
@@ -175,33 +175,58 @@
               </div>
 
               <div>
-                <label for="pref-otros-distritos">Otros distritos</label>
-                <input type="text" id="pref-otros-distritos" placeholder="Ej: LANUS,QUILMES" />
+                <label for="pref-segundo-distrito">Segundo distrito</label>
+                <input type="text" id="pref-segundo-distrito" placeholder="Ej: LANUS" />
+                <div id="sugerencias-segundo-distrito" class="autocomplete-lista"></div>
+              </div>
+
+              <div>
+                <label for="pref-tercer-distrito">Tercer distrito</label>
+                <input type="text" id="pref-tercer-distrito" placeholder="Ej: QUILMES" />
+                <div id="sugerencias-tercer-distrito" class="autocomplete-lista"></div>
               </div>
             </div>
 
             <div class="grid-2">
               <div>
-                <label for="pref-materias">Materias</label>
-                <input type="text" id="pref-materias" placeholder="Ej: MATEMATICA,INFORMATICA" />
+                <label for="pref-cargos">Materia / cargo</label>
+                <input type="text" id="pref-cargos" placeholder="Ej: MATEMATICA o PRECEPTOR" />
+                <div id="sugerencias-cargos" class="autocomplete-lista"></div>
               </div>
 
               <div>
                 <label for="pref-nivel-modalidad">Nivel / modalidad</label>
-                <input type="text" id="pref-nivel-modalidad" placeholder="Ej: SECUNDARIA TECNICA" />
+                <select id="pref-nivel-modalidad">
+                  <option value="">Seleccionar</option>
+                  <option value="INICIAL">Inicial</option>
+                  <option value="PRIMARIO">Primario</option>
+                  <option value="SECUNDARIO">Secundario</option>
+                  <option value="SUPERIOR FORMACION DOCENTE INICIAL">Superior Formación Docente Inicial</option>
+                  <option value="EDUCACION ESPECIAL">Educación Especial</option>
+                  <option value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES">Educación de Jóvenes, Adultos y Adultos Mayores</option>
+                  <option value="EDUCACION FISICA">Educación Física</option>
+                  <option value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL">Psicología Comunitaria y Pedagogía Social</option>
+                  <option value="EDUCACION ARTISTICA">Educación Artística</option>
+                  <option value="EDUCACION TECNICO-PROFESIONAL">Educación Técnico-Profesional (Técnica / Agraria / Formación Profesional / Superior Formación Técnica)</option>
+                </select>
               </div>
             </div>
 
             <div class="grid-2">
               <div>
-                <label for="pref-turnos">Turnos</label>
-                <input type="text" id="pref-turnos" placeholder="Ej: MAÑANA,TARDE" />
+                <label for="pref-turnos">Turno</label>
+                <select id="pref-turnos">
+                  <option value="">Seleccionar</option>
+                  <option value="M">Mañana</option>
+                  <option value="T">Tarde</option>
+                  <option value="N">Noche</option>
+                  <option value="ALTERNADO">Alternado</option>
+                </select>
               </div>
 
               <div>
-                <label for="pref-cargos">Cargos</label>
-                <input type="text" id="pref-cargos" placeholder="Ej: PROFESOR,PRECEPTOR" />
-                <div id="sugerencias-cargos" class="autocomplete-lista"></div>
+                <label for="pref-cargos-info">Búsqueda actual</label>
+                <input type="text" id="pref-cargos-info" value="Se usa el mismo campo para materia y cargo" readonly />
               </div>
             </div>
 
