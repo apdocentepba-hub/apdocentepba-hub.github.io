@@ -1,14 +1,14 @@
 'use strict';
 
 /* ══════════════════════════════════════════
-   APDocentePBA — app.js v10
+   APDocentePBA — app.js v4
 ══════════════════════════════════════════ */
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFtHAZ8ItzTK7MQdqn-FaVVO6s4s4HTIttZDC0daJgn6TgkJvFBafgNLTG_PcG0HxMbg/exec";
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    NAVEGACIÓN
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 function mostrarSeccion(id) {
   document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
@@ -17,18 +17,18 @@ function mostrarSeccion(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* ══════════════════════════════════════════
-   TOKEN
-══════════════════════════════════════════ */
+/* ──────────────────────────────────────────
+   TOKEN / SESIÓN
+────────────────────────────────────────── */
 
-const TOKEN_KEY = "apd_token_v2";
-const guardarToken  = t  => localStorage.setItem(TOKEN_KEY, t);
-const obtenerToken  = () => localStorage.getItem(TOKEN_KEY);
-const borrarToken   = () => localStorage.removeItem(TOKEN_KEY);
+const TOKEN_KEY  = "apd_token_v2";
+const guardarToken = t  => localStorage.setItem(TOKEN_KEY, t);
+const obtenerToken = () => localStorage.getItem(TOKEN_KEY);
+const borrarToken  = () => localStorage.removeItem(TOKEN_KEY);
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    NAV
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 function actualizarNav() {
   const ok = !!obtenerToken();
@@ -50,9 +50,9 @@ function limpiarMsgs() {
   });
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    MENSAJES
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 function showMsg(id, texto, tipo = "info") {
   const el = document.getElementById(id);
@@ -61,9 +61,9 @@ function showMsg(id, texto, tipo = "info") {
   el.className   = `msg msg-${tipo}`;
 }
 
-/* ══════════════════════════════════════════
-   BOTONES CON ESTADO
-══════════════════════════════════════════ */
+/* ──────────────────────────────────────────
+   BOTONES
+────────────────────────────────────────── */
 
 function btnLoad(btn, txt) {
   if (!btn) return;
@@ -78,9 +78,9 @@ function btnRestore(btn) {
   btn.textContent = btn.dataset.orig || btn.textContent;
 }
 
-/* ══════════════════════════════════════════
-   HTTP POST
-══════════════════════════════════════════ */
+/* ──────────────────────────────────────────
+   HTTP
+────────────────────────────────────────── */
 
 async function post(payload) {
   const res  = await fetch(WEB_APP_URL, {
@@ -89,25 +89,22 @@ async function post(payload) {
     body:    JSON.stringify(payload)
   });
   const text = await res.text();
-  try { return JSON.parse(text); }
-  catch(e) {
-    console.error("Respuesta no JSON:", text);
-    throw new Error("El backend no devolvió JSON válido");
-  }
+  try   { return JSON.parse(text); }
+  catch { console.error("No JSON:", text); throw new Error("El backend no devolvió JSON válido"); }
 }
 
-/* ══════════════════════════════════════════
-   CARGA DEL PANEL
-══════════════════════════════════════════ */
+/* ──────────────────────────────────────────
+   PANEL LOADING
+────────────────────────────────────────── */
 
 function setPanelLoading(activo) {
   document.getElementById("panel-loading")?.classList.toggle("hidden", !activo);
   document.getElementById("panel-content")?.classList.toggle("hidden",  activo);
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    REGISTRO
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 async function registrarDocente(e) {
   e.preventDefault();
@@ -124,7 +121,6 @@ async function registrarDocente(e) {
       celular:  val("reg-celular"),
       password: val("reg-password")
     });
-
     if (data.ok) {
       showMsg("registro-msg", data.message || "✓ Registro exitoso", "ok");
       document.getElementById("form-registro")?.reset();
@@ -140,9 +136,9 @@ async function registrarDocente(e) {
   }
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    LOGIN
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 async function loginPassword(e) {
   e.preventDefault();
@@ -156,12 +152,10 @@ async function loginPassword(e) {
       email:    val("login-email"),
       password: val("login-password")
     });
-
     if (!data.ok || !data.token) {
       showMsg("login-msg", data.message || "Login incorrecto", "error");
       return;
     }
-
     guardarToken(data.token);
     actualizarNav();
     showMsg("login-msg", "✓ Ingresando...", "ok");
@@ -173,10 +167,6 @@ async function loginPassword(e) {
     btnRestore(btn);
   }
 }
-
-/* ══════════════════════════════════════════
-   GOOGLE LOGIN
-══════════════════════════════════════════ */
 
 async function handleGoogleLogin(response) {
   showMsg("login-msg", "Validando con Google...", "info");
@@ -195,9 +185,9 @@ async function handleGoogleLogin(response) {
   }
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    DASHBOARD
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 async function cargarDashboard() {
   const token = obtenerToken();
@@ -208,16 +198,9 @@ async function cargarDashboard() {
 
   try {
     const data = await post({ action: "dashboard", token });
-
-    if (!data.ok) {
-      alert(data.message || "Sesión inválida. Volvé a ingresar.");
-      logout();
-      return;
-    }
-
+    if (!data.ok) { alert(data.message || "Sesión inválida."); logout(); return; }
     renderDashboard(data);
-    limpiarFormPrefs();
-    cargarChecksDesdeData(data);
+    cargarPrefsEnFormulario(data);
     actualizarNav();
   } catch(err) {
     console.error(err);
@@ -228,17 +211,16 @@ async function cargarDashboard() {
   }
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    RENDER DASHBOARD
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 function renderDashboard(data) {
   const doc   = data.docente      || {};
   const pref  = data.preferencias || {};
-  const alts  = Array.isArray(data.alertas)  ? data.alertas  : [];
-  const hist  = Array.isArray(data.historial) ? data.historial : [];
+  const alts  = Array.isArray(data.alertas)   ? data.alertas  : [];
+  const hist  = Array.isArray(data.historial)  ? data.historial : [];
   const stats = data.estadisticas || {};
-
   const nombre = `${doc.nombre||""} ${doc.apellido||""}`.trim();
 
   setText("panel-bienvenida", nombre ? `Bienvenido/a, ${nombre}` : "Bienvenido/a");
@@ -256,15 +238,16 @@ function renderDashboard(data) {
   `);
 
   // Preferencias resumen
+  const cargos = [pref.cargos_csv, pref.materias_csv].filter(Boolean).join(", ") || "-";
   setHTML("panel-preferencias-resumen", `
     <p><strong>Distrito:</strong> ${esc(pref.distrito_principal||"-")}</p>
-    ${pref.segundo_distrito ? `<p><strong>2°:</strong> ${esc(pref.segundo_distrito)}</p>` : ""}
-    ${pref.tercer_distrito  ? `<p><strong>3°:</strong> ${esc(pref.tercer_distrito)}</p>`  : ""}
-    <p><strong>Materia/Cargo:</strong> ${esc(pref.cargos_csv||pref.materias_csv||"-")}</p>
-    <p><strong>Nivel:</strong> ${esc(pref.nivel_modalidad||"-")}</p>
-    <p><strong>Turno:</strong> ${turnoTexto(pref.turnos_csv||"-")}</p>
+    ${pref.segundo_distrito ? `<p><strong>2° distrito:</strong> ${esc(pref.segundo_distrito)}</p>` : ""}
+    ${pref.tercer_distrito  ? `<p><strong>3° distrito:</strong> ${esc(pref.tercer_distrito)}</p>`  : ""}
+    <p><strong>Cargos/Mat.:</strong> ${esc(cargos)}</p>
+    <p><strong>Nivel:</strong> ${esc(pref.nivel_modalidad||"(cualquiera)")}</p>
+    <p><strong>Turno:</strong> ${esc(turnoTexto(pref.turnos_csv)||"(cualquiera)")}</p>
     <p><strong>Alertas:</strong> ${pref.alertas_activas ? "🔔 Activas" : "⏸ Pausadas"}</p>
-    <p><strong>Email:</strong> ${pref.alertas_email ? "✓" : "✗"} &nbsp; <strong>WhatsApp:</strong> ${pref.alertas_whatsapp ? "✓" : "✗"}</p>
+    <p><strong>Email:</strong> ${pref.alertas_email?"✓ Sí":"✗ No"}</p>
   `);
 
   // Estadísticas
@@ -277,27 +260,22 @@ function renderDashboard(data) {
     <p class="stat-acceso">Último acceso: ${fmtFecha(stats.ultimo_acceso||"-")}</p>
   `);
 
-  // Badge de alertas
+  // Badge alertas
   const badge = document.getElementById("alertas-badge");
-  if (badge) {
-    badge.textContent = String(alts.length);
-    badge.classList.toggle("hidden", alts.length === 0);
-  }
+  if (badge) { badge.textContent = String(alts.length); badge.classList.toggle("hidden", alts.length===0); }
 
   // Alertas APD
   const panelAlts = document.getElementById("panel-alertas");
   if (panelAlts) {
     if (alts.length > 0) {
       panelAlts.innerHTML = `
-        <p class="alertas-count">${alts.length} oferta${alts.length>1?"s":""} compatible${alts.length>1?"s":""} con tus preferencias</p>
-        <div class="alertas-grid">
-          ${alts.map(a => renderAlertaCard(a)).join("")}
-        </div>`;
+        <p class="alertas-count">${alts.length} oferta${alts.length>1?"s":""} compatible${alts.length>1?"s":""}</p>
+        <div class="alertas-grid">${alts.map(renderAlertaCard).join("")}</div>`;
     } else {
       panelAlts.innerHTML = `
         <div class="empty-state">
           <p>No hay alertas compatibles todavía.</p>
-          <p class="empty-hint">Asegurate de tener configurado tu distrito, materia, nivel y turno en las preferencias de abajo.</p>
+          <p class="empty-hint">Asegurate de configurar tu distrito y cargo/materia. Si dejás el turno en "Cualquier turno" se aceptan todos los turnos.</p>
         </div>`;
     }
   }
@@ -305,81 +283,50 @@ function renderDashboard(data) {
   // Historial
   const panelHist = document.getElementById("panel-historial");
   if (panelHist) {
-    if (hist.length > 0) {
-      panelHist.innerHTML = `<ul class="hist-list">${hist.map(h=>`<li>${esc(String(h))}</li>`).join("")}</ul>`;
-    } else {
-      panelHist.innerHTML = `<p class="empty-hint">Sin historial todavía.</p>`;
-    }
+    panelHist.innerHTML = hist.length > 0
+      ? `<ul class="hist-list">${hist.map(h=>`<li>${esc(String(h))}</li>`).join("")}</ul>`
+      : `<p class="empty-hint">Sin historial todavía.</p>`;
   }
 }
 
 function renderAlertaCard(a) {
   const turno = a.turno ? turnoTexto(a.turno) : "";
+  const cargoMat = a.cargo && a.materia && a.cargo !== a.materia
+    ? `${a.cargo} — ${a.materia}` : (a.cargo || a.materia || "");
   return `
     <div class="alerta-card">
       <div class="alerta-tags">
-        ${turno  ? `<span class="tag tag-turno">${esc(turno)}</span>` : ""}
+        ${turno ? `<span class="tag tag-turno">${esc(turno)}</span>` : ""}
         ${a.nivel_modalidad ? `<span class="tag tag-nivel">${esc(a.nivel_modalidad)}</span>` : ""}
         <span class="tag tag-estado">Publicada</span>
       </div>
       <div class="alerta-titulo">${esc(a.titulo||"APD")}</div>
       <div class="alerta-info">
-        ${arow("Cargo/Mat.",  a.cargo && a.materia && a.cargo!==a.materia ? a.cargo+" — "+a.materia : (a.cargo||a.materia))}
+        ${arow("Cargo/Mat.", cargoMat)}
         ${arow("Distrito",   a.distrito)}
         ${arow("Escuela",    a.escuela)}
-        ${a.domicilio    ? arow("Domicilio",  a.domicilio)    : ""}
-        ${a.jornada      ? arow("Jornada",    a.jornada)      : ""}
-        ${a.modulos      ? arow("Módulos",    a.modulos)      : ""}
-        ${a.curso_division ? arow("Curso",    a.curso_division) : ""}
+        ${a.domicilio      ? arow("Domicilio",  a.domicilio)     : ""}
+        ${a.jornada        ? arow("Jornada",    a.jornada)       : ""}
+        ${a.modulos        ? arow("Módulos",    a.modulos)       : ""}
+        ${a.curso_division ? arow("Curso/Div.", a.curso_division): ""}
       </div>
-      ${a.fecha_cierre_fmt ? `<div class="alerta-cierre">⏱ Cierre: ${esc(fmtFecha(a.fecha_cierre_fmt))}</div>` : ""}
+      ${a.fecha_cierre_fmt
+        ? `<div class="alerta-cierre">⏱ Cierre: ${esc(fmtFecha(a.fecha_cierre_fmt))}</div>`
+        : ""}
     </div>`;
 }
 
 function arow(key, val) {
   if (!val) return "";
-  return `<div class="alerta-row"><span class="alerta-key">${esc(key)}</span><span class="alerta-val">${esc(String(val))}</span></div>`;
+  return `<div class="alerta-row">
+    <span class="alerta-key">${esc(key)}</span>
+    <span class="alerta-val">${esc(String(val))}</span>
+  </div>`;
 }
 
-/* ══════════════════════════════════════════
-   PREFERENCIAS
-══════════════════════════════════════════ */
-
-function limpiarFormPrefs() {
-  document.getElementById("form-preferencias")?.reset();
-  ["pref-distrito-principal","pref-segundo-distrito","pref-tercer-distrito","pref-cargos"].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = "";
-  });
-  document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(c => c.checked = false);
-  document.querySelectorAll(".ac-list").forEach(l => { l.innerHTML=""; l.style.display="none"; });
-}
-
-function cargarChecksDesdeData(data) {
-  const p = data.preferencias || {};
-  setCheck("pref-alertas-activas",  !!p.alertas_activas);
-  setCheck("pref-alertas-email",    !!p.alertas_email);
-  setCheck("pref-alertas-whatsapp", !!p.alertas_whatsapp);
-
-  // Cargar valores de texto en los campos
-  if (p.distrito_principal) setVal("pref-distrito-principal", p.distrito_principal);
-  if (p.segundo_distrito)   setVal("pref-segundo-distrito",   p.segundo_distrito);
-  if (p.tercer_distrito)    setVal("pref-tercer-distrito",    p.tercer_distrito);
-  if (p.cargos_csv)         setVal("pref-cargos",             p.cargos_csv);
-  if (p.turnos_csv)         setVal("pref-turnos",             p.turnos_csv);
-
-  // Cargar checkboxes de nivel/modalidad
-  if (p.nivel_modalidad) {
-    const niveles = p.nivel_modalidad.split(",").map(s=>s.trim().toUpperCase());
-    document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(cb => {
-      cb.checked = niveles.includes(cb.value.toUpperCase());
-    });
-  }
-}
-
-function getNivelSeleccionadoCSV() {
-  return Array.from(document.querySelectorAll('input[name="pref-nivel-modalidad"]:checked'))
-    .map(el => el.value.trim().toUpperCase()).filter(Boolean).join(",");
-}
+/* ──────────────────────────────────────────
+   PREFERENCIAS — GUARDAR
+────────────────────────────────────────── */
 
 async function guardarPreferencias(e) {
   e.preventDefault();
@@ -390,31 +337,36 @@ async function guardarPreferencias(e) {
   btnLoad(btn, "Guardando...");
   showMsg("preferencias-msg", "Guardando preferencias...", "info");
 
+  // Combinar los 3 campos de cargo en un CSV
+  const cargo1 = val("pref-cargo-1").toUpperCase();
+  const cargo2 = val("pref-cargo-2").toUpperCase();
+  const cargo3 = val("pref-cargo-3").toUpperCase();
+  const cargoCSV = normCSV([cargo1,cargo2,cargo3].filter(Boolean).join(","));
+
   const segundo = val("pref-segundo-distrito").toUpperCase();
   const tercero = val("pref-tercer-distrito").toUpperCase();
-  const cargo   = val("pref-cargos").toUpperCase();
 
   try {
     const data = await post({
       action:            "save_preferences",
       token,
       distrito_principal: val("pref-distrito-principal").toUpperCase(),
-      otros_distritos_c:  normCSV([segundo, tercero].filter(Boolean).join(",")),
-      materias_csv:       normCSV(cargo),
-      cargos_csv:         normCSV(cargo),
-      nivel_modalidad:    normCSV(getNivelSeleccionadoCSV()),
-      turnos_csv:         normCSV(val("pref-turnos")),
+      otros_distritos_c:  normCSV([segundo,tercero].filter(Boolean).join(",")),
+      materias_csv:       cargoCSV,
+      cargos_csv:         cargoCSV,
+      nivel_modalidad:    normCSV(getNivelCSV()),
+      // Turno vacío = cualquier turno (backend lo interpreta sin filtro)
+      turnos_csv:         val("pref-turnos"),
       alertas_activas:    checked("pref-alertas-activas"),
       alertas_email:      checked("pref-alertas-email"),
       alertas_whatsapp:   checked("pref-alertas-whatsapp")
     });
 
     if (!data.ok) {
-      showMsg("preferencias-msg", data.message || "No se pudieron guardar", "error");
+      showMsg("preferencias-msg", data.message||"No se pudieron guardar", "error");
       return;
     }
-
-    showMsg("preferencias-msg", "✓ " + (data.message || "Preferencias guardadas"), "ok");
+    showMsg("preferencias-msg", "✓ " + (data.message||"Preferencias guardadas"), "ok");
     await cargarDashboard();
   } catch(err) {
     console.error(err);
@@ -424,53 +376,103 @@ async function guardarPreferencias(e) {
   }
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
+   PREFERENCIAS — CARGAR EN FORMULARIO
+   Precarga los valores guardados en los campos
+────────────────────────────────────────── */
+
+function cargarPrefsEnFormulario(data) {
+  const p = data.preferencias || {};
+
+  // Limpiar checkboxes de nivel
+  document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(c => c.checked = false);
+  // Limpiar listas autocomplete
+  document.querySelectorAll(".ac-list").forEach(l => { l.innerHTML=""; l.style.display="none"; });
+
+  // Distritos
+  setVal("pref-distrito-principal", p.distrito_principal || "");
+  setVal("pref-segundo-distrito",   p.segundo_distrito   || "");
+  setVal("pref-tercer-distrito",    p.tercer_distrito    || "");
+
+  // Cargos — distribuir el CSV en los 3 campos
+  const cargos = splitCSV(p.cargos_csv || p.materias_csv || "");
+  setVal("pref-cargo-1", cargos[0] || "");
+  setVal("pref-cargo-2", cargos[1] || "");
+  setVal("pref-cargo-3", cargos[2] || "");
+
+  // Turno — value="" = "Cualquier turno" (ya es la opción por defecto)
+  setVal("pref-turnos", p.turnos_csv || "");
+
+  // Nivel/modalidad checkboxes
+  if (p.nivel_modalidad) {
+    const niveles = p.nivel_modalidad.split(",").map(s => s.trim().toUpperCase());
+    document.querySelectorAll('input[name="pref-nivel-modalidad"]').forEach(cb => {
+      cb.checked = niveles.includes(cb.value.trim().toUpperCase());
+    });
+  }
+
+  // Checks de notificación
+  setCheck("pref-alertas-activas",  !!p.alertas_activas);
+  setCheck("pref-alertas-email",    !!p.alertas_email);
+  setCheck("pref-alertas-whatsapp", !!p.alertas_whatsapp);
+}
+
+function getNivelCSV() {
+  return Array.from(document.querySelectorAll('input[name="pref-nivel-modalidad"]:checked'))
+    .map(el => el.value.trim().toUpperCase()).filter(Boolean).join(",");
+}
+
+/* ──────────────────────────────────────────
    HELPERS DOM
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
-const val     = id => (document.getElementById(id)?.value||"").trim();
-const setVal  = (id,v) => { const el=document.getElementById(id); if(el) el.value=v; };
-const checked = id => !!(document.getElementById(id)?.checked);
-const setCheck = (id,v) => { const el=document.getElementById(id); if(el) el.checked=!!v; };
-const setText = (id,t) => { const el=document.getElementById(id); if(el) el.textContent=t; };
-const setHTML = (id,h) => { const el=document.getElementById(id); if(el) el.innerHTML=h; };
+const val      = id => (document.getElementById(id)?.value || "").trim();
+const setVal   = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+const checked  = id => !!(document.getElementById(id)?.checked);
+const setCheck = (id, v) => { const el = document.getElementById(id); if (el) el.checked = !!v; };
+const setText  = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+const setHTML  = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML  = h; };
 
-function esc(s) {
-  return String(s||"")
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function splitCSV(s) {
+  return String(s || "").split(",").map(x => x.trim()).filter(Boolean);
 }
 
 function normCSV(txt) {
-  return String(txt||"").split(",").map(x=>x.trim().toUpperCase()).filter(Boolean).join(",");
+  return splitCSV(txt).map(x => x.toUpperCase()).join(",");
+}
+
+function esc(s) {
+  return String(s || "")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
 function turnoTexto(v) {
-  const t = String(v||"").trim().toUpperCase();
-  if (!t||t==="-") return "-";
+  const t = String(v || "").trim().toUpperCase();
+  if (!t || t === "-") return "";
   return t.split(",").map(x => {
-    if (x==="M") return "Mañana";
-    if (x==="T") return "Tarde";
-    if (x==="V") return "Vespertino";
-    if (x==="N") return "Noche";
-    if (x==="ALTERNADO") return "Alternado";
+    if (x === "M") return "Mañana";
+    if (x === "T") return "Tarde";
+    if (x === "V") return "Vespertino";
+    if (x === "N") return "Noche";
+    if (x === "ALTERNADO") return "Alternado";
     return x;
-  }).join(", ");
+  }).filter(Boolean).join(", ");
 }
 
 function fmtFecha(v) {
-  const t = String(v||"").trim();
-  if (!t||t==="-") return "-";
+  const t = String(v || "").trim();
+  if (!t || t === "-") return "-";
   const d = new Date(t);
   return isNaN(d.getTime()) ? t : d.toLocaleString("es-AR");
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    AUTOCOMPLETE
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
-function debounce(fn, ms=320) {
+function debounce(fn, ms = 320) {
   let timer;
-  return function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args),ms); };
+  return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), ms); };
 }
 
 async function fetchSugerencias(tipo, q) {
@@ -480,14 +482,14 @@ async function fetchSugerencias(tipo, q) {
 }
 
 function renderAC(lista, items, input) {
-  if (!items?.length) { lista.innerHTML=""; lista.style.display="none"; return; }
-  lista.innerHTML = items.map(it=>`<div class="ac-item">${esc(it.label||"")}</div>`).join("");
+  if (!items?.length) { lista.innerHTML = ""; lista.style.display = "none"; return; }
+  lista.innerHTML = items.map(it => `<div class="ac-item">${esc(it.label || "")}</div>`).join("");
   lista.style.display = "block";
   lista.querySelectorAll(".ac-item").forEach(el => {
     el.addEventListener("mousedown", ev => {
       ev.preventDefault();
       input.value = el.textContent.trim();
-      lista.innerHTML=""; lista.style.display="none";
+      lista.innerHTML = ""; lista.style.display = "none";
     });
   });
 }
@@ -495,24 +497,24 @@ function renderAC(lista, items, input) {
 function activarAC(inputId, listaId, tipo) {
   const input = document.getElementById(inputId);
   const lista = document.getElementById(listaId);
-  if (!input||!lista) return;
+  if (!input || !lista) return;
 
   input.addEventListener("input", debounce(async () => {
     const q = input.value.trim();
-    if (q.length < 2) { lista.innerHTML=""; lista.style.display="none"; return; }
+    if (q.length < 2) { lista.innerHTML = ""; lista.style.display = "none"; return; }
     try {
       const data = await fetchSugerencias(tipo, q);
       renderAC(lista, data.ok ? data.items : [], input);
-    } catch(_){ lista.innerHTML=""; lista.style.display="none"; }
+    } catch(_) { lista.innerHTML = ""; lista.style.display = "none"; }
   }));
 
-  input.addEventListener("blur",  ()=>setTimeout(()=>{lista.style.display="none";},150));
-  input.addEventListener("focus", ()=>{ if(input.value.trim().length>=2) input.dispatchEvent(new Event("input")); });
+  input.addEventListener("blur",  () => setTimeout(() => { lista.style.display = "none"; }, 150));
+  input.addEventListener("focus", () => { if (input.value.trim().length >= 2) input.dispatchEvent(new Event("input")); });
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    MOSTRAR/OCULTAR CONTRASEÑA
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 function initPwToggles() {
   document.querySelectorAll(".pw-toggle").forEach(btn => {
@@ -520,35 +522,35 @@ function initPwToggles() {
       const target = document.getElementById(btn.dataset.target);
       if (!target) return;
       const show = target.type === "password";
-      target.type   = show ? "text"     : "password";
+      target.type     = show ? "text"     : "password";
       btn.textContent = show ? "🙈" : "👁";
     });
   });
 }
 
-/* ══════════════════════════════════════════
+/* ──────────────────────────────────────────
    INIT
-══════════════════════════════════════════ */
+────────────────────────────────────────── */
 
 document.addEventListener("DOMContentLoaded", () => {
 
   // Formularios
-  document.getElementById("form-registro")?.addEventListener("submit",     registrarDocente);
-  document.getElementById("form-login")?.addEventListener("submit",         loginPassword);
-  document.getElementById("form-preferencias")?.addEventListener("submit",  guardarPreferencias);
+  document.getElementById("form-registro")?.addEventListener("submit",    registrarDocente);
+  document.getElementById("form-login")?.addEventListener("submit",        loginPassword);
+  document.getElementById("form-preferencias")?.addEventListener("submit", guardarPreferencias);
 
   // Logout
   document.getElementById("btn-logout")?.addEventListener("click",      logout);
   document.getElementById("btnCerrarSesion")?.addEventListener("click", logout);
 
-  // Recargar panel — FIX: async + finally garantiza que el botón siempre vuelve
+  // Recargar
   const btnRecargar = document.getElementById("btn-recargar-panel");
   if (btnRecargar) {
     btnRecargar.addEventListener("click", async () => {
       btnLoad(btnRecargar, "↻ Recargando...");
-      try { await cargarDashboard(); }
-      catch(e){ console.error(e); }
-      finally { btnRestore(btnRecargar); }
+      try   { await cargarDashboard(); }
+      catch (e) { console.error(e); }
+      finally   { btnRestore(btnRecargar); }
     });
   }
 
@@ -557,11 +559,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnRegistro")?.addEventListener("click", () => mostrarSeccion("registro"));
   document.getElementById("btnMiPanel")?.addEventListener("click",  () => cargarDashboard());
 
-  // Autocomplete
-  activarAC("pref-distrito-principal", "sugerencias-distrito-principal", "distrito");
-  activarAC("pref-segundo-distrito",   "sugerencias-segundo-distrito",   "distrito");
-  activarAC("pref-tercer-distrito",    "sugerencias-tercer-distrito",    "distrito");
-  activarAC("pref-cargos",             "sugerencias-cargos",             "cargo_area");
+  // Autocomplete — distritos
+  activarAC("pref-distrito-principal", "sug-distrito-1", "distrito");
+  activarAC("pref-segundo-distrito",   "sug-distrito-2", "distrito");
+  activarAC("pref-tercer-distrito",    "sug-distrito-3", "distrito");
+  // Autocomplete — cargos (3 campos)
+  activarAC("pref-cargo-1", "sug-cargo-1", "cargo_area");
+  activarAC("pref-cargo-2", "sug-cargo-2", "cargo_area");
+  activarAC("pref-cargo-3", "sug-cargo-3", "cargo_area");
 
   // Mostrar/ocultar contraseña
   initPwToggles();
