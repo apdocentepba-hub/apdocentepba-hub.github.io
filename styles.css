@@ -103,6 +103,12 @@ body {
 
 .panel-card {
   padding: 22px;
+  min-height: 220px;
+}
+
+.panel-card h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
 }
 
 .preferences-card {
@@ -205,6 +211,14 @@ select:focus {
 
 .checks-grid-3 {
   grid-template-columns: repeat(3, 1fr);
+}
+
+#pref-nivel-modalidad-box {
+  margin-top: 6px;
+}
+
+#pref-nivel-modalidad-box .check-card {
+  min-height: 46px;
 }
 
 .check-card {
