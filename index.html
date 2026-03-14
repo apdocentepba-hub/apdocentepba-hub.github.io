@@ -19,14 +19,14 @@
       </div>
 
       <nav class="top-nav">
-        <div id="navPublico">
-          <button id="btnLogin">Ingresar</button>
-          <button id="btnRegistro">Registrarse</button>
+        <div id="navPublico" class="nav-group">
+          <button id="btnLogin" class="btn btn-light" type="button">Ingresar</button>
+          <button id="btnRegistro" class="btn btn-light" type="button">Registrarse</button>
         </div>
 
-        <div id="navPrivado" style="display:none;">
-          <button id="btnMiPanel">Mi panel</button>
-          <button id="btnCerrarSesion">Cerrar sesión</button>
+        <div id="navPrivado" class="nav-group hidden">
+          <button id="btnMiPanel" class="btn btn-light" type="button">Mi panel</button>
+          <button id="btnCerrarSesion" class="btn btn-danger" type="button">Cerrar sesión</button>
         </div>
       </nav>
     </div>
@@ -35,68 +35,72 @@
   <main>
     <section id="inicio" class="section">
       <div class="container hero">
-        <h2>Bienvenido a APDocentePBA</h2>
+        <h2>Bienvenido/a a APDocentePBA</h2>
         <p>
           Registrate, iniciá sesión y configurá tus preferencias para recibir alertas
-          según distrito, materia/cargo, nivel/modalidad y turnos.
+          de Actos Públicos Digitales según distrito, materia/cargo, nivel/modalidad y turnos.
         </p>
       </div>
     </section>
 
     <section id="registro" class="section hidden">
-      <div class="container card">
+      <div class="container auth-card">
         <h2>Registro docente</h2>
 
         <form id="form-registro">
           <div class="grid-2">
-            <div>
+            <div class="field">
               <label for="reg-nombre">Nombre</label>
               <input type="text" id="reg-nombre" required />
             </div>
-            <div>
+            <div class="field">
               <label for="reg-apellido">Apellido</label>
               <input type="text" id="reg-apellido" required />
             </div>
           </div>
 
           <div class="grid-2">
-            <div>
+            <div class="field">
               <label for="reg-email">Email</label>
               <input type="email" id="reg-email" required />
             </div>
-            <div>
+            <div class="field">
               <label for="reg-celular">Celular</label>
               <input type="text" id="reg-celular" />
             </div>
           </div>
 
-          <div>
+          <div class="field">
             <label for="reg-password">Contraseña</label>
             <input type="password" id="reg-password" required />
           </div>
 
-          <button type="submit" class="btn btn-primary">Registrarme</button>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Registrarme</button>
+          </div>
           <p id="registro-msg" class="msg"></p>
         </form>
       </div>
     </section>
 
     <section id="login" class="section hidden">
-      <div class="container card">
+      <div class="container auth-card">
         <h2>Iniciar sesión</h2>
 
         <form id="form-login">
-          <div>
+          <div class="field">
             <label for="login-email">Email</label>
             <input type="email" id="login-email" required />
           </div>
 
-          <div>
+          <div class="field">
             <label for="login-password">Contraseña</label>
             <input type="password" id="login-password" required />
           </div>
 
-          <button type="submit" class="btn btn-primary">Ingresar</button>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+          </div>
           <p id="login-msg" class="msg"></p>
         </form>
 
@@ -121,12 +125,12 @@
           </div>
 
           <div class="panel-actions">
-            <button id="btn-recargar-panel" class="btn btn-secondary">Recargar</button>
-            <button id="btn-logout" class="btn btn-danger">Cerrar sesión</button>
+            <button id="btn-recargar-panel" class="btn btn-secondary" type="button">Recargar</button>
+            <button id="btn-logout" class="btn btn-danger" type="button">Cerrar sesión</button>
           </div>
         </div>
 
-        <div class="panel-grid">
+        <div class="cards-grid">
           <div class="panel-card">
             <h3>Datos del docente</h3>
             <div id="panel-datos-docente">
@@ -141,7 +145,7 @@
             </div>
           </div>
 
-          <div class="panel-card">
+          <div class="panel-card panel-card-wide">
             <h3>Alertas APD</h3>
             <div id="panel-alertas">
               <p>Cargando...</p>
@@ -168,19 +172,19 @@
 
           <form id="form-preferencias">
             <div class="grid-3">
-              <div>
+              <div class="field">
                 <label for="pref-distrito-principal">Distrito principal</label>
                 <input type="text" id="pref-distrito-principal" placeholder="Ej: AVELLANEDA" />
                 <div id="sugerencias-distrito-principal" class="autocomplete-lista"></div>
               </div>
 
-              <div>
+              <div class="field">
                 <label for="pref-segundo-distrito">Segundo distrito</label>
-                <input type="text" id="pref-segundo-distrito" placeholder="Ej: LANUS" />
+                <input type="text" id="pref-segundo-distrito" placeholder="Ej: LANÚS" />
                 <div id="sugerencias-segundo-distrito" class="autocomplete-lista"></div>
               </div>
 
-              <div>
+              <div class="field">
                 <label for="pref-tercer-distrito">Tercer distrito</label>
                 <input type="text" id="pref-tercer-distrito" placeholder="Ej: QUILMES" />
                 <div id="sugerencias-tercer-distrito" class="autocomplete-lista"></div>
@@ -188,32 +192,13 @@
             </div>
 
             <div class="grid-2">
-              <div>
+              <div class="field">
                 <label for="pref-cargos">Materia / cargo</label>
-                <input type="text" id="pref-cargos" placeholder="Ej: MATEMATICA o PRECEPTOR" />
+                <input type="text" id="pref-cargos" placeholder="Ej: MATEMÁTICA o PRECEPTOR" />
                 <div id="sugerencias-cargos" class="autocomplete-lista"></div>
               </div>
 
-              <div>
-                <label for="pref-nivel-modalidad">Nivel / modalidad</label>
-                <select id="pref-nivel-modalidad">
-                  <option value="">Seleccionar</option>
-                  <option value="INICIAL">Inicial</option>
-                  <option value="PRIMARIO">Primario</option>
-                  <option value="SECUNDARIO">Secundario</option>
-                  <option value="SUPERIOR FORMACION DOCENTE INICIAL">Superior Formación Docente Inicial</option>
-                  <option value="EDUCACION ESPECIAL">Educación Especial</option>
-                  <option value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES">Educación de Jóvenes, Adultos y Adultos Mayores</option>
-                  <option value="EDUCACION FISICA">Educación Física</option>
-                  <option value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL">Psicología Comunitaria y Pedagogía Social</option>
-                  <option value="EDUCACION ARTISTICA">Educación Artística</option>
-                  <option value="EDUCACION TECNICO-PROFESIONAL">Educación Técnico-Profesional (Técnica / Agraria / Formación Profesional / Superior Formación Técnica)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid-2">
-              <div>
+              <div class="field">
                 <label for="pref-turnos">Turno</label>
                 <select id="pref-turnos">
                   <option value="">Seleccionar</option>
@@ -223,31 +208,44 @@
                   <option value="ALTERNADO">Alternado</option>
                 </select>
               </div>
+            </div>
 
-              <div>
-                <label for="pref-cargos-info">Búsqueda actual</label>
-                <input type="text" id="pref-cargos-info" value="Se usa el mismo campo para materia y cargo" readonly />
+            <div class="field">
+              <label>Nivel / modalidad</label>
+              <div id="pref-nivel-modalidad-box" class="checks-grid checks-grid-2">
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="INICIAL"> Inicial</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="PRIMARIO"> Primario</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="SECUNDARIO"> Secundario</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="SUPERIOR FORMACION DOCENTE INICIAL"> Superior Formación Docente Inicial</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ESPECIAL"> Educación Especial</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES"> Educación de Jóvenes, Adultos y Adultos Mayores</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION FISICA"> Educación Física</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL"> Psicología Comunitaria y Pedagogía Social</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ARTISTICA"> Educación Artística</label>
+                <label class="check-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION TECNICO-PROFESIONAL"> Educación Técnico-Profesional</label>
               </div>
             </div>
 
-            <div class="grid-3 checks">
-              <label class="check-item">
+            <div class="checks-grid checks-grid-3">
+              <label class="check-card">
                 <input type="checkbox" id="pref-alertas-activas" />
                 Alertas activas
               </label>
 
-              <label class="check-item">
+              <label class="check-card">
                 <input type="checkbox" id="pref-alertas-email" />
                 Recibir por email
               </label>
 
-              <label class="check-item">
+              <label class="check-card">
                 <input type="checkbox" id="pref-alertas-whatsapp" />
                 Recibir por WhatsApp
               </label>
             </div>
 
-            <button type="submit" class="btn btn-primary">Guardar preferencias</button>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Guardar preferencias</button>
+            </div>
             <p id="preferencias-msg" class="msg"></p>
           </form>
         </div>
