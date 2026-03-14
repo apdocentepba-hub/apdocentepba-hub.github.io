@@ -237,13 +237,13 @@ function renderDashboard(data) {
       : '<span class="badge-off">● Inactivo</span>'}</p>
   `);
 
-  // Preferencias resumen
-  const cargos = [pref.cargos_csv, pref.materias_csv].filter(Boolean).join(", ") || "-";
+  // Preferencias resumen — cargos: mostrar solo cargos_csv (no duplicar con materias_csv)
+  const cargosDisplay = pref.cargos_csv || pref.materias_csv || "-";
   setHTML("panel-preferencias-resumen", `
     <p><strong>Distrito:</strong> ${esc(pref.distrito_principal||"-")}</p>
     ${pref.segundo_distrito ? `<p><strong>2° distrito:</strong> ${esc(pref.segundo_distrito)}</p>` : ""}
     ${pref.tercer_distrito  ? `<p><strong>3° distrito:</strong> ${esc(pref.tercer_distrito)}</p>`  : ""}
-    <p><strong>Cargos/Mat.:</strong> ${esc(cargos)}</p>
+    <p><strong>Cargos/Mat.:</strong> ${esc(cargosDisplay)}</p>
     <p><strong>Nivel:</strong> ${esc(pref.nivel_modalidad||"(cualquiera)")}</p>
     <p><strong>Turno:</strong> ${esc(turnoTexto(pref.turnos_csv)||"(cualquiera)")}</p>
     <p><strong>Alertas:</strong> ${pref.alertas_activas ? "🔔 Activas" : "⏸ Pausadas"}</p>
@@ -337,25 +337,34 @@ async function guardarPreferencias(e) {
   btnLoad(btn, "Guardando...");
   showMsg("preferencias-msg", "Guardando preferencias...", "info");
 
-  // Combinar los 3 campos de cargo en un CSV
-  const cargo1 = val("pref-cargo-1").toUpperCase();
-  const cargo2 = val("pref-cargo-2").toUpperCase();
-  const cargo3 = val("pref-cargo-3").toUpperCase();
-  const cargoCSV = normCSV([cargo1,cargo2,cargo3].filter(Boolean).join(","));
+  // Cargos: combinar los 3 campos en un CSV limpio
+  const cargo1 = val("pref-cargo-1").toUpperCase().trim();
+  const cargo2 = val("pref-cargo-2").toUpperCase().trim();
+  const cargo3 = val("pref-cargo-3").toUpperCase().trim();
+  const cargoCSV = [cargo1, cargo2, cargo3].filter(Boolean).join(",");
 
-  const segundo = val("pref-segundo-distrito").toUpperCase();
-  const tercero = val("pref-tercer-distrito").toUpperCase();
+  // Distritos: construir CSV de otros distritos
+  const segundo = val("pref-segundo-distrito").toUpperCase().trim();
+  const tercero = val("pref-tercer-distrito").toUpperCase().trim();
+  const otrosDistritos = [segundo, tercero].filter(Boolean).join(",");
+
+  // Log local para debugging
+  console.log("Guardando preferencias:", {
+    distrito_principal: val("pref-distrito-principal").toUpperCase(),
+    otros_distritos_c: otrosDistritos,
+    cargos_csv: cargoCSV,
+    turnos_csv: val("pref-turnos")
+  });
 
   try {
     const data = await post({
-      action:            "save_preferences",
+      action:             "save_preferences",
       token,
-      distrito_principal: val("pref-distrito-principal").toUpperCase(),
-      otros_distritos_c:  normCSV([segundo,tercero].filter(Boolean).join(",")),
+      distrito_principal: val("pref-distrito-principal").toUpperCase().trim(),
+      otros_distritos_c:  otrosDistritos,
       materias_csv:       cargoCSV,
       cargos_csv:         cargoCSV,
-      nivel_modalidad:    normCSV(getNivelCSV()),
-      // Turno vacío = cualquier turno (backend lo interpreta sin filtro)
+      nivel_modalidad:    getNivelCSV(),
       turnos_csv:         val("pref-turnos"),
       alertas_activas:    checked("pref-alertas-activas"),
       alertas_email:      checked("pref-alertas-email"),
