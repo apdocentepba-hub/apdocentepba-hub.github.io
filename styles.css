@@ -111,6 +111,7 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
+
 .grid-2 > div,
 .grid-3 > div {
   position: relative;
@@ -131,12 +132,14 @@ label {
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+select {
   width: 100%;
   padding: 12px;
   border: 1px solid #c9d2de;
   border-radius: 12px;
   font-size: 15px;
+  background: white;
 }
 
 .checks {
@@ -166,6 +169,16 @@ input[type="password"] {
   font-weight: 700;
   cursor: pointer;
   margin-top: 16px;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -257,20 +270,6 @@ input[type="password"] {
   font-weight: 700;
 }
 
-@media (max-width: 800px) {
-  .grid-2,
-  .grid-3 {
-    grid-template-columns: 1fr;
-  }
-
-  .brand {
-    align-items: flex-start;
-  }
-
-  .brand h1 {
-    font-size: 24px;
-  }
-}
 .alertas-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -282,6 +281,12 @@ input[type="password"] {
   border: 1px solid #dbe3ee;
   border-radius: 14px;
   padding: 14px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.alerta-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 .alerta-item h4 {
@@ -295,6 +300,7 @@ input[type="password"] {
   font-size: 14px;
   line-height: 1.35;
 }
+
 .autocomplete-lista {
   position: absolute;
   top: calc(100% + 4px);
@@ -324,4 +330,48 @@ input[type="password"] {
 .autocomplete-item:hover,
 .autocomplete-item.activo {
   background: #eef4ff;
+}
+
+.top-nav,
+#navPublico,
+#navPrivado {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.top-nav button {
+  border: none;
+  background: white;
+  color: #133f7c;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease;
+}
+
+.top-nav button:hover {
+  transform: translateY(-1px);
+}
+
+.top-nav button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 800px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .brand {
+    align-items: flex-start;
+  }
+
+  .brand h1 {
+    font-size: 24px;
+  }
 }
