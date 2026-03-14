@@ -325,6 +325,9 @@ function formatearFechaCorta(valor) {
 }
 
 function limpiarFormularioPreferencias() {
+  const form = document.getElementById("form-preferencias");
+  if (form) form.reset();
+
   setInputValue("pref-distrito-principal", "");
   setInputValue("pref-segundo-distrito", "");
   setInputValue("pref-tercer-distrito", "");
@@ -335,12 +338,13 @@ function limpiarFormularioPreferencias() {
     chk.checked = false;
   });
 
-  const box1 = document.getElementById("sugerencias-distrito-principal");
-  const box2 = document.getElementById("sugerencias-segundo-distrito");
-  const box3 = document.getElementById("sugerencias-tercer-distrito");
-  const box4 = document.getElementById("sugerencias-cargos");
-
-  [box1, box2, box3, box4].forEach(box => {
+  [
+    "sugerencias-distrito-principal",
+    "sugerencias-segundo-distrito",
+    "sugerencias-tercer-distrito",
+    "sugerencias-cargos"
+  ].forEach(id => {
+    const box = document.getElementById(id);
     if (box) {
       box.innerHTML = "";
       box.style.display = "none";
