@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>APDocentePBA — Alertas docentes PBA</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -23,14 +21,13 @@
           <p class="brand-sub">Alertas de Actos Públicos Digitales · Provincia de Buenos Aires</p>
         </div>
       </div>
-
       <nav class="top-nav">
         <div id="navPublico" class="nav-group">
-          <button id="btnLogin" class="btn btn-ghost" type="button">Ingresar</button>
+          <button id="btnLogin"    class="btn btn-ghost"           type="button">Ingresar</button>
           <button id="btnRegistro" class="btn btn-primary-outline" type="button">Registrarse</button>
         </div>
         <div id="navPrivado" class="nav-group hidden">
-          <button id="btnMiPanel" class="btn btn-ghost" type="button">Mi panel</button>
+          <button id="btnMiPanel"      class="btn btn-ghost"  type="button">Mi panel</button>
           <button id="btnCerrarSesion" class="btn btn-danger" type="button">Cerrar sesión</button>
         </div>
       </nav>
@@ -51,7 +48,7 @@
           </p>
           <div class="hero-actions">
             <button class="btn btn-primary btn-lg" onclick="mostrarSeccion('registro')">Registrarme gratis</button>
-            <button class="btn btn-outline btn-lg" onclick="mostrarSeccion('login')">Ya tengo cuenta</button>
+            <button class="btn btn-outline  btn-lg" onclick="mostrarSeccion('login')">Ya tengo cuenta</button>
           </div>
           <div class="hero-features">
             <div class="hfeat"><span class="hfeat-icon">⚡</span><span>APD en tiempo real</span></div>
@@ -71,7 +68,6 @@
             <h2>Crear cuenta</h2>
             <p>Completá tus datos para empezar a recibir alertas</p>
           </div>
-
           <form id="form-registro" novalidate>
             <div class="grid-2">
               <div class="field">
@@ -83,7 +79,6 @@
                 <input type="text" id="reg-apellido" placeholder="Tu apellido" required autocomplete="family-name"/>
               </div>
             </div>
-
             <div class="grid-2">
               <div class="field">
                 <label for="reg-email">Email <span class="req">*</span></label>
@@ -94,7 +89,6 @@
                 <input type="text" id="reg-celular" placeholder="11 1234-5678" autocomplete="tel"/>
               </div>
             </div>
-
             <div class="field">
               <label for="reg-password">Contraseña <span class="req">*</span></label>
               <div class="pw-wrap">
@@ -102,16 +96,12 @@
                 <button type="button" class="pw-toggle" data-target="reg-password" tabindex="-1">👁</button>
               </div>
             </div>
-
             <div class="form-actions">
               <button type="submit" class="btn btn-primary btn-full">Crear mi cuenta</button>
             </div>
-
-            <div class="form-foot">
-              ¿Ya tenés cuenta?
+            <div class="form-foot">¿Ya tenés cuenta?
               <button type="button" class="link-btn" onclick="mostrarSeccion('login')">Iniciá sesión</button>
             </div>
-
             <span id="registro-msg" class="msg"></span>
           </form>
         </div>
@@ -126,13 +116,11 @@
             <h2>Iniciar sesión</h2>
             <p>Ingresá para ver tus alertas y preferencias</p>
           </div>
-
           <form id="form-login" novalidate>
             <div class="field">
               <label for="login-email">Email</label>
               <input type="email" id="login-email" placeholder="tu@email.com" required autocomplete="email"/>
             </div>
-
             <div class="field">
               <label for="login-password">Contraseña</label>
               <div class="pw-wrap">
@@ -140,32 +128,27 @@
                 <button type="button" class="pw-toggle" data-target="login-password" tabindex="-1">👁</button>
               </div>
             </div>
-
             <div class="form-actions">
               <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
             </div>
-
-            <div class="form-foot">
-              ¿No tenés cuenta?
+            <div class="form-foot">¿No tenés cuenta?
               <button type="button" class="link-btn" onclick="mostrarSeccion('registro')">Registrate gratis</button>
             </div>
-
             <span id="login-msg" class="msg"></span>
           </form>
-
           <div class="separator"><span>o ingresá con</span></div>
-
           <div class="google-wrap">
-            <div id="google-login-box"></div>
-            <div id="google-login-fallback" class="google-fallback hidden">
-              No se pudo cargar el botón de Google.
+            <div id="g_id_onload"
+                 data-client_id="650896364013-s3o36ckvoi42947v6ummmgdkdmsgondo.apps.googleusercontent.com"
+                 data-callback="handleGoogleLogin">
             </div>
+            <div class="g_id_signin" data-type="standard" data-width="100%" data-logo_alignment="left"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- PANEL -->
+    <!-- PANEL DOCENTE -->
     <section id="panel-docente" class="section hidden">
       <div class="container">
 
@@ -176,10 +159,11 @@
           </div>
           <div class="panel-actions">
             <button id="btn-recargar-panel" class="btn btn-secondary" type="button">↻ Recargar</button>
-            <button id="btn-logout" class="btn btn-danger" type="button">Cerrar sesión</button>
+            <button id="btn-logout"         class="btn btn-danger"    type="button">Cerrar sesión</button>
           </div>
         </div>
 
+        <!-- Loading overlay -->
         <div id="panel-loading" class="panel-loading hidden">
           <div class="spinner"></div>
           <span>Cargando panel...</span>
@@ -217,15 +201,14 @@
 
         </div>
 
+        <!-- PREFERENCIAS -->
         <div class="panel-card prefs-card">
           <div class="card-lbl">✏️ Configurar mis preferencias de alerta</div>
-          <p class="prefs-hint">
-            Las alertas se envían cuando un APD coincide con tu distrito, cargo/materia, nivel y turno.
-            Dejá un campo vacío para aceptar cualquier valor en ese filtro.
-          </p>
+          <p class="prefs-hint">Las alertas se envían cuando un APD coincide con tu distrito, cargo/materia, nivel y turno. Dejá un campo vacío para aceptar cualquier valor en ese filtro.</p>
 
           <form id="form-preferencias">
 
+            <!-- Distritos -->
             <div class="sec-label">Distritos</div>
             <div class="grid-3">
               <div class="field">
@@ -245,6 +228,7 @@
               </div>
             </div>
 
+            <!-- Cargos / Materias — AHORA 3 CAMPOS -->
             <div class="sec-label">Cargos / Materias <span class="hint-sm">(hasta 3 — dejá vacío para no filtrar)</span></div>
             <div class="grid-3">
               <div class="field">
@@ -264,11 +248,13 @@
               </div>
             </div>
 
+            <!-- Turno -->
             <div class="sec-label">Turno</div>
             <div class="grid-2">
               <div class="field">
                 <label for="pref-turnos">Turno preferido</label>
                 <select id="pref-turnos">
+                  <!-- value="" = cualquier turno, el backend lo interpreta como sin filtro -->
                   <option value="">Cualquier turno</option>
                   <option value="M">Mañana</option>
                   <option value="T">Tarde</option>
@@ -279,6 +265,7 @@
               </div>
             </div>
 
+            <!-- Nivel / Modalidad -->
             <div class="sec-label">Nivel / Modalidad <span class="hint-sm">(podés elegir más de uno — sin selección = cualquier nivel)</span></div>
             <div id="pref-nivel-modalidad-box" class="checks-grid">
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="INICIAL"><span class="chk-lbl">Inicial</span></label>
@@ -286,13 +273,14 @@
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="SECUNDARIO"><span class="chk-lbl">Secundario</span></label>
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="SUPERIOR FORMACION DOCENTE INICIAL"><span class="chk-lbl">Superior / Form. Docente</span></label>
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ESPECIAL"><span class="chk-lbl">Ed. Especial</span></label>
-              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION DE JOVENES ADULTOS Y ADULTOS MAYORES"><span class="chk-lbl">Jóvenes y Adultos</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION DE JOVENES, ADULTOS Y ADULTOS MAYORES"><span class="chk-lbl">Jóvenes y Adultos</span></label>
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION FISICA"><span class="chk-lbl">Ed. Física</span></label>
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="PSICOLOGIA COMUNITARIA Y PEDAGOGIA SOCIAL"><span class="chk-lbl">Psicología Comunitaria</span></label>
               <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION ARTISTICA"><span class="chk-lbl">Ed. Artística</span></label>
-              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION TECNICO PROFESIONAL"><span class="chk-lbl">Técnico-Profesional</span></label>
+              <label class="chk-card"><input type="checkbox" name="pref-nivel-modalidad" value="EDUCACION TECNICO-PROFESIONAL"><span class="chk-lbl">Técnico-Profesional</span></label>
             </div>
 
+            <!-- Notificaciones -->
             <div class="sec-label">Notificaciones</div>
             <div class="notif-grid">
               <label class="chk-card chk-notif">
@@ -312,7 +300,6 @@
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">Guardar preferencias</button>
             </div>
-
             <span id="preferencias-msg" class="msg"></span>
           </form>
         </div>
@@ -322,9 +309,9 @@
   </main>
 
   <footer class="footer">
-    <div class="footer-inner">APDocentePBA · Sistema gratuito de alertas para docentes PBA · 2026</div>
+    <div class="footer-inner">APDocentePBA · Sistema gratuito de alertas para docentes PBA · 2025</div>
   </footer>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js"></script>
 </body>
 </html>
